@@ -1,0 +1,62 @@
+const $=s=>document.querySelector(s), view=$('#view');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store={get(k,d){try{return JSON.parse(localStorage.getItem('ba_'+k))??d}catch{return d}},set(k,v){try{localStorage.setItem('ba_'+k,JSON.stringify(v))}catch{}}};
+const COL={Fuego:'#e8663d',Hielo:'#6cc4f0',Viento:'#7fd6a0',Tierra:'#c49a5a',Rayo:'#f2d04b'};
+const slug=n=>n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-');
+const el=e=>e?`<span class="el"><i style="background:${COL[e]}"></i>${e}</span>`:'<span class="el">Elemento sin confirmar</span>';
+const GUIAS={grieta:'Grieta dimensional',sendas:'Sendas',conquista:'Conquista',santuario:'Santuario elemental',legendaria:'Conquista legendaria',encargos:'Encargos',historia:'Historia completa',submisiones:'Sub misiones',codice:'Códice de monstruos',ocultos:'Objetos ocultos, cofres, puzzles y hallazgos'};
+const SOON=t=>`<h1>${t}</h1><p class="sub">Sección en preparación.</p><div class="empty"><b>Aún sin contenido.</b> Esta sección se llenará con datos de las fuentes y de tus propias partidas.</div>`;
+let chars=null;
+async function loadChars(){if(!chars){try{chars=(await (await fetch('data/characters.json')).json()).personajes}catch{chars=[]}}return chars}
+
+function inicio(){
+  const p=store.get('player',{nombre:'',uid:'',nivel:'',episodio:'1'});
+  view.innerHTML=`<h1>${p.nombre?'Hola, '+esc(p.nombre):'Bienvenido a Belana Assistant'}</h1>
+  <p class="sub">Tus datos se guardan solo en este dispositivo.</p>
+  <form class="panel form" id="pf">
+   <label>Nombre de jugador<input name="nombre" value="${esc(p.nombre)}" autocomplete="off"></label>
+   <label>UID<input name="uid" value="${esc(p.uid)}" autocomplete="off"></label>
+   <label>Nivel de aventurero<input name="nivel" type="number" min="1" value="${esc(p.nivel)}"></label>
+   <label>Episodio actual<select name="episodio">${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${String(n)===String(p.episodio)?' selected':''}>Episodio ${n}</option>`).join('')}</select></label>
+  </form>
+  <h2>Tu progreso</h2>
+  <p class="panel">Personajes marcados como obtenidos: <b>${store.get('own',[]).length}</b>. Entra en Personajes para marcarlos y armar equipos.</p>`;
+  $('#pf').addEventListener('input',e=>{const f=Object.fromEntries(new FormData($('#pf')));store.set('player',f);});
+}
+
+async function personajes(){
+  const list=await loadChars(); let own=store.get('own',[]), team=store.get('team',[null,null,null,null]), filt='Todos', only=false, pick=null;
+  const draw=()=>{
+    const shown=list.filter(([n,e])=>(filt==='Todos'||e===filt)&&(!only||own.includes(n)));
+    view.innerHTML=`<h1>Personajes</h1><p class="sub">${list.length} personajes jugables. Toca una tarjeta para marcar si la tienes.</p>
+    <h2>Equipo</h2><div class="team">${team.map((n,i)=>`<button class="slot" data-s="${i}" aria-label="Hueco ${i+1}">${n?esc(n):'Hueco '+(i+1)+'<br><small>vacío</small>'}</button>`).join('')}</div>
+    <p class="sub">${pick!==null?'Elige un personaje de la lista para el hueco '+(pick+1)+'.':'Toca un hueco y luego un personaje. Toca un hueco lleno para vaciarlo.'}</p>
+    <div class="bar">${['Todos',...Object.keys(COL)].map(f=>`<button class="chip" data-f="${f}" aria-pressed="${f===filt}">${f}</button>`).join('')}<button class="chip" id="only" aria-pressed="${only}">Solo los que tengo</button></div>
+    <div class="grid">${shown.map(([n,e])=>`<button class="card${own.includes(n)?' own':''}" data-n="${esc(n)}"><div class="pic" style="background-image:url(img/personajes/${slug(n)}.webp)">${esc(n[0])}</div><b>${esc(n)}</b>${el(e)}<span class="el">${own.includes(n)?'✔ La tengo':'No la tengo'}</span></button>`).join('')||'<div class="empty">Ningún personaje con ese filtro.</div>'}</div>`;
+    view.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filt=b.dataset.f;draw()});
+    $('#only').onclick=()=>{only=!only;draw()};
+    view.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const i=+b.dataset.s;if(team[i]){team[i]=null;store.set('team',team)}else pick=i;draw()});
+    view.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{const n=b.dataset.n;
+      if(pick!==null){team=team.map(t=>t===n?null:t);team[pick]=n;pick=null;store.set('team',team)}
+      else{own=own.includes(n)?own.filter(x=>x!==n):[...own,n];store.set('own',own)}draw()});
+  };draw();
+}
+
+async function artefactos(){
+  let d={artefactos:[]};try{d=await (await fetch('data/artifacts.json')).json()}catch{}
+  view.innerHTML=`<h1>Artefactos</h1><p class="sub">Detalle de todos los artefactos.</p>`+(d.artefactos.length?`<div class="grid">${d.artefactos.map(a=>`<div class="card"><div class="pic" style="background-image:url(img/artefactos/${slug(a.nombre)}.webp)">${esc(a.nombre[0])}</div><b>${esc(a.nombre)}</b><span class="el">${esc(a.efecto||'')}</span></div>`).join('')}</div>`:`<div class="empty"><b>Aún no hay artefactos cargados.</b> Agrega cada uno a <code>data/artifacts.json</code> con <code>nombre</code> y <code>efecto</code>; las imágenes van en <code>img/artefactos/</code>.</div>`);
+}
+
+const R={inicio,personajes,artefactos,equipamientos:()=>view.innerHTML=SOON('Equipamientos'),monstruitos:()=>view.innerHTML=SOON('Monstruitos'),mapa:()=>view.innerHTML=SOON('Mapa interactivo')};
+function route(){
+  const h=location.hash.replace(/^#\//,'')||'inicio', [a,b]=h.split('/');
+  if(a==='guia'&&GUIAS[b]){view.innerHTML=SOON(GUIAS[b]);$('#guias').open=true}else(R[a]||inicio)();
+  document.querySelectorAll('#nav a[href^="#/"]').forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#/'+h||(h==='inicio'&&l.getAttribute('href')==='#/inicio')));
+  setMenu(false);view.focus({preventScroll:true});scrollTo(0,0);
+}
+function setMenu(o){document.body.classList.toggle('open',o);$('#scrim').hidden=!o;$('#menuBtn').setAttribute('aria-expanded',o)}
+$('#menuBtn').onclick=()=>setMenu(!document.body.classList.contains('open'));
+$('#scrim').onclick=()=>setMenu(false);
+addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false)});
+addEventListener('hashchange',route);route();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
