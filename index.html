@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Belana Assistant</title>
+<meta name="theme-color" content="#101a30">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+<header class="topbar">
+  <button id="menuBtn" class="iconbtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">☰</button>
+  <strong>Belana Assistant</strong>
+</header>
+<div id="scrim" hidden></div>
+<nav id="nav" aria-label="Secciones">
+  <a class="brand" href="#/inicio">Belana<br>Assistant</a>
+  <a href="#/inicio">Inicio</a>
+  <a href="#/personajes">Personajes</a>
+  <a href="#/equipamientos">Equipamientos</a>
+  <a href="#/monstruitos">Monstruitos</a>
+  <a href="#/artefactos">Artefactos</a>
+  <details id="guias"><summary>Guías</summary>
+    <a href="#/guia/grieta">Grieta dimensional</a>
+    <a href="#/guia/sendas">Sendas</a>
+    <a href="#/guia/conquista">Conquista</a>
+    <a href="#/guia/santuario">Santuario elemental</a>
+    <a href="#/guia/legendaria">Conquista legendaria</a>
+    <a href="#/guia/encargos">Encargos</a>
+    <a href="#/guia/historia">Historia completa</a>
+    <a href="#/guia/submisiones">Sub misiones</a>
+    <a href="#/guia/codice">Códice de monstruos</a>
+    <a href="#/guia/ocultos">Ocultos, cofres y puzzles</a>
+  </details>
+  <a href="#/mapa">Mapa interactivo</a>
+</nav>
+<main id="view" tabindex="-1"></main>
+<script src="app.js?v=3"></script>
+</body>
+</html>

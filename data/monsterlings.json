@@ -1,0 +1,801 @@
+{
+"actualizado": "2026-10-03",
+"fuente": "Kaiden.gg (lista); habilidades y fusiones aún sin cargar",
+"monsterlings": [
+{
+"nombre": "2nd Lt. Goblin",
+"id": "2nd-lt-goblin"
+},
+{
+"nombre": "Albino Wolf",
+"id": "albino-wolf"
+},
+{
+"nombre": "Amon",
+"id": "amon"
+},
+{
+"nombre": "Amon's Shadow",
+"id": "amons-shadow"
+},
+{
+"nombre": "Ashen Mask",
+"id": "ashen-mask"
+},
+{
+"nombre": "Avardan",
+"id": "avardan"
+},
+{
+"nombre": "Avardan's Mana",
+"id": "avardans-mana"
+},
+{
+"nombre": "Baby Spirit",
+"id": "baby-spirit"
+},
+{
+"nombre": "Battle Spirit",
+"id": "battle-spirit"
+},
+{
+"nombre": "Beepmo",
+"id": "beepmo"
+},
+{
+"nombre": "Behemo-wolf",
+"id": "behemo-wolf"
+},
+{
+"nombre": "Big Bro Goblin",
+"id": "big-bro-goblin"
+},
+{
+"nombre": "Black Hauntstack",
+"id": "black-hauntstack"
+},
+{
+"nombre": "Black Wolf",
+"id": "black-wolf"
+},
+{
+"nombre": "Bleacher Bunnie",
+"id": "bleacher-bunnie"
+},
+{
+"nombre": "Bleacher Raccoonie",
+"id": "bleacher-raccoonie"
+},
+{
+"nombre": "Blue Shadow",
+"id": "blue-shadow"
+},
+{
+"nombre": "Bop-kkaebi",
+"id": "bop-kkaebi"
+},
+{
+"nombre": "Borborg",
+"id": "borborg"
+},
+{
+"nombre": "Bouldermander",
+"id": "bouldermander"
+},
+{
+"nombre": "Brown Cappy",
+"id": "brown-cappy"
+},
+{
+"nombre": "Bruised Bloodflower",
+"id": "bruised-bloodflower"
+},
+{
+"nombre": "Brush Hauntstack",
+"id": "brush-hauntstack"
+},
+{
+"nombre": "Brute-alee",
+"id": "brute-alee"
+},
+{
+"nombre": "Bunnie",
+"id": "bunnie"
+},
+{
+"nombre": "Bunnie Swordsman",
+"id": "bunnie-swordsman"
+},
+{
+"nombre": "Cacabagge",
+"id": "cacabagge"
+},
+{
+"nombre": "Cappy",
+"id": "cappy"
+},
+{
+"nombre": "Cappy Mama",
+"id": "cappy-mama"
+},
+{
+"nombre": "Cappy: Summer Dive!",
+"id": "cappy-summer-dive"
+},
+{
+"nombre": "Cappyberry",
+"id": "cappyberry"
+},
+{
+"nombre": "Chipmunk Spirit",
+"id": "chipmunk-spirit"
+},
+{
+"nombre": "Cinder",
+"id": "cinder"
+},
+{
+"nombre": "Cocorn",
+"id": "cocorn"
+},
+{
+"nombre": "Colossus",
+"id": "colossus"
+},
+{
+"nombre": "Cpl. Goblin",
+"id": "cpl-goblin"
+},
+{
+"nombre": "Crimsonjaw",
+"id": "crimsonjaw"
+},
+{
+"nombre": "Crusher",
+"id": "crusher"
+},
+{
+"nombre": "Custos",
+"id": "custos"
+},
+{
+"nombre": "Destructor",
+"id": "destructor"
+},
+{
+"nombre": "Digger Mole",
+"id": "digger-mole"
+},
+{
+"nombre": "Duoxini",
+"id": "duoxini"
+},
+{
+"nombre": "EightB",
+"id": "eightb"
+},
+{
+"nombre": "El Dorado Guardian",
+"id": "el-dorado-guardian"
+},
+{
+"nombre": "Empress Slime",
+"id": "empress-slime"
+},
+{
+"nombre": "Enforcer",
+"id": "enforcer"
+},
+{
+"nombre": "Fearless",
+"id": "fearless"
+},
+{
+"nombre": "Fidelis Raptor",
+"id": "fidelis-raptor"
+},
+{
+"nombre": "Fiend",
+"id": "fiend"
+},
+{
+"nombre": "Fire Slime",
+"id": "fire-slime"
+},
+{
+"nombre": "Forkmugger",
+"id": "forkmugger"
+},
+{
+"nombre": "Frostbite",
+"id": "frostbite"
+},
+{
+"nombre": "Frostjaw",
+"id": "frostjaw"
+},
+{
+"nombre": "Full Moon Vamphid",
+"id": "full-moon-vamphid"
+},
+{
+"nombre": "Gargoyle",
+"id": "gargoyle"
+},
+{
+"nombre": "Goald",
+"id": "goald"
+},
+{
+"nombre": "Goblin Recruit",
+"id": "goblin-recruit"
+},
+{
+"nombre": "Gold Digger Mole",
+"id": "gold-digger-mole"
+},
+{
+"nombre": "Gold Digger Moley Mole",
+"id": "gold-digger-moley-mole"
+},
+{
+"nombre": "Golden Fist Dude",
+"id": "golden-fist-dude"
+},
+{
+"nombre": "Golden Spark Slime",
+"id": "golden-spark-slime"
+},
+{
+"nombre": "Gorrik",
+"id": "gorrik"
+},
+{
+"nombre": "Grassgoyle",
+"id": "grassgoyle"
+},
+{
+"nombre": "Green Cappy",
+"id": "green-cappy"
+},
+{
+"nombre": "Green Cappy Bro",
+"id": "green-cappy-bro"
+},
+{
+"nombre": "Green Cappy Papa",
+"id": "green-cappy-papa"
+},
+{
+"nombre": "Greenpadupa",
+"id": "greenpadupa"
+},
+{
+"nombre": "Grippy",
+"id": "grippy"
+},
+{
+"nombre": "Grudge Revenant",
+"id": "grudge-revenant"
+},
+{
+"nombre": "Grudge Spirit",
+"id": "grudge-spirit"
+},
+{
+"nombre": "Gulgak",
+"id": "gulgak"
+},
+{
+"nombre": "Hahnul",
+"id": "hahnul"
+},
+{
+"nombre": "Hak-yu",
+"id": "hak-yu"
+},
+{
+"nombre": "Harvester",
+"id": "harvester"
+},
+{
+"nombre": "Hauntstack",
+"id": "hauntstack"
+},
+{
+"nombre": "Head Stickphid",
+"id": "head-stickphid"
+},
+{
+"nombre": "Healphid",
+"id": "healphid"
+},
+{
+"nombre": "Hop-alee",
+"id": "hop-alee"
+},
+{
+"nombre": "Ice Fist Dude",
+"id": "ice-fist-dude"
+},
+{
+"nombre": "Ice Slime",
+"id": "ice-slime"
+},
+{
+"nombre": "Inklet",
+"id": "inklet"
+},
+{
+"nombre": "Irontoise",
+"id": "irontoise"
+},
+{
+"nombre": "Kimkimchi",
+"id": "kimkimchi"
+},
+{
+"nombre": "King Slime",
+"id": "king-slime"
+},
+{
+"nombre": "Kkaebi Herder",
+"id": "kkaebi-herder"
+},
+{
+"nombre": "Kroko",
+"id": "kroko"
+},
+{
+"nombre": "Krokomander",
+"id": "krokomander"
+},
+{
+"nombre": "Leafy Mama",
+"id": "leafy-mama"
+},
+{
+"nombre": "Leafymander",
+"id": "leafymander"
+},
+{
+"nombre": "Lil' Hauntstack",
+"id": "lil-hauntstack"
+},
+{
+"nombre": "Lizarcher",
+"id": "lizarcher"
+},
+{
+"nombre": "Lizcout",
+"id": "lizcout"
+},
+{
+"nombre": "Lupe",
+"id": "lupe"
+},
+{
+"nombre": "Macrodon",
+"id": "macrodon"
+},
+{
+"nombre": "Manwol",
+"id": "manwol"
+},
+{
+"nombre": "Maple Odong",
+"id": "maple-odong"
+},
+{
+"nombre": "Masked Bunnie",
+"id": "masked-bunnie"
+},
+{
+"nombre": "Masked Raccoonie",
+"id": "masked-raccoonie"
+},
+{
+"nombre": "Master Lizcout",
+"id": "master-lizcout"
+},
+{
+"nombre": "Moley Mole",
+"id": "moley-mole"
+},
+{
+"nombre": "Mollumander",
+"id": "mollumander"
+},
+{
+"nombre": "Monk's Shadow",
+"id": "monks-shadow"
+},
+{
+"nombre": "Moon Shadow Lupe",
+"id": "moon-shadow-lupe"
+},
+{
+"nombre": "Mountaintaur",
+"id": "mountaintaur"
+},
+{
+"nombre": "Nokjung",
+"id": "nokjung"
+},
+{
+"nombre": "Noxtroll",
+"id": "noxtroll"
+},
+{
+"nombre": "Odong",
+"id": "odong"
+},
+{
+"nombre": "Odong Seed",
+"id": "odong-seed"
+},
+{
+"nombre": "Onsae",
+"id": "onsae"
+},
+{
+"nombre": "Orange Cappy",
+"id": "orange-cappy"
+},
+{
+"nombre": "Orc Raider",
+"id": "orc-raider"
+},
+{
+"nombre": "Orc Warrior",
+"id": "orc-warrior"
+},
+{
+"nombre": "Pew-kkaebi",
+"id": "pew-kkaebi"
+},
+{
+"nombre": "Phantom Snow Tiger",
+"id": "phantom-snow-tiger"
+},
+{
+"nombre": "Phantom Stone Tiger",
+"id": "phantom-stone-tiger"
+},
+{
+"nombre": "Pink Orc Dude",
+"id": "pink-orc-dude"
+},
+{
+"nombre": "Plains Minotaur",
+"id": "plains-minotaur"
+},
+{
+"nombre": "Promo",
+"id": "promo"
+},
+{
+"nombre": "Pvt. Goblin",
+"id": "pvt-goblin"
+},
+{
+"nombre": "Queen Slime",
+"id": "queen-slime"
+},
+{
+"nombre": "Raccoonie",
+"id": "raccoonie"
+},
+{
+"nombre": "Ragnadon",
+"id": "ragnadon"
+},
+{
+"nombre": "Red Shadow",
+"id": "red-shadow"
+},
+{
+"nombre": "Reginula",
+"id": "reginula"
+},
+{
+"nombre": "Ring Slime",
+"id": "ring-slime"
+},
+{
+"nombre": "Rock Fist Dude",
+"id": "rock-fist-dude"
+},
+{
+"nombre": "Rockymander",
+"id": "rockymander"
+},
+{
+"nombre": "Rococorn",
+"id": "rococorn"
+},
+{
+"nombre": "Ronin Bunnie",
+"id": "ronin-bunnie"
+},
+{
+"nombre": "Ronin Raccoonie",
+"id": "ronin-raccoonie"
+},
+{
+"nombre": "Ronin Turtlie",
+"id": "ronin-turtlie"
+},
+{
+"nombre": "Sacred Hauntstack",
+"id": "sacred-hauntstack"
+},
+{
+"nombre": "Salt-alee",
+"id": "salt-alee"
+},
+{
+"nombre": "Scar",
+"id": "scar"
+},
+{
+"nombre": "Scarlet Queen",
+"id": "scarlet-queen"
+},
+{
+"nombre": "Scrap Hoarder",
+"id": "scrap-hoarder"
+},
+{
+"nombre": "Shademask",
+"id": "shademask"
+},
+{
+"nombre": "Shellymander",
+"id": "shellymander"
+},
+{
+"nombre": "Shellymander: Summer Dive!",
+"id": "shellymander-summer-dive"
+},
+{
+"nombre": "Silvershell",
+"id": "silvershell"
+},
+{
+"nombre": "Slimeboo",
+"id": "slimeboo"
+},
+{
+"nombre": "Slimelet",
+"id": "slimelet"
+},
+{
+"nombre": "Slimelet: Summer Dive!",
+"id": "slimelet-summer-dive"
+},
+{
+"nombre": "Sludge",
+"id": "sludge"
+},
+{
+"nombre": "Soilgoyle",
+"id": "soilgoyle"
+},
+{
+"nombre": "Spadupa",
+"id": "spadupa"
+},
+{
+"nombre": "Spaider",
+"id": "spaider"
+},
+{
+"nombre": "Sparder",
+"id": "sparder"
+},
+{
+"nombre": "Spardig",
+"id": "spardig"
+},
+{
+"nombre": "Spark Slime",
+"id": "spark-slime"
+},
+{
+"nombre": "Spooder",
+"id": "spooder"
+},
+{
+"nombre": "Spoonmugger",
+"id": "spoonmugger"
+},
+{
+"nombre": "Stickmugger",
+"id": "stickmugger"
+},
+{
+"nombre": "Stickphid",
+"id": "stickphid"
+},
+{
+"nombre": "Stumpster",
+"id": "stumpster"
+},
+{
+"nombre": "Suhwa",
+"id": "suhwa"
+},
+{
+"nombre": "Sun Lizarcher",
+"id": "sun-lizarcher"
+},
+{
+"nombre": "Sunek",
+"id": "sunek"
+},
+{
+"nombre": "Swamp Odong",
+"id": "swamp-odong"
+},
+{
+"nombre": "Swellymander",
+"id": "swellymander"
+},
+{
+"nombre": "Sylphid",
+"id": "sylphid"
+},
+{
+"nombre": "Taglock",
+"id": "taglock"
+},
+{
+"nombre": "Teal Cappy",
+"id": "teal-cappy"
+},
+{
+"nombre": "Tealtaur",
+"id": "tealtaur"
+},
+{
+"nombre": "Titus",
+"id": "titus"
+},
+{
+"nombre": "Toad-alee",
+"id": "toad-alee"
+},
+{
+"nombre": "Tree Youkai",
+"id": "tree-youkai"
+},
+{
+"nombre": "Treetoise",
+"id": "treetoise"
+},
+{
+"nombre": "Troll",
+"id": "troll"
+},
+{
+"nombre": "Tunneler Mole",
+"id": "tunneler-mole"
+},
+{
+"nombre": "Turtlie",
+"id": "turtlie"
+},
+{
+"nombre": "Twisted Bloodflower",
+"id": "twisted-bloodflower"
+},
+{
+"nombre": "Twisted Spineflower",
+"id": "twisted-spineflower"
+},
+{
+"nombre": "Uncle Cappy",
+"id": "uncle-cappy"
+},
+{
+"nombre": "Unknown",
+"id": "unknown"
+},
+{
+"nombre": "Urgash",
+"id": "urgash"
+},
+{
+"nombre": "Vamphid",
+"id": "vamphid"
+},
+{
+"nombre": "Vectus",
+"id": "vectus"
+},
+{
+"nombre": "Vikkymander",
+"id": "vikkymander"
+},
+{
+"nombre": "Void Friar",
+"id": "void-friar"
+},
+{
+"nombre": "White Wolf Fulminator",
+"id": "white-wolf-fulminator"
+},
+{
+"nombre": "White Wolf Warrior",
+"id": "white-wolf-warrior"
+},
+{
+"nombre": "White Wraith",
+"id": "white-wraith"
+},
+{
+"nombre": "Wind Spirit",
+"id": "wind-spirit"
+},
+{
+"nombre": "Wolf",
+"id": "wolf"
+},
+{
+"nombre": "레드비",
+"id": "eight-b",
+"nota": "nombre en coreano en la fuente"
+},
+{
+"nombre": "보이드 이터니티",
+"id": "unknown-27202",
+"nota": "nombre en coreano en la fuente"
+},
+{
+"nombre": "블랙러스",
+"id": "ortus-fearless",
+"nota": "nombre en coreano en la fuente"
+},
+{
+"nombre": "블랙서스",
+"id": "collossus-black",
+"nota": "nombre en coreano en la fuente"
+},
+{
+"nombre": "비스포모",
+"id": "bispo-mo",
+"nota": "nombre en coreano en la fuente"
+},
+{
+"nombre": "실비지",
+"id": "garbage-silver",
+"nota": "nombre en coreano en la fuente"
+},
+{
+"nombre": "알투스 랩터",
+"id": "fidelis-raptor-gold",
+"nota": "nombre en coreano en la fuente"
+},
+{
+"nombre": "캡큐",
+"id": "ha-cube-captain",
+"nota": "nombre en coreano en la fuente"
+},
+{
+"nombre": "클린 호더",
+"id": "scrap-hoarder-clean",
+"nota": "nombre en coreano en la fuente"
+},
+{
+"nombre": "헌터피",
+"id": "ortus-grip-hunt",
+"nota": "nombre en coreano en la fuente"
+},
+{
+"nombre": "화이트론",
+"id": "ortus-shark-boss",
+"nota": "nombre en coreano en la fuente"
+}
+]
+}
