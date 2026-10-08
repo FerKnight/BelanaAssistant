@@ -353,6 +353,31 @@ button.posesion {
 button.posesion[aria-pressed="true"] { background: var(--ok); color: #0b0e22; border-color: var(--ok); font-weight: 600; }
 .ficha-bloque { margin-top: 12px; }
 .ficha-bloque h3 { color: var(--accent-2); }
+.roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
+.rol-card { background: var(--panel-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+.rol-ico { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; overflow: hidden; }
+.rol-ico svg { width: 36px; height: 36px; }
+.rol-ico img { width: 100%; height: 100%; object-fit: contain; }
+.rol-card h3 { margin: 0 0 2px; }
+.rol-sub { color: var(--accent-2); font-size: .8rem; margin-bottom: 6px; }
+.rol-card p { margin: 0 0 6px; font-size: .82rem; color: var(--muted); }
+.dupes { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 4px; }
+.stepper { display: flex; align-items: center; gap: 8px; }
+.stepper button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.stepper button:disabled { opacity: .4; cursor: not-allowed; }
+.stepper output { min-width: 2ch; text-align: center; font-weight: 700; font-size: 1.1rem; }
+.ficha-bloque ul { margin-top: 4px; }
+.ficha-bloque .sub { margin: 8px 0 0; }
 footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20px 16px 32px; }
 </style>
 </head>
@@ -414,7 +439,7 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
       <h2>Lo esencial</h2>
       <ul>
         <li><strong>Equipos de tres:</strong> cambias de personaje en tiempo real y activas habilidades de equipo (Tag Skills).</li>
-        <li><strong>Roles:</strong> Fighter, Destroyer, Assassin y Support. Equilibra el equipo.</li>
+        <li><strong>Roles:</strong> Luchador, Destructor, Asesino y Soporte. Equilibra el equipo.</li>
         <li><strong>Elementos:</strong> Fuego, Hielo, Rayo, Viento y Tierra.</li>
         <li><strong>Monsterlings:</strong> los capturas, los combinas y los equipas con Link Chains.</li>
         <li><strong>Nivel de Aventura:</strong> el máximo subió de 60 a 70 con la versión 1.4.</li>
@@ -440,7 +465,7 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
       <p class="muted">Publicada el 30 de septiembre de 2026 (mantenimiento el día 29).</p>
       <ul>
         <li><strong>Episodio 7</strong> y la nueva región <strong>Archipiélago de Gaba</strong>: 29 Monsterlings nuevos y 15 Link Chains que fabricar.</li>
-        <li><strong>Isabella:</strong> nuevo personaje 5★ de Hielo, rol Destroyer.</li>
+        <li><strong>Isabella:</strong> nuevo personaje 5★ de Hielo, rol Destructor.</li>
         <li><strong>Sorin:</strong> nueva Conquista Legendaria (rota semanalmente con Reginula; Sorin ocupa las dos primeras semanas).</li>
         <li><strong>Santuario Elemental (Elemental Sanctum):</strong> modo con jefes para mejorar pasivas nuevas de cada personaje.</li>
         <li><strong>Modo Foto AR</strong> para móviles y función <strong>Archivo</strong> para rejugar historias principales, de eventos y minijuegos.</li>
@@ -462,7 +487,7 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
     <div class="card">
       <h2>Versiones anteriores</h2>
       <ul>
-        <li><strong>Septiembre:</strong> Vivian (5★ Fuego, Support) con su misión épica "Desire Collector".</li>
+        <li><strong>Septiembre:</strong> Vivian (5★ Fuego, Soporte) con su misión épica "Desire Collector".</li>
         <li><strong>1.3 "Girl from the Void" (19 de agosto):</strong> Brisshell, reintento de reclutamiento (Harmonious Encounters), Guía rediseñada, tienda de cosméticos y cambios en Grietas y Conquista.</li>
         <li><strong>1.2 (7 de julio):</strong> Francis y Verna: Summer Dive, mapa Summer Lane y sistema de Despacho.</li>
         <li><strong>1.1:</strong> Narae, Nagi, Episodio 6 y Conquista Legendaria de Reginula.</li>
@@ -474,7 +499,7 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   <section id="personajes" data-section hidden>
     <div class="card">
       <h2>Personajes</h2>
-      <p class="muted">28 personajes (16 de 5★ y 12 de 4★), según Kaiden.gg y GameWith. Toca un personaje para ver su ficha y marcar si lo tienes. Un "—" en el rol significa que ninguna fuente lo confirma todavía.</p>
+      <div class="roles" id="rolesInfo"></div>
       <p class="contador" id="contadorPoseidos"></p>
     </div>
     <input type="search" id="buscador" placeholder="Buscar por nombre…" aria-label="Buscar personaje">
@@ -597,6 +622,15 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
       <button class="cerrar" id="cerrarFicha" type="button">Cerrar</button>
     </div>
     <button class="posesion" id="fichaPosesion" type="button" aria-pressed="false"></button>
+    <div class="dupes">
+      <span id="dupesEtiqueta">Copias extra (dupes)</span>
+      <div class="stepper" role="group" aria-labelledby="dupesEtiqueta">
+        <button type="button" id="dupesMenos" aria-label="Quitar una copia">−</button>
+        <output id="dupesValor" aria-live="polite">0</output>
+        <button type="button" id="dupesMas" aria-label="Añadir una copia">+</button>
+      </div>
+    </div>
+    <p class="muted" id="dupesNota"></p>
     <div id="fichaContenido"></div>
   </div>
 </div>
@@ -645,37 +679,37 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
 
   /* ---------- Personajes ---------- */
   var personajes = [
-    { nombre: 'Gabi',      rareza: '5★', elemento: 'Tierra', rol: 'Fighter' },
-    { nombre: 'Esther',    rareza: '5★', elemento: 'Viento', rol: 'Assassin' },
-    { nombre: 'Jiwon',     rareza: '5★', elemento: 'Viento', rol: 'Support' },
-    { nombre: 'Sangun',    rareza: '5★', elemento: 'Viento', rol: 'Fighter' },
-    { nombre: 'Penny',     rareza: '5★', elemento: 'Rayo',   rol: 'Fighter' },
-    { nombre: 'Ophelia',   rareza: '5★', elemento: 'Hielo',  rol: 'Fighter' },
-    { nombre: 'Flare',     rareza: '5★', elemento: 'Fuego',  rol: 'Destroyer' },
-    { nombre: 'Mina',      rareza: '5★', elemento: 'Fuego',  rol: '—' },
-    { nombre: 'Narae',     rareza: '5★', elemento: 'Hielo',  rol: '—', nota: 'Versión 1.1' },
-    { nombre: 'Nagi',      rareza: '5★', elemento: 'Viento', rol: '—', nota: 'Versión 1.1' },
+    { nombre: 'Gabi',      rareza: '5★', elemento: 'Tierra', rol: 'Luchador' },
+    { nombre: 'Esther',    rareza: '5★', elemento: 'Viento', rol: 'Asesino' },
+    { nombre: 'Jiwon',     rareza: '5★', elemento: 'Viento', rol: 'Soporte' },
+    { nombre: 'Sangun',    rareza: '5★', elemento: 'Viento', rol: 'Luchador' },
+    { nombre: 'Penny',     rareza: '5★', elemento: 'Rayo',   rol: 'Luchador' },
+    { nombre: 'Ophelia',   rareza: '5★', elemento: 'Hielo',  rol: 'Luchador' },
+    { nombre: 'Flare',     rareza: '5★', elemento: 'Fuego',  rol: 'Destructor' },
+    { nombre: 'Mina',      rareza: '5★', elemento: 'Fuego',  rol: 'Luchador' },
+    { nombre: 'Narae',     rareza: '5★', elemento: 'Hielo',  rol: '—' },
+    { nombre: 'Nagi',      rareza: '5★', elemento: 'Viento', rol: '—' },
     { nombre: 'Mabel',     rareza: '5★', elemento: 'Rayo',   rol: '—' },
-    { nombre: 'Brisshell', rareza: '5★', elemento: 'Tierra', rol: '—', nota: 'Versión 1.3' },
-    { nombre: 'Vivian',    rareza: '5★', elemento: 'Fuego',  rol: 'Support', nota: 'Septiembre 2026' },
-    { nombre: 'Isabella',  rareza: '5★', elemento: 'Hielo',  rol: 'Destroyer', nota: 'Versión 1.4', nuevo: true },
-    { nombre: 'Verna: Summer Dive!',   rareza: '5★', elemento: 'Fuego',  rol: '—', nota: 'Versión 1.2' },
-    { nombre: 'Francis: Summer Dive!', rareza: '5★', elemento: 'Tierra', rol: '—', nota: 'Versión 1.2' },
-    { nombre: 'Verna',     rareza: '4★', elemento: 'Fuego',  rol: 'Fighter' },
-    { nombre: 'Cloud',     rareza: '4★', elemento: 'Hielo',  rol: 'Destroyer' },
-    { nombre: 'Francis',   rareza: '4★', elemento: 'Tierra', rol: 'Support' },
-    { nombre: 'Yeonhwa',   rareza: '4★', elemento: 'Rayo',   rol: 'Assassin' },
-    { nombre: 'Daisy',     rareza: '4★', elemento: 'Tierra', rol: 'Support' },
-    { nombre: 'Leeho',     rareza: '4★', elemento: 'Fuego',  rol: 'Assassin' },
-    { nombre: 'Benjamin',  rareza: '4★', elemento: 'Rayo',   rol: 'Assassin' },
-    { nombre: 'Sera',      rareza: '4★', elemento: 'Hielo',  rol: 'Fighter' },
-    { nombre: 'Ellie',     rareza: '4★', elemento: 'Tierra', rol: 'Destroyer' },
-    { nombre: 'Reina',     rareza: '4★', elemento: 'Rayo',   rol: 'Destroyer' },
-    { nombre: 'Bonnie',    rareza: '4★', elemento: 'Viento', rol: 'Support' },
-    { nombre: 'Angel',     rareza: '4★', elemento: 'Fuego',  rol: 'Assassin' }
+    { nombre: 'Brisshell', rareza: '5★', elemento: 'Tierra', rol: '—' },
+    { nombre: 'Vivian',    rareza: '5★', elemento: 'Fuego',  rol: 'Soporte' },
+    { nombre: 'Isabella',  rareza: '5★', elemento: 'Hielo',  rol: 'Destructor', nuevo: true },
+    { nombre: 'Verna: Summer Dive!',   rareza: '5★', elemento: 'Fuego',  rol: '—' },
+    { nombre: 'Francis: Summer Dive!', rareza: '5★', elemento: 'Tierra', rol: '—' },
+    { nombre: 'Verna',     rareza: '4★', elemento: 'Fuego',  rol: 'Luchador' },
+    { nombre: 'Cloud',     rareza: '4★', elemento: 'Hielo',  rol: 'Destructor' },
+    { nombre: 'Francis',   rareza: '4★', elemento: 'Tierra', rol: 'Soporte' },
+    { nombre: 'Yeonhwa',   rareza: '4★', elemento: 'Rayo',   rol: 'Asesino' },
+    { nombre: 'Daisy',     rareza: '4★', elemento: 'Tierra', rol: 'Soporte' },
+    { nombre: 'Leeho',     rareza: '4★', elemento: 'Fuego',  rol: 'Asesino' },
+    { nombre: 'Benjamin',  rareza: '4★', elemento: 'Rayo',   rol: 'Asesino' },
+    { nombre: 'Sera',      rareza: '4★', elemento: 'Hielo',  rol: 'Luchador' },
+    { nombre: 'Ellie',     rareza: '4★', elemento: 'Tierra', rol: 'Destructor' },
+    { nombre: 'Reina',     rareza: '4★', elemento: 'Rayo',   rol: 'Destructor' },
+    { nombre: 'Bonnie',    rareza: '4★', elemento: 'Viento', rol: 'Soporte' },
+    { nombre: 'Angel',     rareza: '4★', elemento: 'Fuego',  rol: 'Asesino' }
   ];
   var elementos = ['Todos', 'Fuego', 'Hielo', 'Rayo', 'Viento', 'Tierra'];
-  var roles = ['Todos', 'Fighter', 'Destroyer', 'Assassin', 'Support'];
+  var roles = ['Todos', 'Luchador', 'Destructor', 'Asesino', 'Soporte'];
   var rarezas = ['Todos', '5★', '4★'];
   var posesiones = ['Todos', 'Los tengo', 'Me faltan'];
   var filtroE = 'Todos', filtroR = 'Todos', filtroZ = 'Todos', filtroP = 'Todos', texto = '';
@@ -683,21 +717,131 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   var COLORES = { 'Fuego': '#ff8a65', 'Hielo': '#7fd8ff', 'Rayo': '#ffd94a', 'Viento': '#6fe3a1', 'Tierra': '#c9a27a' };
   function colorDe(p) { return COLORES[p.elemento] || '#a7acd6'; }
 
-  /* Personajes que el usuario tiene (se guarda en este dispositivo) */
+  /* Personajes que el usuario tiene y sus copias extra (se guardan en este dispositivo) */
+  var MAX_DUPES = 6;
   var poseidos = {};
+  var dupes = {};
   try {
     var gp = localStorage.getItem('belana.poseidos');
     if (gp) poseidos = JSON.parse(gp) || {};
   } catch (_) { poseidos = {}; }
+  try {
+    var gd = localStorage.getItem('belana.dupes');
+    if (gd) dupes = JSON.parse(gd) || {};
+  } catch (_) { dupes = {}; }
   function guardarPoseidos() {
     try { localStorage.setItem('belana.poseidos', JSON.stringify(poseidos)); } catch (_) {}
+  }
+  function guardarDupes() {
+    try { localStorage.setItem('belana.dupes', JSON.stringify(dupes)); } catch (_) {}
   }
   function contarPoseidos() {
     return personajes.filter(function (p) { return poseidos[p.nombre]; }).length;
   }
+  function dupesDe(p) {
+    var n = parseInt(dupes[p.nombre], 10);
+    if (isNaN(n)) return 0;
+    return Math.max(0, Math.min(MAX_DUPES, n));
+  }
 
-  /* Fichas detalladas. Solo incluyo lo que las guías consultadas confirman. */
+  /* ---------- Roles: función general (guía de composición de equipos de ZeroLuck) ---------- */
+  var COLOR_ROL = { 'Luchador': '#ff8a65', 'Destructor': '#ffd94a', 'Asesino': '#b58cff', 'Soporte': '#6fe3a1' };
+  var SVG_ABRE = '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  var ICONOS_ROL = {
+    'Luchador': SVG_ABRE + '<path d="M50 10L22 38M16 32l12 12M22 38L12 48M14 10l28 28M36 44l12-12M42 38l10 10"/></svg>',
+    'Destructor': SVG_ABRE + '<rect x="12" y="10" width="40" height="18" rx="4"/><path d="M32 28v28M24 56h16"/></svg>',
+    'Asesino': SVG_ABRE + '<path d="M32 6l8 24-8 6-8-6z"/><path d="M20 40h24M32 40v14"/><circle cx="32" cy="58" r="2"/></svg>',
+    'Soporte': SVG_ABRE + '<path d="M32 54C10 38 10 18 24 16c4-.5 7 2 8 5c1-3 4-5.5 8-5C54 18 54 38 32 54z"/><path d="M32 26v14M25 33h14"/></svg>'
+  };
+  var ROLES_INFO = {
+    'Luchador': {
+      subtitulo: 'Daño principal',
+      texto: "Es el pilar del equipo: pasa más tiempo en el campo y da el daño más constante. Brilla limpiando oleadas y manteniendo la presión durante todo el combate.",
+      ejemplos: 'Mina, Gabi, Penny, Sangun, Ophelia, Sera, Verna',
+      formatos: [
+        "Luchador + Asesino + Soporte: el formato versátil; ningún contenido lo contrarresta.",
+        "Luchador + Destructor + Asesino: agresivo y constante; sirve para todo tipo de contenido."
+      ],
+      img: ''
+    },
+    'Destructor': {
+      subtitulo: 'Rompe el aturdimiento',
+      texto: "Su único objetivo es llenar la barra de aturdimiento (Stagger) lo más rápido posible. Contra jefes con fase de aturdimiento es imprescindible: sin él no se abre la ventana de ráfaga.",
+      ejemplos: 'Flare, Cloud, Ellie, Reina',
+      formatos: [
+        "Asesino + Destructor + Soporte: ideal contra jefes; llenas el aturdimiento y golpeas en la ventana de ráfaga. Es menos eficaz contra oleadas grandes.",
+        "Luchador + Destructor + Asesino: agresivo y consistente."
+      ],
+      img: ''
+    },
+    'Asesino': {
+      subtitulo: 'Daño de ráfaga',
+      texto: "Entra justo cuando el enemigo es más vulnerable y suelta el máximo daño en poco tiempo. Sus habilidades de apoyo también lanzan ataques de seguimiento fuera del campo.",
+      ejemplos: 'Esther, Angel, Leeho, Benjamin, Yeonhwa',
+      formatos: [
+        "Luchador + Asesino + Soporte: el formato versátil.",
+        "Asesino + Destructor + Soporte: la máquina de matar jefes."
+      ],
+      img: ''
+    },
+    'Soporte': {
+      subtitulo: 'Amplifica al equipo',
+      texto: "Cura, aplica buffs y mantiene la Aflicción elemental cuando su elemento coincide con el del resto del equipo. Parece menos vistoso que el daño, pero es decisivo.",
+      ejemplos: 'Jiwon, Francis, Daisy, Bonnie',
+      formatos: [
+        "Luchador + Asesino + Soporte: el formato versátil.",
+        "Asesino + Destructor + Soporte: para jefes. Un segundo Soporte aporta poco: deja el tercer espacio para un perfil de daño."
+      ],
+      img: ''
+    }
+  };
+  function construirRoles() {
+    var cont = document.getElementById('rolesInfo');
+    cont.innerHTML = '';
+    ['Luchador', 'Destructor', 'Asesino', 'Soporte'].forEach(function (nombre) {
+      var info = ROLES_INFO[nombre];
+      var card = document.createElement('div');
+      card.className = 'rol-card';
+      var ico = document.createElement('div');
+      ico.className = 'rol-ico';
+      ico.style.color = COLOR_ROL[nombre];
+      ico.style.background = COLOR_ROL[nombre] + '22';
+      if (info.img) {
+        var im = document.createElement('img');
+        im.src = info.img;
+        im.alt = nombre;
+        ico.appendChild(im);
+      } else {
+        ico.innerHTML = ICONOS_ROL[nombre];
+      }
+      var h = document.createElement('h3');
+      h.textContent = nombre;
+      var sub = document.createElement('div');
+      sub.className = 'rol-sub';
+      sub.textContent = info.subtitulo;
+      var t = document.createElement('p');
+      t.textContent = info.texto;
+      var ej = document.createElement('p');
+      ej.textContent = 'Ejemplos: ' + info.ejemplos + '.';
+      card.appendChild(ico);
+      card.appendChild(h);
+      card.appendChild(sub);
+      card.appendChild(t);
+      card.appendChild(ej);
+      cont.appendChild(card);
+    });
+  }
+  construirRoles();
+
+  /* ---------- Fichas detalladas ----------
+     Solo incluyo lo que las guías consultadas confirman.
+     Campos: resumen, puntos (función), equipamiento, monsterlings, equipo (listas de texto). */
   var NOTA_FICHA = 'Resumen hecho con guías de GameWith, Kaiden.gg, games.gg y ZeroLuck. El juego cambia con cada versión: compruébalo en tu partida.';
+  var SIN_EQUIPAMIENTO = 'Todavía no hay datos confirmados para este personaje. Se completará con la sección de artefactos y equipamientos.';
+  var SIN_LEGENDARIO = 'Ninguna guía consultada indica un Monsterling legendario concreto para este personaje.';
+  var AVISO_EQUIPO = 'Cuantos más personajes del mismo elemento lleves, más tiempo se mantiene la Aflicción elemental (la mayor mejora de daño del juego): dos aliados del mismo elemento dan buena cobertura y tres casi permanente.';
+  var AVISO_MONSTERLINGS = 'Cada personaje lleva hasta tres Monsterlings y el efecto de Enlace (Link) solo funciona en el primer espacio. Rasgos a buscar en la mayoría: Daño a jefes, Reducción de enfriamiento, Debilidad elemental y Daño crítico.';
+
   var fichas = {
     'Esther': {
       resumen: "Asesina de Viento. Su habilidad especial crea una Nube de Polvo: dentro de ella los enemigos quedan confundidos y su ataque básico se potencia.",
@@ -708,107 +852,162 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
         "Punto débil: no tiene control propio para mantener a los enemigos dentro de la nube.",
         "Despertares destacados: el cambio de personaje activa la nube durante 3 s, la nube crece de tamaño y el ataque básico potenciado hace un 50 % más de daño."
       ],
-      equipo: "Jiwon (junta a los enemigos y le da dashes infinitos) y Bonnie (aplica Resonancia, que amplifica el daño recibido) forman la combinación que las guías ven más fuerte. GameWith también propone Esther + Flare + Jiwon.",
-      build: "Monsterlings: Plains Minotaur en el primer espacio (por su Link Chain) y Taglock en el segundo (sube el ATK tras 20 golpes). Artefacto exclusivo: Wind-Harboring Broom; alternativa: Suffocating Darkness."
+      equipamiento: [
+        "Artefacto exclusivo: Wind-Harboring Broom (artefacto de Asesino de 5★).",
+        "Alternativa: Suffocating Darkness, que sube bastante el ATK y añade daño crítico a los golpes de su habilidad de apoyo (su daño fuera del campo)."
+      ],
+      monsterlings: [
+        "Plains Minotaur en el primer espacio, por su Link Chain.",
+        "Taglock en el segundo: sube el ATK tras 20 golpes."
+      ],
+      equipo: [
+        "Esther + Jiwon + Bonnie: la combinación que las guías ven más fuerte. Jiwon junta a los enemigos en la nube y Bonnie aplica Resonancia para amplificar el daño.",
+        "Esther + Flare + Jiwon (propuesta de GameWith)."
+      ]
     },
     'Jiwon': {
-      resumen: "Support de Viento. Su habilidad especial junta a los enemigos delante de ella, ideal para combos de área.",
+      resumen: "Soporte de Viento. Su habilidad especial junta a los enemigos delante de ella, ideal para combos de área.",
       puntos: [
         "Con ella en el equipo, Esther consigue dashes infinitos, que aceleran su rotación y suben su daño.",
         "Aporta buffs fuertes al equipo y, según guías para principiantes, reduce el gasto de estamina.",
         "Recibió mejoras de equilibrio con la versión 1.3."
       ],
-      equipo: "Esther y Bonnie. También aparece en el equipo Esther + Flare + Jiwon."
+      equipo: [
+        "Esther + Jiwon + Bonnie.",
+        "Esther + Flare + Jiwon."
+      ]
     },
     'Bonnie': {
-      resumen: "Support de Viento (4★). Usa habilidades musicales para controlar el campo.",
+      resumen: "Soporte de Viento (4★). Usa habilidades musicales para controlar el campo.",
       puntos: [
         "Aplica Resonancia a los enemigos: amplifica el daño que reciben justo antes de que tu DPS ataque.",
         "Su valor está en la sinergia con Esther y Jiwon; sola, las tier lists la ponen en un nivel bajo."
       ],
-      equipo: "Esther y Jiwon."
+      equipo: ["Esther + Jiwon + Bonnie."]
     },
     'Francis': {
-      resumen: "Support de Tierra (4★). Sanadora versátil, entregada como recompensa de pre-registro.",
+      resumen: "Soporte de Tierra (4★). Sanadora versátil, entregada como recompensa de pre-registro.",
       puntos: [
         "Cura de forma activa y se autocura cuando su vida es baja.",
         "Baja la DEF de los enemigos y mejora el daño de Tierra.",
         "Aplica buffs potentes al personaje que entra en el campo; necesita algo de inversión en ATK.",
-        "Es de las 4★ que mejor aguantan el paso del tiempo: algunas tier lists la ponen entre las mejores."
+        "Es de las 4★ que mejor aguantan el paso del tiempo: algunas tier lists la ponen entre las mejores.",
+        "ZeroLuck la propone como Soporte universal cuando no tienes uno de tu elemento."
       ],
-      equipo: "Gabi: la sinergia de Tierra es muy valorada.",
-      build: "La guía de Monsterlings de Kaiden.gg recomienda construir un Custos para ella."
+      monsterlings: [
+        "Custos: la guía de Kaiden.gg recomienda construir uno para ella, porque aparece en casi todos los equipos."
+      ],
+      equipo: [
+        "Cloud + Francis + Verna: el trío inicial universal.",
+        "Cloud + Francis + Ophelia: trío de Hielo accesible; Francis cura y sube el ATK.",
+        "Con Gabi: misma afinidad de Tierra, así que mantiene la Aflicción incluso fuera del campo."
+      ]
     },
     'Gabi': {
-      resumen: "Fighter de Tierra. Buen daño tanto a grupos como a un solo objetivo.",
+      resumen: "Luchador de Tierra. Buen daño tanto a grupos como a un solo objetivo.",
       puntos: [
         "Tiene un mecanismo propio para contrarrestar los ataques especiales de los enemigos, por eso rinde bien en las etapas altas de Conquista.",
-        "Su definitiva es larga: actívala al final de la rotación, cuando el Support y el Asesino ya aplicaron sus buffs.",
+        "Su definitiva es larga: actívala al final de la rotación, cuando el Soporte y el Asesino ya aplicaron sus buffs.",
         "GameWith la recomienda como núcleo del equipo si haces reroll."
       ],
-      equipo: "Francis (sinergia de Tierra)."
+      monsterlings: ["No necesita el rasgo Reducción de enfriamiento."],
+      equipo: ["Gabi + Francis: misma afinidad de Tierra."]
     },
     'Sangun': {
-      resumen: "Fighter de Viento.",
+      resumen: "Luchador de Viento.",
       puntos: [
-        "Su definitiva es larga: actívala al final de la rotación, con los buffs del Support y del Asesino ya aplicados."
+        "Su definitiva es larga: actívala al final de la rotación, con los buffs del Soporte y del Asesino ya aplicados.",
+        "ZeroLuck lo cita entre los Luchadores de área que brillan contra oleadas de enemigos."
       ]
     },
     'Mina': {
-      resumen: "5★ de Fuego. Las guías la describen como daño de ráfaga y control de masas.",
+      resumen: "Luchador de Fuego (5★). Daño de ráfaga y control de masas.",
       puntos: [
         "Limpia grupos de enemigos con rapidez, y sus bucles de habilidades dan mucho daño continuo.",
-        "Su definitiva es larga: actívala mientras los buffs del Support siguen activos.",
-        "Aparece en el nivel más alto de las tier lists recientes."
-      ]
+        "Su definitiva es larga: actívala mientras los buffs del Soporte siguen activos.",
+        "Aparece en el nivel más alto de las tier lists recientes.",
+        "ZeroLuck la cita entre los Luchadores de área que brillan contra oleadas de enemigos."
+      ],
+      monsterlings: ["El rasgo Reducción de enfriamiento le da ciclos de habilidades más fluidos."]
     },
     'Ophelia': {
-      resumen: "Fighter de Hielo. Daño sostenido.",
+      resumen: "Luchador de Hielo. Daño sostenido.",
       puntos: [
         "Se potencia a sí misma: convierte sus ataques a Hielo y sube su índice crítico.",
         "Con entradas adicionales de la habilidad especial mantiene esos buffs activos.",
         "Recibió mejoras de equilibrio con la versión 1.3."
-      ]
+      ],
+      equipo: ["Cloud + Francis + Ophelia: trío de Hielo accesible; Ophelia convierte cada apertura en daño."]
     },
     'Penny': {
-      resumen: "Fighter de Rayo.",
+      resumen: "Luchador de Rayo.",
       puntos: [
         "Se fortalece con sus habilidades especiales.",
         "Su índice crítico sube junto con el bono de daño de Rayo.",
         "Puede pelear con seguridad a distancia."
-      ]
+      ],
+      monsterlings: ["No necesita el rasgo Reducción de enfriamiento."]
+    },
+    'Sera': {
+      resumen: "Luchador de Hielo (4★).",
+      puntos: [
+        "Tiene una sinergia natural con Cloud por la afinidad de Hielo, mejor que la de Verna."
+      ],
+      monsterlings: ["Blue Shadow: la guía de Kaiden.gg lo señala como el Monsterling hecho para este personaje."],
+      equipo: ["Cloud + Francis + Sera, como alternativa al trío inicial con Verna."]
+    },
+    'Verna': {
+      resumen: "Luchador de Fuego (4★). Protagonista de la historia.",
+      puntos: [
+        "Cubre bien el hueco de Luchador en el trío inicial, aunque Sera u Ophelia tienen más sinergia con Cloud."
+      ],
+      equipo: ["Cloud + Francis + Verna: el trío inicial universal, sin necesidad de personajes 5★."]
     },
     'Flare': {
-      resumen: "Destroyer de Fuego.",
+      resumen: "Destructor de Fuego.",
       puntos: [
+        "Como Destructor, su trabajo es llenar la barra de aturdimiento para abrir la ventana de ráfaga.",
         "Las guías la usan en el equipo Esther + Flare + Jiwon."
       ],
-      equipo: "Esther y Jiwon."
+      equipo: ["Esther + Flare + Jiwon (propuesta de GameWith)."]
+    },
+    'Cloud': {
+      resumen: "Destructor de Hielo (4★). Protagonista de la historia.",
+      puntos: [
+        "Presiona la barra de aturdimiento y baja la resistencia al Hielo del enemigo.",
+        "Rinde bien incluso con poca inversión.",
+        "Sus rotaciones dependen de reducir el enfriamiento de las habilidades."
+      ],
+      monsterlings: ["Rasgo clave: Reducción de enfriamiento."],
+      equipo: [
+        "Cloud + Francis + Verna: el trío inicial universal.",
+        "Cloud + Francis + Ophelia: trío de Hielo accesible."
+      ]
     },
     'Reina': {
-      resumen: "Destroyer de Rayo (4★).",
+      resumen: "Destructor de Rayo (4★).",
       puntos: [
         "Acumula y gasta energía de Rayo para lanzar ataques variantes más fuertes.",
         "Es resistente, con daño de Rayo constante y buen daño al cambiar de personaje."
       ]
     },
     'Ellie': {
-      resumen: "Destroyer de Tierra (4★).",
+      resumen: "Destructor de Tierra (4★).",
       puntos: [
         "Rinde bien incluso fuera del campo y con entradas rápidas.",
-        "Aunque no esté activa, ayuda a llenar la barra de Aturdimiento del enemigo.",
+        "Aunque no esté activa, ayuda a llenar la barra de aturdimiento del enemigo.",
         "Su juego gira en torno a los Snacks y la Sugar Charge."
       ]
     },
     'Daisy': {
-      resumen: "Support de Tierra (4★).",
+      resumen: "Soporte de Tierra (4★).",
       puntos: [
         "Se especializa en curar y controlar el campo.",
         "Las tier lists la ponen por debajo de Francis."
       ]
     },
     'Vivian': {
-      resumen: "Support de Fuego (5★), pensada para equipos de Fuego.",
+      resumen: "Soporte de Fuego (5★), pensada para equipos de Fuego.",
       puntos: [
         "Aumenta el daño de Fuego y aplica debuffs de Fuego, para apoyar a aliados del mismo elemento.",
         "Tiene su propia misión épica: Desire Collector.",
@@ -816,7 +1015,7 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
       ]
     },
     'Isabella': {
-      resumen: "Destroyer de Hielo (5★), la novedad de la versión 1.4.",
+      resumen: "Destructor de Hielo (5★), la novedad de la versión 1.4.",
       puntos: [
         "Ingeniera genio que antes usaba su talento para ayudar a la gente y ahora se centra en su propia investigación.",
         "Su historia se descubre en el evento Wanderers Beyond Borders.",
@@ -838,17 +1037,35 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
     'Benjamin': {
       resumen: "Asesino de Rayo (4★).",
       puntos: [
-        "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones."
+        "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones.",
+        "Según Kaiden.gg, en Reginula un equipo de Benjamin sin copias extra (A0) que lucha con su elemento alcanza el daño de una Esther al máximo con el elemento contrario."
       ]
     },
     'Yeonhwa': {
-      resumen: "Asesina de Rayo (4★).",
+      resumen: "Asesino de Rayo (4★).",
       puntos: [
         "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones.",
         "Game8 la puso en el nivel S en su tier list de la versión 1.1."
       ]
     }
   };
+
+  function monsterlingsGenerales(p) {
+    var l = [];
+    if (p.rol === 'Soporte') {
+      l.push("El Dorado Guardian (o Avardan): debilidad elemental del 30 % durante el aturdimiento del enemigo y cinco segundos más.");
+      l.push("Fiend (o Blue Shadow): debilidad elemental del 15 % durante unos 13 s; es la más larga de ese valor.");
+      l.push("Gulgak: reduce un 8 % la defensa si el portador golpea una vez cada 5 s.");
+      l.push("Amon: +11 % de índice crítico para todo el equipo si el portador da más de diez golpes en diez segundos.");
+    } else if (p.rol && p.rol !== '—') {
+      l.push("Scar: +8 % de daño a jefes; casi todas las builds de daño principal lo usan.");
+      l.push("Ice Fist Dude: +11 % de índice crítico al golpear una debilidad elemental.");
+      if (p.elemento === 'Fuego') l.push("Duoxini: el mejor Monsterling específico para equipos de Fuego.");
+      if (p.elemento === 'Hielo') l.push("Red Shadow: el equivalente de Duoxini para Hielo, algo más débil.");
+      if (p.elemento === 'Tierra') l.push("Rock Fist Dude: la opción de Tierra, con un enlace y un rango condicionales.");
+    }
+    return l;
+  }
 
   function crearFiltros(id, lista, tipo) {
     var cont = document.getElementById(id);
@@ -911,11 +1128,11 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
         n.textContent = 'Nuevo';
         d.appendChild(n);
       }
-      if (p.nota) {
-        var m = document.createElement('p');
-        m.className = 'muted';
-        m.textContent = p.nota;
-        d.appendChild(m);
+      if (poseidos[p.nombre] && dupesDe(p) > 0) {
+        var dp = document.createElement('span');
+        dp.className = 'tag new';
+        dp.textContent = '+' + dupesDe(p) + ' copias';
+        d.appendChild(dp);
       }
       if (poseidos[p.nombre]) {
         var bd = document.createElement('span');
@@ -936,23 +1153,50 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   var fichaEl = document.getElementById('ficha');
   var fichaActual = null;
   var fichaDisparador = null;
-  function bloqueFicha(titulo, texto) {
-    var div = document.createElement('div');
-    div.className = 'ficha-bloque';
+
+  function bloqueLista(titulo, items, vacio, pie) {
+    var bl = document.createElement('div');
+    bl.className = 'ficha-bloque';
     var h = document.createElement('h3');
     h.textContent = titulo;
-    var t = document.createElement('p');
-    t.textContent = texto;
-    div.appendChild(h);
-    div.appendChild(t);
-    return div;
+    bl.appendChild(h);
+    if (items && items.length) {
+      var ul = document.createElement('ul');
+      items.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+      bl.appendChild(ul);
+    } else if (vacio) {
+      var v = document.createElement('p');
+      v.className = 'muted';
+      v.textContent = vacio;
+      bl.appendChild(v);
+    }
+    if (pie) {
+      var pp = document.createElement('p');
+      pp.className = 'muted sub';
+      pp.textContent = pie;
+      bl.appendChild(pp);
+    }
+    return bl;
   }
-  function pintarBotonPosesion() {
+
+  function pintarEstadoFicha() {
     var b = document.getElementById('fichaPosesion');
     var tiene = !!(fichaActual && poseidos[fichaActual.nombre]);
     b.setAttribute('aria-pressed', String(tiene));
     b.textContent = tiene ? '✓ Lo tengo' : 'Marcar como "Lo tengo"';
+    var n = fichaActual ? dupesDe(fichaActual) : 0;
+    document.getElementById('dupesValor').textContent = String(n);
+    document.getElementById('dupesMenos').disabled = !tiene || n <= 0;
+    document.getElementById('dupesMas').disabled = !tiene || n >= MAX_DUPES;
+    document.getElementById('dupesNota').textContent = tiene
+      ? 'Copias extra además de la primera. Máximo ' + MAX_DUPES + ' (las guías hablan de despertares de A0 a A6).'
+      : 'Marca el personaje como "Lo tengo" para anotar sus copias extra.';
   }
+
   function abrirFicha(p, disparador) {
     fichaActual = p;
     fichaDisparador = disparador || null;
@@ -968,42 +1212,136 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
       s.textContent = t;
       tags.appendChild(s);
     });
-    pintarBotonPosesion();
+    pintarEstadoFicha();
+
     var cont = document.getElementById('fichaContenido');
     cont.innerHTML = '';
-    var f = fichas[p.nombre];
-    if (!f) {
-      var v = document.createElement('p');
-      v.className = 'muted';
-      v.textContent = 'Todavía no tengo una ficha detallada de este personaje: ninguna guía que consulté describe su kit con claridad. La iré completando.';
-      cont.appendChild(v);
-    } else {
+    var f = fichas[p.nombre] || {};
+    var rolInfo = ROLES_INFO[p.rol];
+
+    /* Función en el equipo */
+    var fun = document.createElement('div');
+    fun.className = 'ficha-bloque';
+    var hf = document.createElement('h3');
+    hf.textContent = 'Función en el equipo';
+    fun.appendChild(hf);
+    if (f.resumen) {
       var r = document.createElement('p');
       r.textContent = f.resumen;
-      cont.appendChild(r);
+      fun.appendChild(r);
       if (f.puntos && f.puntos.length) {
-        var bl = document.createElement('div');
-        bl.className = 'ficha-bloque';
-        var h3 = document.createElement('h3');
-        h3.textContent = 'Claves';
         var ul = document.createElement('ul');
         f.puntos.forEach(function (t) {
           var li = document.createElement('li');
           li.textContent = t;
           ul.appendChild(li);
         });
-        bl.appendChild(h3);
-        bl.appendChild(ul);
-        cont.appendChild(bl);
+        fun.appendChild(ul);
       }
-      if (f.equipo) cont.appendChild(bloqueFicha('Equipo recomendado', f.equipo));
-      if (f.build) cont.appendChild(bloqueFicha('Build sugerida', f.build));
-      var nota = document.createElement('p');
-      nota.className = 'muted';
-      nota.style.marginTop = '12px';
-      nota.textContent = NOTA_FICHA;
-      cont.appendChild(nota);
+    } else {
+      if (rolInfo) {
+        var rg = document.createElement('p');
+        rg.textContent = p.rol + ' (' + rolInfo.subtitulo.toLowerCase() + '): ' + rolInfo.texto;
+        fun.appendChild(rg);
+      }
+      var nf = document.createElement('p');
+      nf.className = 'muted';
+      nf.textContent = 'Todavía no tengo una ficha detallada de este personaje: ninguna guía que consulté describe su kit con claridad. La iré completando.';
+      fun.appendChild(nf);
     }
+    cont.appendChild(fun);
+
+    /* Equipamiento recomendado */
+    cont.appendChild(bloqueLista('Equipamiento recomendado', f.equipamiento, SIN_EQUIPAMIENTO));
+
+    /* Monsterlings recomendados: los del personaje y los generales de su rol */
+    var gen = monsterlingsGenerales(p);
+    var monst = document.createElement('div');
+    monst.className = 'ficha-bloque';
+    var hm = document.createElement('h3');
+    hm.textContent = 'Monsterlings recomendados';
+    monst.appendChild(hm);
+    if (f.monsterlings && f.monsterlings.length) {
+      var ulm = document.createElement('ul');
+      f.monsterlings.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ulm.appendChild(li);
+      });
+      monst.appendChild(ulm);
+    }
+    if (gen.length) {
+      var sub = document.createElement('p');
+      sub.className = 'muted sub';
+      sub.textContent = p.rol === 'Soporte' ? 'Generales para Soportes (Kaiden.gg):' : 'Generales para personajes de daño (Kaiden.gg):';
+      monst.appendChild(sub);
+      var ulg = document.createElement('ul');
+      gen.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ulg.appendChild(li);
+      });
+      monst.appendChild(ulg);
+    } else if (!(f.monsterlings && f.monsterlings.length)) {
+      var sm = document.createElement('p');
+      sm.className = 'muted';
+      sm.textContent = 'Su rol todavía no está confirmado, así que no puedo recomendar Monsterlings por rol.';
+      monst.appendChild(sm);
+    }
+    var pm = document.createElement('p');
+    pm.className = 'muted sub';
+    pm.textContent = AVISO_MONSTERLINGS;
+    monst.appendChild(pm);
+    cont.appendChild(monst);
+
+    /* Monstruo legendario recomendado */
+    cont.appendChild(bloqueLista('Monstruo legendario recomendado', f.legendario, SIN_LEGENDARIO));
+
+    /* Equipo recomendado */
+    var eq = document.createElement('div');
+    eq.className = 'ficha-bloque';
+    var he = document.createElement('h3');
+    he.textContent = 'Equipo recomendado';
+    eq.appendChild(he);
+    if (f.equipo && f.equipo.length) {
+      var ule = document.createElement('ul');
+      f.equipo.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ule.appendChild(li);
+      });
+      eq.appendChild(ule);
+    }
+    if (rolInfo) {
+      var sub2 = document.createElement('p');
+      sub2.className = 'muted sub';
+      sub2.textContent = 'Formatos de equipo según su rol (ZeroLuck):';
+      eq.appendChild(sub2);
+      var ulf = document.createElement('ul');
+      rolInfo.formatos.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ulf.appendChild(li);
+      });
+      eq.appendChild(ulf);
+    } else if (!(f.equipo && f.equipo.length)) {
+      var se = document.createElement('p');
+      se.className = 'muted';
+      se.textContent = 'Su rol todavía no está confirmado, así que no puedo sugerir un formato de equipo.';
+      eq.appendChild(se);
+    }
+    var pe = document.createElement('p');
+    pe.className = 'muted sub';
+    pe.textContent = AVISO_EQUIPO;
+    eq.appendChild(pe);
+    cont.appendChild(eq);
+
+    var nota = document.createElement('p');
+    nota.className = 'muted';
+    nota.style.marginTop = '12px';
+    nota.textContent = NOTA_FICHA;
+    cont.appendChild(nota);
+
     fichaEl.classList.add('show');
     document.getElementById('cerrarFicha').focus();
   }
@@ -1018,9 +1356,19 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
     if (poseidos[fichaActual.nombre]) delete poseidos[fichaActual.nombre];
     else poseidos[fichaActual.nombre] = true;
     guardarPoseidos();
-    pintarBotonPosesion();
+    pintarEstadoFicha();
     pintar();
   });
+  function cambiarDupes(delta) {
+    if (!fichaActual || !poseidos[fichaActual.nombre]) return;
+    var n = Math.max(0, Math.min(MAX_DUPES, dupesDe(fichaActual) + delta));
+    dupes[fichaActual.nombre] = n;
+    guardarDupes();
+    pintarEstadoFicha();
+    pintar();
+  }
+  document.getElementById('dupesMenos').addEventListener('click', function () { cambiarDupes(-1); });
+  document.getElementById('dupesMas').addEventListener('click', function () { cambiarDupes(1); });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && fichaEl.classList.contains('show')) cerrarFicha();
   });
