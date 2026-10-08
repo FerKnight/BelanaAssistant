@@ -1,7 +1,7 @@
 /* Service worker de Belana Assistant.
-   Sube el número de VERSION cada vez que cambies index.html para que los
-   dispositivos descarguen la versión nueva. */
-var VERSION = 'belana-assistant-v5';
+   Sube el número de VERSION cada vez que cambies index.html, los iconos o
+   cualquier otro archivo, para que los dispositivos descarguen la versión nueva. */
+var VERSION = 'belana-assistant-v6';
 var ARCHIVOS = [
   './',
   './index.html',
@@ -12,7 +12,14 @@ var ARCHIVOS = [
 
 self.addEventListener('install', function (e) {
   e.waitUntil(
-    caches.open(VERSION).then(function (c) { return c.addAll(ARCHIVOS); })
+    caches.open(VERSION).then(function (c) {
+      /* cache: 'reload' obliga a descargar de la red, sin usar copias viejas del navegador. */
+      return Promise.all(ARCHIVOS.map(function (ruta) {
+        return fetch(new Request(ruta, { cache: 'reload' })).then(function (resp) {
+          if (resp.ok) return c.put(ruta, resp);
+        });
+      }));
+    })
   );
   self.skipWaiting();
 });
