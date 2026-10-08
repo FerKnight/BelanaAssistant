@@ -1,7 +1,7 @@
 /* Service worker de Belana Assistant.
    Sube el número de VERSION cada vez que cambies index.html, los iconos o
    cualquier otro archivo, para que los dispositivos descarguen la versión nueva. */
-var VERSION = 'belana-assistant-v9';
+var VERSION = 'belana-assistant-v10';
 var ARCHIVOS = [
   './',
   './index.html',
