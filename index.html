@@ -1,43 +1,536 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Belana Assistant</title>
-<meta name="theme-color" content="#101a30">
+<title>Belana Assistant — Guía de Mongil: Star Dive</title>
+<meta name="description" content="Belana Assistant: guía en español de Mongil: Star Dive con versión 1.4, personajes 5★, códigos activos, meta y fuentes actualizadas.">
+<meta name="theme-color" content="#0f1226">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Belana Assistant">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root {
+  --bg: #0f1226;
+  --panel: #171b36;
+  --panel-2: #1f2448;
+  --text: #eef0ff;
+  --muted: #a7acd6;
+  --accent: #7c9cff;
+  --accent-2: #ffcf5a;
+  --ok: #6fe3a1;
+  --warn: #ff9b7a;
+  --border: #2b3266;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+header {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+}
+header h1 { margin: 0; font-size: 1.2rem; }
+header p { margin: 2px 0 0; color: var(--muted); font-size: .85rem; }
+nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 9;
+}
+nav button {
+  flex: 0 0 auto;
+  background: var(--panel-2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font: inherit;
+  font-size: .9rem;
+  cursor: pointer;
+}
+nav button[aria-selected="true"] {
+  background: var(--accent);
+  color: #0b0e22;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+main { padding: 16px; max-width: 760px; margin: 0 auto; }
+section[hidden] { display: none; }
+h2 { font-size: 1.1rem; margin: 0 0 10px; color: var(--accent-2); }
+h3 { font-size: 1rem; margin: 0 0 6px; }
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.muted { color: var(--muted); font-size: .9rem; }
+.tag {
+  display: inline-block;
+  font-size: .75rem;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin: 2px 4px 2px 0;
+  color: var(--muted);
+}
+.tag.new { color: var(--ok); border-color: var(--ok); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.grid .card { margin: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.filters button {
+  background: var(--panel-2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: .85rem;
+  cursor: pointer;
+}
+.filters button[aria-pressed="true"] { border-color: var(--accent-2); color: var(--accent-2); }
+input[type="search"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  margin-bottom: 10px;
+}
+.code {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  background: var(--panel-2);
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: var(--accent-2);
+  user-select: all;
+}
+.row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-top: 1px solid var(--border); }
+.row:first-of-type { border-top: 0; }
+.row .info { min-width: 0; }
+.row .info span { display: block; }
+button.copy {
+  flex: 0 0 auto;
+  background: var(--accent);
+  color: #0b0e22;
+  border: 0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: .85rem;
+  cursor: pointer;
+}
+.expired { color: var(--warn); text-decoration: line-through; }
+a { color: var(--accent); }
+ul { padding-left: 18px; margin: 6px 0; }
+li { margin-bottom: 4px; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--accent-2); white-space: nowrap; }
+.install {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+.install.show { display: flex; }
+.install button {
+  background: var(--accent-2);
+  color: #0b0e22;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20px 16px 32px; }
+</style>
 </head>
 <body>
-<header class="topbar">
-  <button id="menuBtn" class="iconbtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">☰</button>
-  <strong>Belana Assistant</strong>
+
+<header>
+  <h1>⭐ Belana Assistant</h1>
+  <p>Guía de Mongil: Star Dive · Actualizada al 8 de octubre de 2026 · Juego en versión 1.4</p>
 </header>
-<div id="scrim" hidden></div>
-<nav id="nav" aria-label="Secciones">
-  <a class="brand" href="#/inicio">Belana<br>Assistant</a>
-  <a href="#/inicio">Inicio</a>
-  <a href="#/personajes">Personajes</a>
-  <a href="#/equipamientos">Equipamientos</a>
-  <a href="#/monstruitos">Monstruitos</a>
-  <a href="#/artefactos">Artefactos</a>
-  <details id="guias"><summary>Guías</summary>
-    <a href="#/guia/grieta">Grieta dimensional</a>
-    <a href="#/guia/sendas">Sendas</a>
-    <a href="#/guia/conquista">Conquista</a>
-    <a href="#/guia/santuario">Santuario elemental</a>
-    <a href="#/guia/legendaria">Conquista legendaria</a>
-    <a href="#/guia/encargos">Encargos</a>
-    <a href="#/guia/historia">Historia completa</a>
-    <a href="#/guia/submisiones">Sub misiones</a>
-    <a href="#/guia/codice">Códice de monstruos</a>
-    <a href="#/guia/ocultos">Ocultos, cofres y puzzles</a>
-  </details>
-  <a href="#/mapa">Mapa interactivo</a>
+
+<nav role="tablist" aria-label="Secciones">
+  <button role="tab" aria-selected="true" data-tab="inicio">Inicio</button>
+  <button role="tab" aria-selected="false" data-tab="novedades">Novedades</button>
+  <button role="tab" aria-selected="false" data-tab="personajes">Personajes 5★</button>
+  <button role="tab" aria-selected="false" data-tab="meta">Meta</button>
+  <button role="tab" aria-selected="false" data-tab="codigos">Códigos</button>
+  <button role="tab" aria-selected="false" data-tab="fuentes">Fuentes</button>
 </nav>
-<main id="view" tabindex="-1"></main>
-<script src="app.js?v=3"></script>
+
+<main>
+
+  <div class="install" id="installBox">
+    <span>Instala esta guía en tu dispositivo para abrirla como una app.</span>
+    <button id="installBtn">Instalar</button>
+  </div>
+
+  <!-- INICIO -->
+  <section id="inicio" data-section>
+    <div class="card">
+      <h2>¿Qué es Mongil: Star Dive?</h2>
+      <p>RPG de acción con captura de monstruos de Netmarble Monster, reimaginación del juego móvil Monster Taming (2013). Salió en abril de 2026 para PC (Epic Games Store), iOS y Android, con gráficos en Unreal Engine 5.</p>
+      <p class="muted">Es gratuito. Sigues a Cloud, Verna y al felino Nyanners por un mundo con humanos, monstruos, elfos y bestiales.</p>
+    </div>
+
+    <div class="card">
+      <h2>Lo esencial</h2>
+      <ul>
+        <li><strong>Equipos de tres:</strong> cambias de personaje en tiempo real y activas habilidades de equipo (Tag Skills).</li>
+        <li><strong>Roles:</strong> Fighter, Destroyer, Assassin y Support. Equilibra el equipo.</li>
+        <li><strong>Elementos:</strong> Fuego, Hielo, Rayo, Viento y Tierra.</li>
+        <li><strong>Monsterlings:</strong> los capturas, los combinas y los equipas con Link Chains.</li>
+        <li><strong>Nivel de Aventura:</strong> el máximo subió de 60 a 70 con la versión 1.4.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Consejos para empezar (vigentes en 1.4)</h2>
+      <ul>
+        <li>Desde la 1.4, tu <strong>primer reclutamiento garantiza un personaje 5★ permanente</strong>, así que ya no hace falta hacer reroll para empezar bien.</li>
+        <li>Reclama el ticket "A New Friend for a New Journey" (hasta el 10 de noviembre, 23:59 UTC) si ya completaste tu primer reclutamiento.</li>
+        <li>El evento de medio aniversario añade el reclutamiento "Promise of Choice", para elegir un 5★ permanente concreto.</li>
+        <li>Haz las misiones de la Guía de Manon (Manon's Guidebook): dan buena recompensa por esfuerzo.</li>
+        <li>Agrega amigos: las llaves diarias te dan más partidas en las Sendas.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NOVEDADES -->
+  <section id="novedades" data-section hidden>
+    <div class="card">
+      <h2>Versión 1.4 — "Ashen Cradle Lullaby" <span class="tag new">Actual</span></h2>
+      <p class="muted">Publicada el 30 de septiembre de 2026 (mantenimiento el día 29).</p>
+      <ul>
+        <li><strong>Episodio 7</strong> y la nueva región <strong>Archipiélago de Gaba</strong>: 29 Monsterlings nuevos y 15 Link Chains que fabricar.</li>
+        <li><strong>Isabella:</strong> nuevo personaje 5★ de Hielo, rol Destroyer.</li>
+        <li><strong>Sorin:</strong> nueva Conquista Legendaria (rota semanalmente con Reginula; Sorin ocupa las dos primeras semanas).</li>
+        <li><strong>Santuario Elemental (Elemental Sanctum):</strong> modo con jefes para mejorar pasivas nuevas de cada personaje.</li>
+        <li><strong>Modo Foto AR</strong> para móviles y función <strong>Archivo</strong> para rejugar historias principales, de eventos y minijuegos.</li>
+        <li><strong>Ajustes de equilibrio:</strong> mejoras para los 5★ permanentes, Esther, Nagi y Verna: Summer Dive.</li>
+        <li>Eventos de medio aniversario, con reruns de personajes.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Lo que viene</h2>
+      <p class="muted">Hoja de ruta del segundo semestre: provisional, puede cambiar.</p>
+      <ul>
+        <li><strong>1.5 (noviembre):</strong> nueva historia, 2 personajes nuevos, rediseño del sistema de amigos, sistema de Ranking y Honor, y lanzamiento en DMM GAMES.</li>
+        <li><strong>1.6 (diciembre):</strong> historias especiales de Fiestas y Año Nuevo, epílogos de personajes, contenido de desafío, 2 personajes nuevos, trajes y contenido de Afinidad/Interacción.</li>
+        <li>El primer informe de 1.4 mencionaba también a <strong>Chloe</strong> como personaje nuevo; en las fuentes de lanzamiento solo aparece Isabella, así que no la doy por confirmada.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Recientes anteriores</h2>
+      <ul>
+        <li><strong>Septiembre:</strong> Vivian (5★ Fuego, Support) con su misión épica "Desire Collector".</li>
+        <li><strong>1.3 "Girl from the Void" (19 de agosto):</strong> Brisshell, reintento de reclutamiento (Harmonious Encounters), Guía rediseñada, tienda de cosméticos y cambios en Grietas y Conquista.</li>
+        <li><strong>1.2 (7 de julio):</strong> Francis y Verna: Summer Dive, mapa Summer Lane y sistema de Despacho.</li>
+        <li><strong>1.1:</strong> Narae, Nagi, Episodio 6 y Conquista Legendaria de Reginula.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PERSONAJES -->
+  <section id="personajes" data-section hidden>
+    <div class="card">
+      <h2>Personajes 5★</h2>
+      <p class="muted">Solo muestro elemento y rol cuando una fuente lo confirma. Para el listado completo con 4★, mira GameWith o Kaiden.gg en Fuentes.</p>
+    </div>
+    <input type="search" id="buscador" placeholder="Buscar por nombre…" aria-label="Buscar personaje">
+    <div class="filters" id="filtrosElemento" aria-label="Filtrar por elemento"></div>
+    <div class="filters" id="filtrosRol" aria-label="Filtrar por rol"></div>
+    <div class="grid" id="listaPersonajes"></div>
+  </section>
+
+  <!-- META -->
+  <section id="meta" data-section hidden>
+    <div class="card">
+      <h2>Qué personajes se consideran mejores</h2>
+      <p class="muted">Las listas de nivel (tier lists) no coinciden entre sí y envejecen rápido. Estas son las dos más recientes que encontré con datos completos; ninguna incluye todavía a Isabella.</p>
+    </div>
+    <div class="card table-wrap">
+      <table>
+        <thead><tr><th>Fuente</th><th>Nivel SS</th><th>Nivel S</th></tr></thead>
+        <tbody>
+          <tr><td>Game8 (v1.1, julio)</td><td>Narae, Mina, Esther, Francis</td><td>Ophelia, Gabi, Penny, Nagi, Flare, Jiwon, Yeonhwa</td></tr>
+          <tr><td>Pocket Tactics (hace ~6 semanas)</td><td>Esther, Narae, Mina</td><td>Penny, Gabi, Jiwon, Nagi, Francis, Ophelia, Francis: Summer Dive, Verna: Summer Dive</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <p class="muted">Kaiden.gg mantiene una tier list propia que ya incluye a Vivian y Brisshell; conviene mirarla para ver cómo quedan tras las últimas versiones. Los buffs de 1.3 (Ophelia, Jiwon) y 1.4 (Esther, Nagi, Verna: Summer Dive, 5★ permanentes) pueden haber cambiado el orden.</p>
+    </div>
+  </section>
+
+  <!-- CÓDIGOS -->
+  <section id="codigos" data-section hidden>
+    <div class="card">
+      <h2>Códigos activos</h2>
+      <p class="muted">Según la lista de Pocket Gamer, revisada el 4 de octubre de 2026. Distingue mayúsculas, y suelen usarse una sola vez por cuenta.</p>
+      <div id="listaCodigos"></div>
+    </div>
+
+    <div class="card">
+      <h2>Caducados o dudosos</h2>
+      <div id="listaCaducados"></div>
+    </div>
+
+    <div class="card">
+      <h2>Cómo canjear</h2>
+      <ul>
+        <li><strong>En el juego:</strong> menú (arriba a la derecha) → Ajustes → icono "Otros" → sección Atención al cliente → botón "Código de canje".</li>
+        <li><strong>En la web:</strong> también existe una página oficial de canje.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FUENTES -->
+  <section id="fuentes" data-section hidden>
+    <div class="card">
+      <h2>Oficiales</h2>
+      <ul>
+        <li><a href="https://forum.netmarble.com/stardive_gl/" target="_blank" rel="noopener">Foro oficial de Netmarble (global)</a>: Dev Notes y avisos</li>
+        <li><a href="https://store.epicgames.com/es-ES/p/mongil-star-dive-e6f95e" target="_blank" rel="noopener">Epic Games Store</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Noticias de la versión 1.4 (septiembre–octubre 2026)</h2>
+      <ul>
+        <li><a href="https://www.invenglobal.com/articles/26667/mongil-star-dive-version-14-update-adds-isabella-and-new-region" target="_blank" rel="noopener">Inven Global — versión 1.4</a></li>
+        <li><a href="https://noisypixel.net/mongil-star-dive-version-1-4-isabella-gaba-archipelago/" target="_blank" rel="noopener">Noisy Pixel — versión 1.4</a></li>
+        <li><a href="https://forum.netmarble.com/stardive_gl/view/4/655" target="_blank" rel="noopener">Foro oficial — Dev Note #10</a></li>
+        <li><a href="https://forum.netmarble.com/stardive_gl/view/4/631" target="_blank" rel="noopener">Foro oficial — resumen del Developer Lounge del 22/9</a></li>
+        <li><a href="https://www.gamespress.com/MONGIL-STAR-DIVE-WELCOMES-FAN-FAVORITE-VIVIAN-IN-LATEST-UPDATE" target="_blank" rel="noopener">Games Press — Vivian y hoja de ruta</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Wikis, builds y códigos</h2>
+      <ul>
+        <li><a href="https://www.kaiden.gg/mongil/" target="_blank" rel="noopener">Kaiden.gg — personajes, tier list, mapa y equipos</a></li>
+        <li><a href="https://www.pocketgamer.com/mongil-star-dive/codes/" target="_blank" rel="noopener">Pocket Gamer — códigos</a></li>
+        <li><a href="https://gamewith.net/mongil-stardive/73789" target="_blank" rel="noopener">GameWith — personajes</a></li>
+        <li><a href="https://game8.co/games/Mongil-Star-Dive/archives/593943" target="_blank" rel="noopener">Game8 — tier list</a></li>
+        <li><a href="https://games.gg/es/mongil-star-dive/guides/" target="_blank" rel="noopener">games.gg — guías en español</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <p class="muted">Descarté fuentes de antes del lanzamiento, tier lists de abril y la hoja de ruta del primer semestre, porque ya están superadas. Los datos de 1.4 son de los primeros días tras el lanzamiento y pueden recibir correcciones.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Página no oficial, hecha con información de fuentes públicas. Mongil: Star Dive es propiedad de Netmarble.
+</footer>
+
+<script>
+(function () {
+  /* ---------- Pestañas ---------- */
+  var tabs = document.querySelectorAll('nav [role="tab"]');
+  var sections = document.querySelectorAll('[data-section]');
+  function mostrar(id) {
+    sections.forEach(function (s) { s.hidden = s.id !== id; });
+    tabs.forEach(function (t) { t.setAttribute('aria-selected', String(t.dataset.tab === id)); });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  tabs.forEach(function (t) { t.addEventListener('click', function () { mostrar(t.dataset.tab); }); });
+
+  /* ---------- Personajes ---------- */
+  var personajes = [
+    { nombre: 'Gabi',      elemento: 'Tierra',  rol: 'Fighter' },
+    { nombre: 'Esther',    elemento: 'Viento',  rol: 'Assassin' },
+    { nombre: 'Jiwon',     elemento: 'Viento',  rol: 'Support' },
+    { nombre: 'Sangun',    elemento: 'Viento',  rol: 'Fighter' },
+    { nombre: 'Penny',     elemento: 'Rayo',    rol: 'Fighter' },
+    { nombre: 'Ophelia',   elemento: 'Hielo',   rol: 'Fighter' },
+    { nombre: 'Flare',     elemento: 'Fuego',   rol: 'Destroyer' },
+    { nombre: 'Mina',      elemento: 'Fuego',   rol: '—' },
+    { nombre: 'Vivian',    elemento: 'Fuego',   rol: 'Support', nota: 'Septiembre 2026' },
+    { nombre: 'Isabella',  elemento: 'Hielo',   rol: 'Destroyer', nota: 'Versión 1.4', nuevo: true },
+    { nombre: 'Brisshell', elemento: '—',       rol: '—', nota: 'Versión 1.3 · elemento sin confirmar' },
+    { nombre: 'Narae',     elemento: '—',       rol: '—', nota: 'Versión 1.1' },
+    { nombre: 'Nagi',      elemento: '—',       rol: '—', nota: 'Versión 1.1' },
+    { nombre: 'Verna: Summer Dive!', elemento: 'Fuego', rol: '—', nota: 'Versión 1.2' },
+    { nombre: 'Francis: Summer Dive!', elemento: '—', rol: '—', nota: 'Versión 1.2' }
+  ];
+  var elementos = ['Todos', 'Fuego', 'Hielo', 'Rayo', 'Viento', 'Tierra'];
+  var roles = ['Todos', 'Fighter', 'Destroyer', 'Assassin', 'Support'];
+  var filtroE = 'Todos', filtroR = 'Todos', texto = '';
+
+  function crearFiltros(id, lista, tipo) {
+    var cont = document.getElementById(id);
+    lista.forEach(function (v) {
+      var b = document.createElement('button');
+      b.textContent = v;
+      b.setAttribute('aria-pressed', String(v === 'Todos'));
+      b.addEventListener('click', function () {
+        if (tipo === 'e') filtroE = v; else filtroR = v;
+        cont.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        pintar();
+      });
+      cont.appendChild(b);
+    });
+  }
+  function pintar() {
+    var cont = document.getElementById('listaPersonajes');
+    var q = texto.trim().toLowerCase();
+    var lista = personajes.filter(function (p) {
+      return (filtroE === 'Todos' || p.elemento === filtroE) &&
+             (filtroR === 'Todos' || p.rol === filtroR) &&
+             (!q || p.nombre.toLowerCase().indexOf(q) !== -1);
+    });
+    cont.innerHTML = '';
+    if (!lista.length) {
+      var vacio = document.createElement('p');
+      vacio.className = 'muted';
+      vacio.textContent = 'No hay personajes con esos filtros.';
+      cont.appendChild(vacio);
+      return;
+    }
+    lista.forEach(function (p) {
+      var d = document.createElement('div');
+      d.className = 'card';
+      var h = document.createElement('h3');
+      h.textContent = p.nombre;
+      d.appendChild(h);
+      [p.elemento, p.rol].forEach(function (t) {
+        var s = document.createElement('span');
+        s.className = 'tag';
+        s.textContent = t;
+        d.appendChild(s);
+      });
+      if (p.nuevo) {
+        var n = document.createElement('span');
+        n.className = 'tag new';
+        n.textContent = 'Nuevo';
+        d.appendChild(n);
+      }
+      if (p.nota) {
+        var m = document.createElement('p');
+        m.className = 'muted';
+        m.textContent = p.nota;
+        d.appendChild(m);
+      }
+      cont.appendChild(d);
+    });
+  }
+  crearFiltros('filtrosElemento', elementos, 'e');
+  crearFiltros('filtrosRol', roles, 'r');
+  document.getElementById('buscador').addEventListener('input', function (e) { texto = e.target.value; pintar(); });
+  pintar();
+
+  /* ---------- Códigos ---------- */
+  var activos = [
+    ['REGINULAUPDATE', '10 Premium Salmon Puree, 1 Piedra de mejora morada, 3 Compass of Promise'],
+    ['LETSPLAYEP6', '10 Premium Salmon Puree, 1 Piedra de mejora morada, 3 Compass of Promise'],
+    ['MEMOLMONGIL', 'Green Cappy Papa, 25 llaves, 10.000 de oro'],
+    ['MONGILDISCORD', '30 Starlight Crystal, 3 Glimmering Stardust, 300.000 de oro'],
+    ['LOVEMONGIL', 'Artefacto Overflowing Love'],
+    ['MONGILPRESENT', 'Brown Cappy, Spark Slime y Forkmugger (Monsterlings)'],
+    ['DINDINISDINDIN', 'Green Cappy (Monsterling) y 10.000 de oro'],
+    ['MONGILREPORT', 'White Wolf Warrior (Monsterling)']
+  ];
+  var dudosos = [
+    ['DEVLIVE0410', 'Pocket Gamer aún lo lista, pero GamesRadar lo daba por caducado el 13 de mayo. Pruébalo, puede fallar.', false],
+    ['SPECIALGIFT0430', 'Caducó el 7 de mayo de 2026.', true],
+    ['FINDSTAR10', 'Caducó el 7 de mayo de 2026.', true],
+    ['SUMMERDIVE2026', 'Ya no aparece en las listas recientes; probablemente caducó.', true]
+  ];
+  function fila(codigo, desc, caducado, conBoton) {
+    var r = document.createElement('div');
+    r.className = 'row';
+    var info = document.createElement('div');
+    info.className = 'info';
+    var c = document.createElement('span');
+    var cc = document.createElement('span');
+    cc.className = caducado ? 'code expired' : 'code';
+    cc.textContent = codigo;
+    c.appendChild(cc);
+    var d = document.createElement('span');
+    d.className = 'muted';
+    d.textContent = desc;
+    info.appendChild(c);
+    info.appendChild(d);
+    r.appendChild(info);
+    if (conBoton) {
+      var b = document.createElement('button');
+      b.className = 'copy';
+      b.textContent = 'Copiar';
+      b.addEventListener('click', function () {
+        var fin = function (t) { b.textContent = t; setTimeout(function () { b.textContent = 'Copiar'; }, 1800); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(codigo).then(function () { fin('¡Copiado!'); }, function () { fin('Copia a mano'); });
+        } else { fin('Copia a mano'); }
+      });
+      r.appendChild(b);
+    }
+    return r;
+  }
+  var la = document.getElementById('listaCodigos');
+  activos.forEach(function (a) { la.appendChild(fila(a[0], a[1], false, true)); });
+  var ld = document.getElementById('listaCaducados');
+  dudosos.forEach(function (a) { ld.appendChild(fila(a[0], a[1], a[2], !a[2])); });
+
+  /* ---------- PWA ---------- */
+  if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+    window.addEventListener('load', function () {
+      try { navigator.serviceWorker.register('./sw.js').catch(function () {}); } catch (_) {}
+    });
+  }
+  var eventoInstalar = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    eventoInstalar = e;
+    document.getElementById('installBox').classList.add('show');
+  });
+  document.getElementById('installBtn').addEventListener('click', function () {
+    if (!eventoInstalar) return;
+    eventoInstalar.prompt();
+    eventoInstalar.userChoice.then(function () {
+      eventoInstalar = null;
+      document.getElementById('installBox').classList.remove('show');
+    });
+  });
+  window.addEventListener('appinstalled', function () {
+    document.getElementById('installBox').classList.remove('show');
+  });
+})();
+</script>
 </body>
 </html>
