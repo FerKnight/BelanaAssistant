@@ -1,1 +1,17 @@
-{"name":"Belana Assistant","short_name":"Belana","description":"Guía no oficial en español de Mongil: Star Dive","lang":"es","start_url":"./#/inicio","scope":"./","display":"standalone","background_color":"#101a30","theme_color":"#101a30","icons":[{"src":"icons/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icons/icon-512.png","sizes":"512x512","type":"image/png"},{"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}
+{
+  "name": "Belana Assistant",
+  "short_name": "Belana",
+  "description": "Belana Assistant: guía en español de Mongil: Star Dive con novedades, personajes, códigos y fuentes.",
+  "lang": "es",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1226",
+  "theme_color": "#0f1226",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
