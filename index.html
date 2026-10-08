@@ -308,6 +308,51 @@ label { display: block; font-size: .85rem; color: var(--muted); margin: 10px 0 4
 }
 .elegible[aria-pressed="true"] { background: var(--panel-2); }
 .elegible[aria-pressed="true"] .ico { border-color: var(--accent-2); }
+.card.clic { cursor: pointer; position: relative; }
+.card.clic:hover { border-color: var(--accent); }
+.badge-tengo {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ok);
+  color: #0b0e22;
+  font-size: .8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ficha-cab { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.ficha-ico {
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0b0e22;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+.ficha-cab h2 { margin: 0 0 4px; }
+button.posesion {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  margin: 4px 0 12px;
+}
+button.posesion[aria-pressed="true"] { background: var(--ok); color: #0b0e22; border-color: var(--ok); font-weight: 600; }
+.ficha-bloque { margin-top: 12px; }
+.ficha-bloque h3 { color: var(--accent-2); }
 footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20px 16px 32px; }
 </style>
 </head>
@@ -429,12 +474,14 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   <section id="personajes" data-section hidden>
     <div class="card">
       <h2>Personajes</h2>
-      <p class="muted">28 personajes (16 de 5★ y 12 de 4★), según Kaiden.gg y GameWith. Un "—" en el rol significa que ninguna fuente lo confirma todavía.</p>
+      <p class="muted">28 personajes (16 de 5★ y 12 de 4★), según Kaiden.gg y GameWith. Toca un personaje para ver su ficha y marcar si lo tienes. Un "—" en el rol significa que ninguna fuente lo confirma todavía.</p>
+      <p class="contador" id="contadorPoseidos"></p>
     </div>
     <input type="search" id="buscador" placeholder="Buscar por nombre…" aria-label="Buscar personaje">
     <div class="filters" id="filtrosRareza" aria-label="Filtrar por rareza"></div>
     <div class="filters" id="filtrosElemento" aria-label="Filtrar por elemento"></div>
     <div class="filters" id="filtrosRol" aria-label="Filtrar por rol"></div>
+    <div class="filters" id="filtrosPosesion" aria-label="Filtrar por posesión"></div>
     <div class="grid" id="listaPersonajes"></div>
   </section>
 
@@ -537,6 +584,23 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   </div>
 </div>
 
+<div class="modal" id="ficha" role="dialog" aria-modal="true" aria-labelledby="fichaNombre">
+  <div class="hoja">
+    <div class="cab">
+      <div class="ficha-cab">
+        <div class="ficha-ico" id="fichaIco"></div>
+        <div>
+          <h2 id="fichaNombre"></h2>
+          <div id="fichaTags"></div>
+        </div>
+      </div>
+      <button class="cerrar" id="cerrarFicha" type="button">Cerrar</button>
+    </div>
+    <button class="posesion" id="fichaPosesion" type="button" aria-pressed="false"></button>
+    <div id="fichaContenido"></div>
+  </div>
+</div>
+
 <footer>
   Página no oficial, hecha con información de fuentes públicas. Mongil: Star Dive es propiedad de Netmarble.
 </footer>
@@ -613,7 +677,178 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   var elementos = ['Todos', 'Fuego', 'Hielo', 'Rayo', 'Viento', 'Tierra'];
   var roles = ['Todos', 'Fighter', 'Destroyer', 'Assassin', 'Support'];
   var rarezas = ['Todos', '5★', '4★'];
-  var filtroE = 'Todos', filtroR = 'Todos', filtroZ = 'Todos', texto = '';
+  var posesiones = ['Todos', 'Los tengo', 'Me faltan'];
+  var filtroE = 'Todos', filtroR = 'Todos', filtroZ = 'Todos', filtroP = 'Todos', texto = '';
+
+  var COLORES = { 'Fuego': '#ff8a65', 'Hielo': '#7fd8ff', 'Rayo': '#ffd94a', 'Viento': '#6fe3a1', 'Tierra': '#c9a27a' };
+  function colorDe(p) { return COLORES[p.elemento] || '#a7acd6'; }
+
+  /* Personajes que el usuario tiene (se guarda en este dispositivo) */
+  var poseidos = {};
+  try {
+    var gp = localStorage.getItem('belana.poseidos');
+    if (gp) poseidos = JSON.parse(gp) || {};
+  } catch (_) { poseidos = {}; }
+  function guardarPoseidos() {
+    try { localStorage.setItem('belana.poseidos', JSON.stringify(poseidos)); } catch (_) {}
+  }
+  function contarPoseidos() {
+    return personajes.filter(function (p) { return poseidos[p.nombre]; }).length;
+  }
+
+  /* Fichas detalladas. Solo incluyo lo que las guías consultadas confirman. */
+  var NOTA_FICHA = 'Resumen hecho con guías de GameWith, Kaiden.gg, games.gg y ZeroLuck. El juego cambia con cada versión: compruébalo en tu partida.';
+  var fichas = {
+    'Esther': {
+      resumen: "Asesina de Viento. Su habilidad especial crea una Nube de Polvo: dentro de ella los enemigos quedan confundidos y su ataque básico se potencia.",
+      puntos: [
+        "Dentro de la nube sube su ATK, y su ataque básico potenciado es el centro de su daño.",
+        "Usa la definitiva dentro de la nube: tiene un multiplicador muy alto y además baja un 15 % la resistencia al Viento del enemigo durante 5 s.",
+        "Sigue haciendo daño fuera del campo: cuando un aliado ataca, aparece a su lado y prepara una emboscada. Hay una ventana de 9 s en la que pierde sus buffs.",
+        "Punto débil: no tiene control propio para mantener a los enemigos dentro de la nube.",
+        "Despertares destacados: el cambio de personaje activa la nube durante 3 s, la nube crece de tamaño y el ataque básico potenciado hace un 50 % más de daño."
+      ],
+      equipo: "Jiwon (junta a los enemigos y le da dashes infinitos) y Bonnie (aplica Resonancia, que amplifica el daño recibido) forman la combinación que las guías ven más fuerte. GameWith también propone Esther + Flare + Jiwon.",
+      build: "Monsterlings: Plains Minotaur en el primer espacio (por su Link Chain) y Taglock en el segundo (sube el ATK tras 20 golpes). Artefacto exclusivo: Wind-Harboring Broom; alternativa: Suffocating Darkness."
+    },
+    'Jiwon': {
+      resumen: "Support de Viento. Su habilidad especial junta a los enemigos delante de ella, ideal para combos de área.",
+      puntos: [
+        "Con ella en el equipo, Esther consigue dashes infinitos, que aceleran su rotación y suben su daño.",
+        "Aporta buffs fuertes al equipo y, según guías para principiantes, reduce el gasto de estamina.",
+        "Recibió mejoras de equilibrio con la versión 1.3."
+      ],
+      equipo: "Esther y Bonnie. También aparece en el equipo Esther + Flare + Jiwon."
+    },
+    'Bonnie': {
+      resumen: "Support de Viento (4★). Usa habilidades musicales para controlar el campo.",
+      puntos: [
+        "Aplica Resonancia a los enemigos: amplifica el daño que reciben justo antes de que tu DPS ataque.",
+        "Su valor está en la sinergia con Esther y Jiwon; sola, las tier lists la ponen en un nivel bajo."
+      ],
+      equipo: "Esther y Jiwon."
+    },
+    'Francis': {
+      resumen: "Support de Tierra (4★). Sanadora versátil, entregada como recompensa de pre-registro.",
+      puntos: [
+        "Cura de forma activa y se autocura cuando su vida es baja.",
+        "Baja la DEF de los enemigos y mejora el daño de Tierra.",
+        "Aplica buffs potentes al personaje que entra en el campo; necesita algo de inversión en ATK.",
+        "Es de las 4★ que mejor aguantan el paso del tiempo: algunas tier lists la ponen entre las mejores."
+      ],
+      equipo: "Gabi: la sinergia de Tierra es muy valorada.",
+      build: "La guía de Monsterlings de Kaiden.gg recomienda construir un Custos para ella."
+    },
+    'Gabi': {
+      resumen: "Fighter de Tierra. Buen daño tanto a grupos como a un solo objetivo.",
+      puntos: [
+        "Tiene un mecanismo propio para contrarrestar los ataques especiales de los enemigos, por eso rinde bien en las etapas altas de Conquista.",
+        "Su definitiva es larga: actívala al final de la rotación, cuando el Support y el Asesino ya aplicaron sus buffs.",
+        "GameWith la recomienda como núcleo del equipo si haces reroll."
+      ],
+      equipo: "Francis (sinergia de Tierra)."
+    },
+    'Sangun': {
+      resumen: "Fighter de Viento.",
+      puntos: [
+        "Su definitiva es larga: actívala al final de la rotación, con los buffs del Support y del Asesino ya aplicados."
+      ]
+    },
+    'Mina': {
+      resumen: "5★ de Fuego. Las guías la describen como daño de ráfaga y control de masas.",
+      puntos: [
+        "Limpia grupos de enemigos con rapidez, y sus bucles de habilidades dan mucho daño continuo.",
+        "Su definitiva es larga: actívala mientras los buffs del Support siguen activos.",
+        "Aparece en el nivel más alto de las tier lists recientes."
+      ]
+    },
+    'Ophelia': {
+      resumen: "Fighter de Hielo. Daño sostenido.",
+      puntos: [
+        "Se potencia a sí misma: convierte sus ataques a Hielo y sube su índice crítico.",
+        "Con entradas adicionales de la habilidad especial mantiene esos buffs activos.",
+        "Recibió mejoras de equilibrio con la versión 1.3."
+      ]
+    },
+    'Penny': {
+      resumen: "Fighter de Rayo.",
+      puntos: [
+        "Se fortalece con sus habilidades especiales.",
+        "Su índice crítico sube junto con el bono de daño de Rayo.",
+        "Puede pelear con seguridad a distancia."
+      ]
+    },
+    'Flare': {
+      resumen: "Destroyer de Fuego.",
+      puntos: [
+        "Las guías la usan en el equipo Esther + Flare + Jiwon."
+      ],
+      equipo: "Esther y Jiwon."
+    },
+    'Reina': {
+      resumen: "Destroyer de Rayo (4★).",
+      puntos: [
+        "Acumula y gasta energía de Rayo para lanzar ataques variantes más fuertes.",
+        "Es resistente, con daño de Rayo constante y buen daño al cambiar de personaje."
+      ]
+    },
+    'Ellie': {
+      resumen: "Destroyer de Tierra (4★).",
+      puntos: [
+        "Rinde bien incluso fuera del campo y con entradas rápidas.",
+        "Aunque no esté activa, ayuda a llenar la barra de Aturdimiento del enemigo.",
+        "Su juego gira en torno a los Snacks y la Sugar Charge."
+      ]
+    },
+    'Daisy': {
+      resumen: "Support de Tierra (4★).",
+      puntos: [
+        "Se especializa en curar y controlar el campo.",
+        "Las tier lists la ponen por debajo de Francis."
+      ]
+    },
+    'Vivian': {
+      resumen: "Support de Fuego (5★), pensada para equipos de Fuego.",
+      puntos: [
+        "Aumenta el daño de Fuego y aplica debuffs de Fuego, para apoyar a aliados del mismo elemento.",
+        "Tiene su propia misión épica: Desire Collector.",
+        "Es la conejita estrella de la compañía Fluffy Tail Troupe, un grupo de baile ambulante."
+      ]
+    },
+    'Isabella': {
+      resumen: "Destroyer de Hielo (5★), la novedad de la versión 1.4.",
+      puntos: [
+        "Ingeniera genio que antes usaba su talento para ayudar a la gente y ahora se centra en su propia investigación.",
+        "Su historia se descubre en el evento Wanderers Beyond Borders.",
+        "Aún no hay tier lists ni guías de build fiables: las que revisé son anteriores a su llegada."
+      ]
+    },
+    'Angel': {
+      resumen: "Asesino de Fuego (4★).",
+      puntos: [
+        "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones."
+      ]
+    },
+    'Leeho': {
+      resumen: "Asesino de Fuego (4★).",
+      puntos: [
+        "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones."
+      ]
+    },
+    'Benjamin': {
+      resumen: "Asesino de Rayo (4★).",
+      puntos: [
+        "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones."
+      ]
+    },
+    'Yeonhwa': {
+      resumen: "Asesina de Rayo (4★).",
+      puntos: [
+        "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones.",
+        "Game8 la puso en el nivel S en su tier list de la versión 1.1."
+      ]
+    }
+  };
 
   function crearFiltros(id, lista, tipo) {
     var cont = document.getElementById(id);
@@ -622,20 +857,29 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
       b.textContent = v;
       b.setAttribute('aria-pressed', String(v === 'Todos'));
       b.addEventListener('click', function () {
-        if (tipo === 'e') filtroE = v; else if (tipo === 'r') filtroR = v; else filtroZ = v;
+        if (tipo === 'e') filtroE = v;
+        else if (tipo === 'r') filtroR = v;
+        else if (tipo === 'p') filtroP = v;
+        else filtroZ = v;
         cont.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
         pintar();
       });
       cont.appendChild(b);
     });
   }
+
   function pintar() {
     var cont = document.getElementById('listaPersonajes');
     var q = texto.trim().toLowerCase();
+    document.getElementById('contadorPoseidos').textContent =
+      'Tienes ' + contarPoseidos() + ' de ' + personajes.length + ' personajes · ' +
+      Object.keys(fichas).length + ' con ficha detallada.';
     var lista = personajes.filter(function (p) {
+      var tiene = !!poseidos[p.nombre];
       return (filtroZ === 'Todos' || p.rareza === filtroZ) &&
              (filtroE === 'Todos' || p.elemento === filtroE) &&
              (filtroR === 'Todos' || p.rol === filtroR) &&
+             (filtroP === 'Todos' || (filtroP === 'Los tengo' ? tiene : !tiene)) &&
              (!q || p.nombre.toLowerCase().indexOf(q) !== -1);
     });
     cont.innerHTML = '';
@@ -648,7 +892,10 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
     }
     lista.forEach(function (p) {
       var d = document.createElement('div');
-      d.className = 'card';
+      d.className = 'card clic';
+      d.setAttribute('role', 'button');
+      d.tabIndex = 0;
+      d.setAttribute('aria-label', 'Ver ficha de ' + p.nombre);
       var h = document.createElement('h3');
       h.textContent = p.nombre;
       d.appendChild(h);
@@ -670,18 +917,122 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
         m.textContent = p.nota;
         d.appendChild(m);
       }
+      if (poseidos[p.nombre]) {
+        var bd = document.createElement('span');
+        bd.className = 'badge-tengo';
+        bd.setAttribute('aria-label', 'Lo tienes');
+        bd.textContent = '✓';
+        d.appendChild(bd);
+      }
+      d.addEventListener('click', function () { abrirFicha(p, d); });
+      d.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirFicha(p, d); }
+      });
       cont.appendChild(d);
     });
   }
+
+  /* ---------- Ficha de personaje ---------- */
+  var fichaEl = document.getElementById('ficha');
+  var fichaActual = null;
+  var fichaDisparador = null;
+  function bloqueFicha(titulo, texto) {
+    var div = document.createElement('div');
+    div.className = 'ficha-bloque';
+    var h = document.createElement('h3');
+    h.textContent = titulo;
+    var t = document.createElement('p');
+    t.textContent = texto;
+    div.appendChild(h);
+    div.appendChild(t);
+    return div;
+  }
+  function pintarBotonPosesion() {
+    var b = document.getElementById('fichaPosesion');
+    var tiene = !!(fichaActual && poseidos[fichaActual.nombre]);
+    b.setAttribute('aria-pressed', String(tiene));
+    b.textContent = tiene ? '✓ Lo tengo' : 'Marcar como "Lo tengo"';
+  }
+  function abrirFicha(p, disparador) {
+    fichaActual = p;
+    fichaDisparador = disparador || null;
+    var ico = document.getElementById('fichaIco');
+    ico.style.background = colorDe(p);
+    ico.textContent = p.nombre.charAt(0).toUpperCase();
+    document.getElementById('fichaNombre').textContent = p.nombre;
+    var tags = document.getElementById('fichaTags');
+    tags.innerHTML = '';
+    [p.rareza, p.elemento, p.rol].forEach(function (t) {
+      var s = document.createElement('span');
+      s.className = 'tag';
+      s.textContent = t;
+      tags.appendChild(s);
+    });
+    pintarBotonPosesion();
+    var cont = document.getElementById('fichaContenido');
+    cont.innerHTML = '';
+    var f = fichas[p.nombre];
+    if (!f) {
+      var v = document.createElement('p');
+      v.className = 'muted';
+      v.textContent = 'Todavía no tengo una ficha detallada de este personaje: ninguna guía que consulté describe su kit con claridad. La iré completando.';
+      cont.appendChild(v);
+    } else {
+      var r = document.createElement('p');
+      r.textContent = f.resumen;
+      cont.appendChild(r);
+      if (f.puntos && f.puntos.length) {
+        var bl = document.createElement('div');
+        bl.className = 'ficha-bloque';
+        var h3 = document.createElement('h3');
+        h3.textContent = 'Claves';
+        var ul = document.createElement('ul');
+        f.puntos.forEach(function (t) {
+          var li = document.createElement('li');
+          li.textContent = t;
+          ul.appendChild(li);
+        });
+        bl.appendChild(h3);
+        bl.appendChild(ul);
+        cont.appendChild(bl);
+      }
+      if (f.equipo) cont.appendChild(bloqueFicha('Equipo recomendado', f.equipo));
+      if (f.build) cont.appendChild(bloqueFicha('Build sugerida', f.build));
+      var nota = document.createElement('p');
+      nota.className = 'muted';
+      nota.style.marginTop = '12px';
+      nota.textContent = NOTA_FICHA;
+      cont.appendChild(nota);
+    }
+    fichaEl.classList.add('show');
+    document.getElementById('cerrarFicha').focus();
+  }
+  function cerrarFicha() {
+    fichaEl.classList.remove('show');
+    if (fichaDisparador && document.body.contains(fichaDisparador)) fichaDisparador.focus();
+  }
+  document.getElementById('cerrarFicha').addEventListener('click', cerrarFicha);
+  fichaEl.addEventListener('click', function (e) { if (e.target === fichaEl) cerrarFicha(); });
+  document.getElementById('fichaPosesion').addEventListener('click', function () {
+    if (!fichaActual) return;
+    if (poseidos[fichaActual.nombre]) delete poseidos[fichaActual.nombre];
+    else poseidos[fichaActual.nombre] = true;
+    guardarPoseidos();
+    pintarBotonPosesion();
+    pintar();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && fichaEl.classList.contains('show')) cerrarFicha();
+  });
+
   crearFiltros('filtrosRareza', rarezas, 'z');
   crearFiltros('filtrosElemento', elementos, 'e');
   crearFiltros('filtrosRol', roles, 'r');
+  crearFiltros('filtrosPosesion', posesiones, 'p');
   document.getElementById('buscador').addEventListener('input', function (e) { texto = e.target.value; pintar(); });
   pintar();
 
   /* ---------- Perfil del usuario ---------- */
-  var COLORES = { 'Fuego': '#ff8a65', 'Hielo': '#7fd8ff', 'Rayo': '#ffd94a', 'Viento': '#6fe3a1', 'Tierra': '#c9a27a' };
-  function colorDe(p) { return COLORES[p.elemento] || '#a7acd6'; }
   function buscarPersonaje(nombre) {
     return personajes.filter(function (x) { return x.nombre === nombre; })[0];
   }
