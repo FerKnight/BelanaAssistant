@@ -37,39 +37,78 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 header {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
   padding: 12px 16px;
 }
 header h1 { margin: 0; font-size: 1.2rem; }
 header p { margin: 2px 0 0; color: var(--muted); font-size: .85rem; }
-nav {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding: 10px 16px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: env(safe-area-inset-top, 0px);
-  z-index: 9;
-}
-nav button {
+.hamb {
   flex: 0 0 auto;
-  background: var(--panel-2);
-  color: var(--muted);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 10px;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 7px 14px;
-  font: inherit;
-  font-size: .9rem;
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 1.4rem;
   cursor: pointer;
 }
-nav button[aria-selected="true"] {
+#menu {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(280px, 85vw);
+  z-index: 40;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 12px calc(env(safe-area-inset-bottom, 0px) + 16px);
+  overflow-y: auto;
+  visibility: hidden;
+  transform: translateX(-100%);
+  transition: transform .2s ease, visibility 0s linear .2s;
+}
+#menu.open { visibility: visible; transform: none; transition: transform .2s ease; }
+#menu .marca { font-weight: 700; font-size: 1.1rem; color: var(--accent-2); padding: 4px 8px 14px; }
+#menu nav { display: flex; flex-direction: column; gap: 4px; }
+#menu nav button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 11px 12px;
+  font: inherit;
+  font-size: .95rem;
+  cursor: pointer;
+}
+#menu nav button .ic { width: 1.4em; text-align: center; }
+#menu nav button[aria-current="page"] {
   background: var(--accent);
   color: #0b0e22;
-  border-color: var(--accent);
   font-weight: 600;
+}
+.velo { position: fixed; inset: 0; background: rgba(5, 6, 16, .6); z-index: 30; display: none; }
+.velo.show { display: block; }
+@media (min-width: 900px) {
+  #menu { visibility: visible; transform: none; transition: none; width: 240px; }
+  .contenido { margin-left: 240px; }
+  .hamb, .velo { display: none !important; }
 }
 main { padding: 16px; max-width: 760px; margin: 0 auto; }
 section[hidden] { display: none; }
@@ -274,19 +313,28 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
 </head>
 <body>
 
-<header>
-  <h1>⭐ Belana Assistant</h1>
-  <p>Guía de Mongil: Star Dive · Actualizada al 8 de octubre de 2026 · Juego en versión 1.4</p>
-</header>
+<aside id="menu" aria-label="Menú principal">
+  <div class="marca">⭐ Belana Assistant</div>
+  <nav>
+    <button type="button" data-tab="inicio" aria-current="page"><span class="ic">🏠</span>Inicio</button>
+    <button type="button" data-tab="novedades"><span class="ic">📰</span>Novedades</button>
+    <button type="button" data-tab="personajes"><span class="ic">👥</span>Personajes</button>
+    <button type="button" data-tab="meta"><span class="ic">📊</span>Meta</button>
+    <button type="button" data-tab="codigos"><span class="ic">🎁</span>Códigos</button>
+    <button type="button" data-tab="fuentes"><span class="ic">🔗</span>Fuentes</button>
+  </nav>
+</aside>
+<div class="velo" id="velo"></div>
 
-<nav role="tablist" aria-label="Secciones">
-  <button role="tab" aria-selected="true" data-tab="inicio">Inicio</button>
-  <button role="tab" aria-selected="false" data-tab="novedades">Novedades</button>
-  <button role="tab" aria-selected="false" data-tab="personajes">Personajes</button>
-  <button role="tab" aria-selected="false" data-tab="meta">Meta</button>
-  <button role="tab" aria-selected="false" data-tab="codigos">Códigos</button>
-  <button role="tab" aria-selected="false" data-tab="fuentes">Fuentes</button>
-</nav>
+<div class="contenido">
+
+<header>
+  <button class="hamb" id="btnMenu" type="button" aria-label="Abrir menú" aria-controls="menu" aria-expanded="false">☰</button>
+  <div>
+    <h1>⭐ Belana Assistant</h1>
+    <p>Guía de Mongil: Star Dive · Actualizada al 8 de octubre de 2026 · Juego en versión 1.4</p>
+  </div>
+</header>
 
 <main>
 
@@ -493,17 +541,43 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   Página no oficial, hecha con información de fuentes públicas. Mongil: Star Dive es propiedad de Netmarble.
 </footer>
 
+</div>
+
 <script>
 (function () {
-  /* ---------- Pestañas ---------- */
-  var tabs = document.querySelectorAll('nav [role="tab"]');
+  /* ---------- Menú lateral ---------- */
+  var items = document.querySelectorAll('#menu nav button[data-tab]');
   var sections = document.querySelectorAll('[data-section]');
+  var menu = document.getElementById('menu');
+  var velo = document.getElementById('velo');
+  var btnMenu = document.getElementById('btnMenu');
+  function abrirMenu() {
+    menu.classList.add('open');
+    velo.classList.add('show');
+    btnMenu.setAttribute('aria-expanded', 'true');
+  }
+  function cerrarMenu() {
+    menu.classList.remove('open');
+    velo.classList.remove('show');
+    btnMenu.setAttribute('aria-expanded', 'false');
+  }
+  btnMenu.addEventListener('click', function () {
+    if (menu.classList.contains('open')) cerrarMenu(); else abrirMenu();
+  });
+  velo.addEventListener('click', cerrarMenu);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') cerrarMenu();
+  });
   function mostrar(id) {
     sections.forEach(function (s) { s.hidden = s.id !== id; });
-    tabs.forEach(function (t) { t.setAttribute('aria-selected', String(t.dataset.tab === id)); });
+    items.forEach(function (t) {
+      if (t.dataset.tab === id) t.setAttribute('aria-current', 'page');
+      else t.removeAttribute('aria-current');
+    });
+    cerrarMenu();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  tabs.forEach(function (t) { t.addEventListener('click', function () { mostrar(t.dataset.tab); }); });
+  items.forEach(function (t) { t.addEventListener('click', function () { mostrar(t.dataset.tab); }); });
 
   /* ---------- Personajes ---------- */
   var personajes = [
