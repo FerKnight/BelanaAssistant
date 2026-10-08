@@ -108,7 +108,7 @@ h3 { font-size: 1rem; margin: 0 0 6px; }
   cursor: pointer;
 }
 .filters button[aria-pressed="true"] { border-color: var(--accent-2); color: var(--accent-2); }
-input[type="search"] {
+input[type="search"], input[type="text"] {
   width: 100%;
   padding: 10px 12px;
   border-radius: 10px;
@@ -171,6 +171,104 @@ th { color: var(--accent-2); white-space: nowrap; }
   font-weight: 600;
   cursor: pointer;
 }
+label { display: block; font-size: .85rem; color: var(--muted); margin: 10px 0 4px; }
+.perfil { display: flex; gap: 14px; align-items: center; }
+.avatar {
+  position: relative;
+  flex: 0 0 auto;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-2);
+  background: var(--panel-2);
+  color: #0b0e22;
+  font: inherit;
+  font-size: 2rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.avatar .edit {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #0b0e22;
+  font-size: .85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--panel);
+}
+.campos { flex: 1; min-width: 0; }
+.campos label:first-child { margin-top: 0; }
+.fila-codigo { display: flex; gap: 8px; align-items: flex-start; }
+.fila-codigo input { margin-bottom: 0; }
+.fila-codigo button.copy { padding: 10px 12px; }
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 6, 16, .75);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+}
+.modal.show { display: flex; }
+.modal .hoja {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: 760px;
+  max-height: 80%;
+  overflow-y: auto;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.modal .cab { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
+.modal .cab h2 { margin: 0; }
+.modal .cerrar {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+.elegibles { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 10px; }
+.elegible {
+  background: none;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  font-size: .75rem;
+  cursor: pointer;
+  text-align: center;
+  padding: 4px;
+  border-radius: 10px;
+}
+.elegible .ico {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin: 0 auto 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0b0e22;
+  font-weight: 700;
+  font-size: 1.4rem;
+  border: 2px solid transparent;
+}
+.elegible[aria-pressed="true"] { background: var(--panel-2); }
+.elegible[aria-pressed="true"] .ico { border-color: var(--accent-2); }
 footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20px 16px 32px; }
 </style>
 </head>
@@ -199,10 +297,24 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
 
   <!-- INICIO -->
   <section id="inicio" data-section>
-    <div class="card">
-      <h2>¿Qué es Mongil: Star Dive?</h2>
-      <p>RPG de acción con captura de monstruos de Netmarble Monster, reimaginación del juego móvil Monster Taming (2013). Salió en abril de 2026 para PC (Epic Games Store), iOS y Android, con gráficos en Unreal Engine 5.</p>
-      <p class="muted">Es gratuito. Sigues a Cloud, Verna y al felino Nyanners por un mundo con humanos, monstruos, elfos y bestiales.</p>
+    <div class="card" id="perfil">
+      <h2>Datos del usuario</h2>
+      <div class="perfil">
+        <button class="avatar" id="avatarBtn" type="button" aria-label="Elegir personaje del avatar">
+          <span id="avatarInicial">?</span>
+          <span class="edit" aria-hidden="true">✎</span>
+        </button>
+        <div class="campos">
+          <label for="nombreJuego">Nombre dentro del juego</label>
+          <input type="text" id="nombreJuego" maxlength="24" placeholder="Tu nombre en el juego" autocomplete="off">
+          <label for="codigoAmistad">Código de amistad</label>
+          <div class="fila-codigo">
+            <input type="text" id="codigoAmistad" maxlength="20" placeholder="Tu código" autocomplete="off" autocapitalize="characters">
+            <button class="copy" id="copiarCodigo" type="button">Copiar</button>
+          </div>
+        </div>
+      </div>
+      <p class="muted">Toca el círculo para elegir un personaje. Los datos se guardan solo en este dispositivo.</p>
     </div>
 
     <div class="card">
@@ -363,6 +475,19 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
 
 </main>
 
+<div class="modal" id="selector" role="dialog" aria-modal="true" aria-labelledby="selectorTitulo">
+  <div class="hoja">
+    <div class="cab">
+      <h2 id="selectorTitulo">Elige tu personaje</h2>
+      <button class="cerrar" id="cerrarSelector" type="button">Cerrar</button>
+    </div>
+    <div class="elegibles" id="listaElegibles"></div>
+    <div class="filters" style="margin-top:12px">
+      <button type="button" id="quitarPersonaje">Quitar personaje</button>
+    </div>
+  </div>
+</div>
+
 <footer>
   Página no oficial, hecha con información de fuentes públicas. Mongil: Star Dive es propiedad de Netmarble.
 </footer>
@@ -462,6 +587,103 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   crearFiltros('filtrosRol', roles, 'r');
   document.getElementById('buscador').addEventListener('input', function (e) { texto = e.target.value; pintar(); });
   pintar();
+
+  /* ---------- Perfil del usuario ---------- */
+  var COLORES = { 'Fuego': '#ff8a65', 'Hielo': '#7fd8ff', 'Rayo': '#ffd94a', 'Viento': '#6fe3a1', 'Tierra': '#c9a27a' };
+  function colorDe(p) { return COLORES[p.elemento] || '#a7acd6'; }
+  function buscarPersonaje(nombre) {
+    return personajes.filter(function (x) { return x.nombre === nombre; })[0];
+  }
+  var perfil = { nombre: '', codigo: '', personaje: '' };
+  try {
+    var guardado = localStorage.getItem('belana.perfil');
+    if (guardado) {
+      var o = JSON.parse(guardado);
+      perfil.nombre = o.nombre || '';
+      perfil.codigo = o.codigo || '';
+      perfil.personaje = o.personaje || '';
+    }
+  } catch (_) {}
+  function guardarPerfil() {
+    try { localStorage.setItem('belana.perfil', JSON.stringify(perfil)); } catch (_) {}
+  }
+  var inNombre = document.getElementById('nombreJuego');
+  var inCodigo = document.getElementById('codigoAmistad');
+  var avatarBtn = document.getElementById('avatarBtn');
+  var avatarIni = document.getElementById('avatarInicial');
+  inNombre.value = perfil.nombre;
+  inCodigo.value = perfil.codigo;
+  function pintarAvatar() {
+    var p = buscarPersonaje(perfil.personaje);
+    if (p) {
+      avatarIni.textContent = p.nombre.charAt(0).toUpperCase();
+      avatarBtn.style.background = colorDe(p);
+      avatarBtn.setAttribute('aria-label', 'Avatar: ' + p.nombre + '. Toca para cambiar');
+    } else {
+      avatarIni.textContent = '?';
+      avatarBtn.style.background = '';
+      avatarBtn.setAttribute('aria-label', 'Elegir personaje del avatar');
+    }
+  }
+  pintarAvatar();
+  inNombre.addEventListener('input', function () { perfil.nombre = inNombre.value; guardarPerfil(); });
+  inCodigo.addEventListener('input', function () { perfil.codigo = inCodigo.value; guardarPerfil(); });
+  document.getElementById('copiarCodigo').addEventListener('click', function () {
+    var b = this;
+    var fin = function (t) { b.textContent = t; setTimeout(function () { b.textContent = 'Copiar'; }, 1800); };
+    if (!inCodigo.value) { fin('Vacío'); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(inCodigo.value).then(function () { fin('¡Copiado!'); }, function () { fin('Copia a mano'); });
+    } else { fin('Copia a mano'); }
+  });
+
+  var selector = document.getElementById('selector');
+  var listaElegibles = document.getElementById('listaElegibles');
+  function construirSelector() {
+    listaElegibles.innerHTML = '';
+    personajes.forEach(function (p) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'elegible';
+      b.setAttribute('aria-pressed', String(p.nombre === perfil.personaje));
+      var ico = document.createElement('div');
+      ico.className = 'ico';
+      ico.style.background = colorDe(p);
+      ico.textContent = p.nombre.charAt(0).toUpperCase();
+      var nom = document.createElement('div');
+      nom.textContent = p.nombre;
+      b.appendChild(ico);
+      b.appendChild(nom);
+      b.addEventListener('click', function () {
+        perfil.personaje = p.nombre;
+        guardarPerfil();
+        pintarAvatar();
+        cerrarSelector();
+      });
+      listaElegibles.appendChild(b);
+    });
+  }
+  function abrirSelector() {
+    construirSelector();
+    selector.classList.add('show');
+    document.getElementById('cerrarSelector').focus();
+  }
+  function cerrarSelector() {
+    selector.classList.remove('show');
+    avatarBtn.focus();
+  }
+  avatarBtn.addEventListener('click', abrirSelector);
+  document.getElementById('cerrarSelector').addEventListener('click', cerrarSelector);
+  document.getElementById('quitarPersonaje').addEventListener('click', function () {
+    perfil.personaje = '';
+    guardarPerfil();
+    pintarAvatar();
+    cerrarSelector();
+  });
+  selector.addEventListener('click', function (e) { if (e.target === selector) cerrarSelector(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && selector.classList.contains('show')) cerrarSelector();
+  });
 
   /* ---------- Códigos ---------- */
   var activos = [
