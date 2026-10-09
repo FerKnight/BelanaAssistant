@@ -339,6 +339,20 @@ label { display: block; font-size: .85rem; color: var(--muted); margin: 10px 0 4
   font-size: 1.5rem;
 }
 .ficha-cab h2 { margin: 0 0 4px; }
+button.posesion {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  margin: 4px 0 12px;
+}
+button.posesion[aria-pressed="true"] { background: var(--ok); color: #0b0e22; border-color: var(--ok); font-weight: 600; }
+.ficha-bloque { margin-top: 12px; }
+.ficha-bloque h3 { color: var(--accent-2); }
 .roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
 .rol-card { background: var(--panel-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
 .rol-ico { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; overflow: hidden; }
@@ -347,6 +361,7 @@ label { display: block; font-size: .85rem; color: var(--muted); margin: 10px 0 4
 .rol-card h3 { margin: 0 0 2px; }
 .rol-sub { color: var(--accent-2); font-size: .8rem; margin-bottom: 6px; }
 .rol-card p { margin: 0 0 6px; font-size: .82rem; color: var(--muted); }
+.dupes { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 4px; }
 .stepper { display: flex; align-items: center; gap: 8px; }
 .stepper button {
   width: 40px;
@@ -361,125 +376,8 @@ label { display: block; font-size: .85rem; color: var(--muted); margin: 10px 0 4
 }
 .stepper button:disabled { opacity: .4; cursor: not-allowed; }
 .stepper output { min-width: 2ch; text-align: center; font-weight: 700; font-size: 1.1rem; }
-.rol-btn {
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--panel-2);
-  overflow: hidden;
-  cursor: pointer;
-}
-.rol-btn img { display: block; width: 100%; height: auto; }
-.visor-img { display: block; width: 100%; height: auto; border-radius: 12px; margin-bottom: 8px; }
-.card.clic h3 { padding-right: 26px; }
-.aw { color: var(--accent-2); font-size: .8rem; font-weight: 700; }
-.tag.lvl { color: var(--accent); border-color: var(--accent); }
-.ficha-cab { flex: 1; }
-.acciones { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
-.casilla {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--panel-2);
-  color: #3b4278;
-  font: inherit;
-  font-size: 1.3rem;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-.casilla[aria-checked="true"] { background: var(--ok); border-color: var(--ok); color: #0b0e22; }
-.progreso { margin: 4px 0 14px; }
-.fila-prog { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-.desp { display: flex; gap: 4px; }
-.desp button {
-  width: 32px;
-  height: 34px;
-  border-radius: 9px;
-  border: 1px solid var(--border);
-  background: var(--panel-2);
-  color: var(--muted);
-  font: inherit;
-  cursor: pointer;
-  padding: 0;
-}
-.desp button[aria-pressed="true"] { background: var(--accent-2); border-color: var(--accent-2); color: #0b0e22; font-weight: 700; }
-.desp button:disabled { opacity: .4; cursor: not-allowed; }
-.par { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
-.grupo h3 { color: var(--accent-2); margin: 0 0 8px; }
-.grupo.der { text-align: right; }
-.slots { display: flex; gap: 8px; }
-.grupo.der .slots { justify-content: flex-end; }
-.slot {
-  width: clamp(44px, 12.5vw, 60px);
-  aspect-ratio: 1;
-  border: 1.5px dashed var(--border);
-  border-radius: 12px;
-  background: var(--panel-2);
-  padding: 0;
-}
-.slot.enlace { border: 2px solid var(--accent-2); }
-.titulo-mas { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.titulo-mas h3 { margin: 0; }
-button.mas {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--accent);
-  background: var(--panel-2);
-  color: var(--accent);
-  font: inherit;
-  font-size: 1.2rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-button.mas:disabled { opacity: .4; cursor: not-allowed; }
-.fila-equipo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
-.slot.slot-pj {
-  width: auto;
-  aspect-ratio: auto;
-  min-height: 74px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: var(--text);
-  font: inherit;
-  font-size: .72rem;
-  cursor: pointer;
-}
-.slot.slot-pj.lleno { border-style: solid; border-color: var(--accent); }
-.slot-pj .ico {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0b0e22;
-  font-weight: 700;
-}
-.habs-bloque { margin-top: 4px; }
-.habs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
-.hab {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background: var(--panel-2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 8px;
-}
-.hab-nombre { font-size: .8rem; color: var(--muted); }
-.hab .stepper { justify-content: space-between; }
-.hab .stepper button { width: 36px; height: 36px; }
-.botones-mas { display: flex; align-items: center; gap: 6px; }
+.ficha-bloque ul { margin-top: 4px; }
+.ficha-bloque .sub { margin: 8px 0 0; }
 footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20px 16px 32px; }
 </style>
 </head>
@@ -721,92 +619,19 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
           <div id="fichaTags"></div>
         </div>
       </div>
-      <div class="acciones">
-        <button class="casilla" id="fichaCasilla" type="button" role="checkbox" aria-checked="false" aria-label="Lo tengo">✓</button>
-        <button class="cerrar" id="cerrarFicha" type="button">Cerrar</button>
+      <button class="cerrar" id="cerrarFicha" type="button">Cerrar</button>
+    </div>
+    <button class="posesion" id="fichaPosesion" type="button" aria-pressed="false"></button>
+    <div class="dupes">
+      <span id="dupesEtiqueta">Copias extra (dupes)</span>
+      <div class="stepper" role="group" aria-labelledby="dupesEtiqueta">
+        <button type="button" id="dupesMenos" aria-label="Quitar una copia">−</button>
+        <output id="dupesValor" aria-live="polite">0</output>
+        <button type="button" id="dupesMas" aria-label="Añadir una copia">+</button>
       </div>
     </div>
-
-    <div class="progreso">
-      <div class="fila-prog">
-        <span id="despEtiqueta">Despertar</span>
-        <div class="desp" id="despBotones" role="group" aria-labelledby="despEtiqueta"></div>
-      </div>
-      <div class="habs-bloque">
-        <span id="habEtiqueta">Habilidades</span>
-        <div class="habs" id="habsGrid" role="group" aria-labelledby="habEtiqueta"></div>
-      </div>
-    </div>
-
-    <div class="par">
-      <div class="grupo">
-        <h3>Equipamiento</h3>
-        <div class="slots">
-          <div class="slot" role="img" aria-label="Equipamiento 1, vacío"></div>
-          <div class="slot" role="img" aria-label="Equipamiento 2, vacío"></div>
-          <div class="slot" role="img" aria-label="Equipamiento 3, vacío"></div>
-          <div class="slot" role="img" aria-label="Equipamiento 4, vacío"></div>
-        </div>
-      </div>
-      <div class="grupo der">
-        <h3>Artefacto</h3>
-        <div class="slots">
-          <div class="slot" role="img" aria-label="Artefacto, vacío"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="par">
-      <div class="grupo">
-        <h3>Monsterlings</h3>
-        <div class="slots">
-          <div class="slot enlace" role="img" aria-label="Monsterling 1 (Link Chain), vacío"></div>
-          <div class="slot" role="img" aria-label="Monsterling 2, vacío"></div>
-          <div class="slot" role="img" aria-label="Monsterling 3, vacío"></div>
-        </div>
-      </div>
-      <div class="grupo der">
-        <h3>Mons. Legendario</h3>
-        <div class="slots">
-          <div class="slot" role="img" aria-label="Monsterling legendario, vacío"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="grupo">
-      <div class="titulo-mas">
-        <h3>Equipo recomendado</h3>
-        <div class="botones-mas">
-          <button class="mas" id="equipoMas" type="button" aria-label="Añadir otro equipo de 3 espacios">+</button>
-          <button class="mas" id="equipoMenos" type="button" aria-label="Quitar el último equipo de 3 espacios">−</button>
-        </div>
-      </div>
-      <div id="equipoFilas"></div>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="pickerEquipo" role="dialog" aria-modal="true" aria-labelledby="pickerTitulo">
-  <div class="hoja">
-    <div class="cab">
-      <h2 id="pickerTitulo">Elige un personaje</h2>
-      <button class="cerrar" id="cerrarPicker" type="button">Cerrar</button>
-    </div>
-    <div class="elegibles" id="listaPicker"></div>
-    <div class="filters" style="margin-top:12px">
-      <button type="button" id="vaciarSlot">Vaciar espacio</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="visor" role="dialog" aria-modal="true" aria-labelledby="visorTitulo">
-  <div class="hoja">
-    <div class="cab">
-      <h2 id="visorTitulo"></h2>
-      <button class="cerrar" id="cerrarVisor" type="button">Cerrar</button>
-    </div>
-    <img class="visor-img" id="visorImg" alt="">
-    <p class="muted" id="visorTexto"></p>
+    <p class="muted" id="dupesNota"></p>
+    <div id="fichaContenido"></div>
   </div>
 </div>
 
@@ -892,65 +717,34 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   var COLORES = { 'Fuego': '#ff8a65', 'Hielo': '#7fd8ff', 'Rayo': '#ffd94a', 'Viento': '#6fe3a1', 'Tierra': '#c9a27a' };
   function colorDe(p) { return COLORES[p.elemento] || '#a7acd6'; }
 
-  /* Estado del usuario (se guarda en este dispositivo):
-     personajes que tiene, despertares (0 a 6), nivel de habilidades y equipos. */
-  var MAX_DESP = 6;
-  var MAX_HAB_BASE = 12;
-  var MAX_FILAS_EQUIPO = 10;
-  function leerAlmacen(clave) {
-    try {
-      var g = localStorage.getItem(clave);
-      if (g) return JSON.parse(g) || {};
-    } catch (_) {}
-    return {};
+  /* Personajes que el usuario tiene y sus copias extra (se guardan en este dispositivo) */
+  var MAX_DUPES = 6;
+  var poseidos = {};
+  var dupes = {};
+  try {
+    var gp = localStorage.getItem('belana.poseidos');
+    if (gp) poseidos = JSON.parse(gp) || {};
+  } catch (_) { poseidos = {}; }
+  try {
+    var gd = localStorage.getItem('belana.dupes');
+    if (gd) dupes = JSON.parse(gd) || {};
+  } catch (_) { dupes = {}; }
+  function guardarPoseidos() {
+    try { localStorage.setItem('belana.poseidos', JSON.stringify(poseidos)); } catch (_) {}
   }
-  function guardarAlmacen(clave, valor) {
-    try { localStorage.setItem(clave, JSON.stringify(valor)); } catch (_) {}
+  function guardarDupes() {
+    try { localStorage.setItem('belana.dupes', JSON.stringify(dupes)); } catch (_) {}
   }
-  var poseidos = leerAlmacen('belana.poseidos');
-  var despertares = leerAlmacen('belana.despertar');
-  var habilidades = leerAlmacen('belana.habilidades');
-  var equiposGuardados = leerAlmacen('belana.equipos');
-  /* Las copias extra de la versión anterior pasan a ser despertares */
-  (function () {
-    var viejo = leerAlmacen('belana.dupes');
-    var cambio = false;
-    Object.keys(viejo).forEach(function (k) {
-      if (despertares[k] === undefined) { despertares[k] = viejo[k]; cambio = true; }
-    });
-    if (cambio) guardarAlmacen('belana.despertar', despertares);
-  })();
   function contarPoseidos() {
     return personajes.filter(function (p) { return poseidos[p.nombre]; }).length;
   }
-  function despDe(p) {
-    var n = parseInt(despertares[p.nombre], 10);
+  function dupesDe(p) {
+    var n = parseInt(dupes[p.nombre], 10);
     if (isNaN(n)) return 0;
-    return Math.max(0, Math.min(MAX_DESP, n));
-  }
-  /* El despertar sube el tope de habilidades: +2 en la etapa 3 y +2 en la 5 (máximo 16) */
-  function maxHab(p) {
-    var a = despDe(p);
-    return MAX_HAB_BASE + (a >= 3 ? 2 : 0) + (a >= 5 ? 2 : 0);
-  }
-  /* Nivel de las 4 habilidades (ataque básico, cambio, especial y definitiva).
-     También acepta el valor único de versiones anteriores. */
-  function habsDe(p) {
-    var v = habilidades[p.nombre];
-    var base = Array.isArray(v) ? v : [v, v, v, v];
-    var tope = maxHab(p);
-    var r = [];
-    for (var i = 0; i < 4; i++) {
-      var n = parseInt(base[i], 10);
-      if (isNaN(n)) n = 1;
-      r.push(Math.max(1, Math.min(tope, n)));
-    }
-    return r;
+    return Math.max(0, Math.min(MAX_DUPES, n));
   }
 
   /* ---------- Roles: función general (guía de composición de equipos de ZeroLuck) ---------- */
-  /* Carpeta de las imágenes de los roles dentro del repositorio ('' = misma carpeta que index.html) */
-  var CARPETA_IMG = '';
   var COLOR_ROL = { 'Luchador': '#ff8a65', 'Destructor': '#ffd94a', 'Asesino': '#b58cff', 'Soporte': '#6fe3a1' };
   var SVG_ABRE = '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
   var ICONOS_ROL = {
@@ -964,126 +758,313 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
       subtitulo: 'Daño principal',
       texto: "Es el pilar del equipo: pasa más tiempo en el campo y da el daño más constante. Brilla limpiando oleadas y manteniendo la presión durante todo el combate.",
       ejemplos: 'Mina, Gabi, Penny, Sangun, Ophelia, Sera, Verna',
-      img: CARPETA_IMG + 'luchador.jpeg'
+      formatos: [
+        "Luchador + Asesino + Soporte: el formato versátil; ningún contenido lo contrarresta.",
+        "Luchador + Destructor + Asesino: agresivo y constante; sirve para todo tipo de contenido."
+      ],
+      img: ''
     },
     'Destructor': {
       subtitulo: 'Rompe el aturdimiento',
       texto: "Su único objetivo es llenar la barra de aturdimiento (Stagger) lo más rápido posible. Contra jefes con fase de aturdimiento es imprescindible: sin él no se abre la ventana de ráfaga.",
       ejemplos: 'Flare, Cloud, Ellie, Reina',
-      img: CARPETA_IMG + 'destructor.jpeg'
+      formatos: [
+        "Asesino + Destructor + Soporte: ideal contra jefes; llenas el aturdimiento y golpeas en la ventana de ráfaga. Es menos eficaz contra oleadas grandes.",
+        "Luchador + Destructor + Asesino: agresivo y consistente."
+      ],
+      img: ''
     },
     'Asesino': {
       subtitulo: 'Daño de ráfaga',
       texto: "Entra justo cuando el enemigo es más vulnerable y suelta el máximo daño en poco tiempo. Sus habilidades de apoyo también lanzan ataques de seguimiento fuera del campo.",
       ejemplos: 'Esther, Angel, Leeho, Benjamin, Yeonhwa',
-      img: CARPETA_IMG + 'asesino.jpeg'
+      formatos: [
+        "Luchador + Asesino + Soporte: el formato versátil.",
+        "Asesino + Destructor + Soporte: la máquina de matar jefes."
+      ],
+      img: ''
     },
     'Soporte': {
       subtitulo: 'Amplifica al equipo',
       texto: "Cura, aplica buffs y mantiene la Aflicción elemental cuando su elemento coincide con el del resto del equipo. Parece menos vistoso que el daño, pero es decisivo.",
       ejemplos: 'Jiwon, Francis, Daisy, Bonnie',
-      img: CARPETA_IMG + 'soporte.jpeg'
+      formatos: [
+        "Luchador + Asesino + Soporte: el formato versátil.",
+        "Asesino + Destructor + Soporte: para jefes. Un segundo Soporte aporta poco: deja el tercer espacio para un perfil de daño."
+      ],
+      img: ''
     }
   };
-  function tarjetaRolTexto(nombre) {
-    var info = ROLES_INFO[nombre];
-    var card = document.createElement('div');
-    card.className = 'rol-card';
-    var ico = document.createElement('div');
-    ico.className = 'rol-ico';
-    ico.style.color = COLOR_ROL[nombre];
-    ico.style.background = COLOR_ROL[nombre] + '22';
-    ico.innerHTML = ICONOS_ROL[nombre];
-    var h = document.createElement('h3');
-    h.textContent = nombre;
-    var sub = document.createElement('div');
-    sub.className = 'rol-sub';
-    sub.textContent = info.subtitulo;
-    var t = document.createElement('p');
-    t.textContent = info.texto;
-    var ej = document.createElement('p');
-    ej.textContent = 'Ejemplos: ' + info.ejemplos + '.';
-    card.appendChild(ico);
-    card.appendChild(h);
-    card.appendChild(sub);
-    card.appendChild(t);
-    card.appendChild(ej);
-    return card;
-  }
   function construirRoles() {
     var cont = document.getElementById('rolesInfo');
     cont.innerHTML = '';
     ['Luchador', 'Destructor', 'Asesino', 'Soporte'].forEach(function (nombre) {
       var info = ROLES_INFO[nombre];
-      var hueco = document.createElement('div');
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'rol-btn';
-      btn.setAttribute('aria-label', 'Ampliar la imagen del rol ' + nombre);
-      var im = document.createElement('img');
-      im.alt = nombre + ': ' + info.texto;
-      im.src = info.img;
-      /* Si la imagen no carga, se muestra la tarjeta con icono y texto */
-      im.addEventListener('error', function () {
-        hueco.innerHTML = '';
-        hueco.appendChild(tarjetaRolTexto(nombre));
-      });
-      btn.appendChild(im);
-      btn.addEventListener('click', function () { abrirVisor(nombre); });
-      hueco.appendChild(btn);
-      cont.appendChild(hueco);
+      var card = document.createElement('div');
+      card.className = 'rol-card';
+      var ico = document.createElement('div');
+      ico.className = 'rol-ico';
+      ico.style.color = COLOR_ROL[nombre];
+      ico.style.background = COLOR_ROL[nombre] + '22';
+      if (info.img) {
+        var im = document.createElement('img');
+        im.src = info.img;
+        im.alt = nombre;
+        ico.appendChild(im);
+      } else {
+        ico.innerHTML = ICONOS_ROL[nombre];
+      }
+      var h = document.createElement('h3');
+      h.textContent = nombre;
+      var sub = document.createElement('div');
+      sub.className = 'rol-sub';
+      sub.textContent = info.subtitulo;
+      var t = document.createElement('p');
+      t.textContent = info.texto;
+      var ej = document.createElement('p');
+      ej.textContent = 'Ejemplos: ' + info.ejemplos + '.';
+      card.appendChild(ico);
+      card.appendChild(h);
+      card.appendChild(sub);
+      card.appendChild(t);
+      card.appendChild(ej);
+      cont.appendChild(card);
     });
   }
-
-  /* ---------- Visor de imagen de rol ---------- */
-  var visorEl = document.getElementById('visor');
-  var visorDisparador = null;
-  function abrirVisor(nombre) {
-    var info = ROLES_INFO[nombre];
-    visorDisparador = document.activeElement;
-    document.getElementById('visorTitulo').textContent = nombre + ' · ' + info.subtitulo;
-    var img = document.getElementById('visorImg');
-    img.src = info.img;
-    img.alt = nombre + ': ' + info.texto;
-    document.getElementById('visorTexto').textContent = info.texto + ' Ejemplos: ' + info.ejemplos + '.';
-    visorEl.classList.add('show');
-    document.getElementById('cerrarVisor').focus();
-  }
-  function cerrarVisor() {
-    visorEl.classList.remove('show');
-    if (visorDisparador && document.body.contains(visorDisparador)) visorDisparador.focus();
-  }
-  document.getElementById('cerrarVisor').addEventListener('click', cerrarVisor);
-  visorEl.addEventListener('click', function (e) { if (e.target === visorEl) cerrarVisor(); });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && visorEl.classList.contains('show')) cerrarVisor();
-  });
   construirRoles();
 
-  /* ---------- Equipos recomendados de partida ----------
-     Solo los que las guías (ZeroLuck, GameWith, Kaiden.gg) confirman.
-     Cada uno se puede cambiar tocando sus espacios. */
-  var EQUIPOS_BASE = {
-    'Esther': [['Esther', 'Jiwon', 'Bonnie'], ['Esther', 'Flare', 'Jiwon']],
-    'Jiwon': [['Esther', 'Jiwon', 'Bonnie'], ['Esther', 'Flare', 'Jiwon']],
-    'Bonnie': [['Esther', 'Jiwon', 'Bonnie']],
-    'Flare': [['Esther', 'Flare', 'Jiwon']],
-    'Francis': [['Cloud', 'Francis', 'Verna'], ['Cloud', 'Francis', 'Ophelia'], ['Gabi', 'Francis', '']],
-    'Cloud': [['Cloud', 'Francis', 'Verna'], ['Cloud', 'Francis', 'Ophelia']],
-    'Verna': [['Cloud', 'Francis', 'Verna']],
-    'Ophelia': [['Cloud', 'Francis', 'Ophelia']],
-    'Sera': [['Cloud', 'Francis', 'Sera']],
-    'Gabi': [['Gabi', 'Francis', '']]
+  /* ---------- Fichas detalladas ----------
+     Solo incluyo lo que las guías consultadas confirman.
+     Campos: resumen, puntos (función), equipamiento, monsterlings, equipo (listas de texto). */
+  var NOTA_FICHA = 'Resumen hecho con guías de GameWith, Kaiden.gg, games.gg y ZeroLuck. El juego cambia con cada versión: compruébalo en tu partida.';
+  var SIN_EQUIPAMIENTO = 'Todavía no hay datos confirmados para este personaje. Se completará con la sección de artefactos y equipamientos.';
+  var SIN_LEGENDARIO = 'Ninguna guía consultada indica un Monsterling legendario concreto para este personaje.';
+  var AVISO_EQUIPO = 'Cuantos más personajes del mismo elemento lleves, más tiempo se mantiene la Aflicción elemental (la mayor mejora de daño del juego): dos aliados del mismo elemento dan buena cobertura y tres casi permanente.';
+  var AVISO_MONSTERLINGS = 'Cada personaje lleva hasta tres Monsterlings y el efecto de Enlace (Link) solo funciona en el primer espacio. Rasgos a buscar en la mayoría: Daño a jefes, Reducción de enfriamiento, Debilidad elemental y Daño crítico.';
+
+  var fichas = {
+    'Esther': {
+      resumen: "Asesina de Viento. Su habilidad especial crea una Nube de Polvo: dentro de ella los enemigos quedan confundidos y su ataque básico se potencia.",
+      puntos: [
+        "Dentro de la nube sube su ATK, y su ataque básico potenciado es el centro de su daño.",
+        "Usa la definitiva dentro de la nube: tiene un multiplicador muy alto y además baja un 15 % la resistencia al Viento del enemigo durante 5 s.",
+        "Sigue haciendo daño fuera del campo: cuando un aliado ataca, aparece a su lado y prepara una emboscada. Hay una ventana de 9 s en la que pierde sus buffs.",
+        "Punto débil: no tiene control propio para mantener a los enemigos dentro de la nube.",
+        "Despertares destacados: el cambio de personaje activa la nube durante 3 s, la nube crece de tamaño y el ataque básico potenciado hace un 50 % más de daño."
+      ],
+      equipamiento: [
+        "Artefacto exclusivo: Wind-Harboring Broom (artefacto de Asesino de 5★).",
+        "Alternativa: Suffocating Darkness, que sube bastante el ATK y añade daño crítico a los golpes de su habilidad de apoyo (su daño fuera del campo)."
+      ],
+      monsterlings: [
+        "Plains Minotaur en el primer espacio, por su Link Chain.",
+        "Taglock en el segundo: sube el ATK tras 20 golpes."
+      ],
+      equipo: [
+        "Esther + Jiwon + Bonnie: la combinación que las guías ven más fuerte. Jiwon junta a los enemigos en la nube y Bonnie aplica Resonancia para amplificar el daño.",
+        "Esther + Flare + Jiwon (propuesta de GameWith)."
+      ]
+    },
+    'Jiwon': {
+      resumen: "Soporte de Viento. Su habilidad especial junta a los enemigos delante de ella, ideal para combos de área.",
+      puntos: [
+        "Con ella en el equipo, Esther consigue dashes infinitos, que aceleran su rotación y suben su daño.",
+        "Aporta buffs fuertes al equipo y, según guías para principiantes, reduce el gasto de estamina.",
+        "Recibió mejoras de equilibrio con la versión 1.3."
+      ],
+      equipo: [
+        "Esther + Jiwon + Bonnie.",
+        "Esther + Flare + Jiwon."
+      ]
+    },
+    'Bonnie': {
+      resumen: "Soporte de Viento (4★). Usa habilidades musicales para controlar el campo.",
+      puntos: [
+        "Aplica Resonancia a los enemigos: amplifica el daño que reciben justo antes de que tu DPS ataque.",
+        "Su valor está en la sinergia con Esther y Jiwon; sola, las tier lists la ponen en un nivel bajo."
+      ],
+      equipo: ["Esther + Jiwon + Bonnie."]
+    },
+    'Francis': {
+      resumen: "Soporte de Tierra (4★). Sanadora versátil, entregada como recompensa de pre-registro.",
+      puntos: [
+        "Cura de forma activa y se autocura cuando su vida es baja.",
+        "Baja la DEF de los enemigos y mejora el daño de Tierra.",
+        "Aplica buffs potentes al personaje que entra en el campo; necesita algo de inversión en ATK.",
+        "Es de las 4★ que mejor aguantan el paso del tiempo: algunas tier lists la ponen entre las mejores.",
+        "ZeroLuck la propone como Soporte universal cuando no tienes uno de tu elemento."
+      ],
+      monsterlings: [
+        "Custos: la guía de Kaiden.gg recomienda construir uno para ella, porque aparece en casi todos los equipos."
+      ],
+      equipo: [
+        "Cloud + Francis + Verna: el trío inicial universal.",
+        "Cloud + Francis + Ophelia: trío de Hielo accesible; Francis cura y sube el ATK.",
+        "Con Gabi: misma afinidad de Tierra, así que mantiene la Aflicción incluso fuera del campo."
+      ]
+    },
+    'Gabi': {
+      resumen: "Luchador de Tierra. Buen daño tanto a grupos como a un solo objetivo.",
+      puntos: [
+        "Tiene un mecanismo propio para contrarrestar los ataques especiales de los enemigos, por eso rinde bien en las etapas altas de Conquista.",
+        "Su definitiva es larga: actívala al final de la rotación, cuando el Soporte y el Asesino ya aplicaron sus buffs.",
+        "GameWith la recomienda como núcleo del equipo si haces reroll."
+      ],
+      monsterlings: ["No necesita el rasgo Reducción de enfriamiento."],
+      equipo: ["Gabi + Francis: misma afinidad de Tierra."]
+    },
+    'Sangun': {
+      resumen: "Luchador de Viento.",
+      puntos: [
+        "Su definitiva es larga: actívala al final de la rotación, con los buffs del Soporte y del Asesino ya aplicados.",
+        "ZeroLuck lo cita entre los Luchadores de área que brillan contra oleadas de enemigos."
+      ]
+    },
+    'Mina': {
+      resumen: "Luchador de Fuego (5★). Daño de ráfaga y control de masas.",
+      puntos: [
+        "Limpia grupos de enemigos con rapidez, y sus bucles de habilidades dan mucho daño continuo.",
+        "Su definitiva es larga: actívala mientras los buffs del Soporte siguen activos.",
+        "Aparece en el nivel más alto de las tier lists recientes.",
+        "ZeroLuck la cita entre los Luchadores de área que brillan contra oleadas de enemigos."
+      ],
+      monsterlings: ["El rasgo Reducción de enfriamiento le da ciclos de habilidades más fluidos."]
+    },
+    'Ophelia': {
+      resumen: "Luchador de Hielo. Daño sostenido.",
+      puntos: [
+        "Se potencia a sí misma: convierte sus ataques a Hielo y sube su índice crítico.",
+        "Con entradas adicionales de la habilidad especial mantiene esos buffs activos.",
+        "Recibió mejoras de equilibrio con la versión 1.3."
+      ],
+      equipo: ["Cloud + Francis + Ophelia: trío de Hielo accesible; Ophelia convierte cada apertura en daño."]
+    },
+    'Penny': {
+      resumen: "Luchador de Rayo.",
+      puntos: [
+        "Se fortalece con sus habilidades especiales.",
+        "Su índice crítico sube junto con el bono de daño de Rayo.",
+        "Puede pelear con seguridad a distancia."
+      ],
+      monsterlings: ["No necesita el rasgo Reducción de enfriamiento."]
+    },
+    'Sera': {
+      resumen: "Luchador de Hielo (4★).",
+      puntos: [
+        "Tiene una sinergia natural con Cloud por la afinidad de Hielo, mejor que la de Verna."
+      ],
+      monsterlings: ["Blue Shadow: la guía de Kaiden.gg lo señala como el Monsterling hecho para este personaje."],
+      equipo: ["Cloud + Francis + Sera, como alternativa al trío inicial con Verna."]
+    },
+    'Verna': {
+      resumen: "Luchador de Fuego (4★). Protagonista de la historia.",
+      puntos: [
+        "Cubre bien el hueco de Luchador en el trío inicial, aunque Sera u Ophelia tienen más sinergia con Cloud."
+      ],
+      equipo: ["Cloud + Francis + Verna: el trío inicial universal, sin necesidad de personajes 5★."]
+    },
+    'Flare': {
+      resumen: "Destructor de Fuego.",
+      puntos: [
+        "Como Destructor, su trabajo es llenar la barra de aturdimiento para abrir la ventana de ráfaga.",
+        "Las guías la usan en el equipo Esther + Flare + Jiwon."
+      ],
+      equipo: ["Esther + Flare + Jiwon (propuesta de GameWith)."]
+    },
+    'Cloud': {
+      resumen: "Destructor de Hielo (4★). Protagonista de la historia.",
+      puntos: [
+        "Presiona la barra de aturdimiento y baja la resistencia al Hielo del enemigo.",
+        "Rinde bien incluso con poca inversión.",
+        "Sus rotaciones dependen de reducir el enfriamiento de las habilidades."
+      ],
+      monsterlings: ["Rasgo clave: Reducción de enfriamiento."],
+      equipo: [
+        "Cloud + Francis + Verna: el trío inicial universal.",
+        "Cloud + Francis + Ophelia: trío de Hielo accesible."
+      ]
+    },
+    'Reina': {
+      resumen: "Destructor de Rayo (4★).",
+      puntos: [
+        "Acumula y gasta energía de Rayo para lanzar ataques variantes más fuertes.",
+        "Es resistente, con daño de Rayo constante y buen daño al cambiar de personaje."
+      ]
+    },
+    'Ellie': {
+      resumen: "Destructor de Tierra (4★).",
+      puntos: [
+        "Rinde bien incluso fuera del campo y con entradas rápidas.",
+        "Aunque no esté activa, ayuda a llenar la barra de aturdimiento del enemigo.",
+        "Su juego gira en torno a los Snacks y la Sugar Charge."
+      ]
+    },
+    'Daisy': {
+      resumen: "Soporte de Tierra (4★).",
+      puntos: [
+        "Se especializa en curar y controlar el campo.",
+        "Las tier lists la ponen por debajo de Francis."
+      ]
+    },
+    'Vivian': {
+      resumen: "Soporte de Fuego (5★), pensada para equipos de Fuego.",
+      puntos: [
+        "Aumenta el daño de Fuego y aplica debuffs de Fuego, para apoyar a aliados del mismo elemento.",
+        "Tiene su propia misión épica: Desire Collector.",
+        "Es la conejita estrella de la compañía Fluffy Tail Troupe, un grupo de baile ambulante."
+      ]
+    },
+    'Isabella': {
+      resumen: "Destructor de Hielo (5★), la novedad de la versión 1.4.",
+      puntos: [
+        "Ingeniera genio que antes usaba su talento para ayudar a la gente y ahora se centra en su propia investigación.",
+        "Su historia se descubre en el evento Wanderers Beyond Borders.",
+        "Aún no hay tier lists ni guías de build fiables: las que revisé son anteriores a su llegada."
+      ]
+    },
+    'Angel': {
+      resumen: "Asesino de Fuego (4★).",
+      puntos: [
+        "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones."
+      ]
+    },
+    'Leeho': {
+      resumen: "Asesino de Fuego (4★).",
+      puntos: [
+        "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones."
+      ]
+    },
+    'Benjamin': {
+      resumen: "Asesino de Rayo (4★).",
+      puntos: [
+        "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones.",
+        "Según Kaiden.gg, en Reginula un equipo de Benjamin sin copias extra (A0) que lucha con su elemento alcanza el daño de una Esther al máximo con el elemento contrario."
+      ]
+    },
+    'Yeonhwa': {
+      resumen: "Asesino de Rayo (4★).",
+      puntos: [
+        "Los Asesinos mantienen su daño fuera del campo: sus habilidades de apoyo lanzan ataques de seguimiento coordinados cuando se cumplen ciertas condiciones.",
+        "Game8 la puso en el nivel S en su tier list de la versión 1.1."
+      ]
+    }
   };
-  function equiposDe(nombre) {
-    if (equiposGuardados[nombre]) return equiposGuardados[nombre];
-    var base = EQUIPOS_BASE[nombre];
-    if (base) return base.map(function (f) { return f.slice(); });
-    return [['', '', '']];
-  }
-  function guardarEquipos(nombre, filas) {
-    equiposGuardados[nombre] = filas;
-    guardarAlmacen('belana.equipos', equiposGuardados);
+
+  function monsterlingsGenerales(p) {
+    var l = [];
+    if (p.rol === 'Soporte') {
+      l.push("El Dorado Guardian (o Avardan): debilidad elemental del 30 % durante el aturdimiento del enemigo y cinco segundos más.");
+      l.push("Fiend (o Blue Shadow): debilidad elemental del 15 % durante unos 13 s; es la más larga de ese valor.");
+      l.push("Gulgak: reduce un 8 % la defensa si el portador golpea una vez cada 5 s.");
+      l.push("Amon: +11 % de índice crítico para todo el equipo si el portador da más de diez golpes en diez segundos.");
+    } else if (p.rol && p.rol !== '—') {
+      l.push("Scar: +8 % de daño a jefes; casi todas las builds de daño principal lo usan.");
+      l.push("Ice Fist Dude: +11 % de índice crítico al golpear una debilidad elemental.");
+      if (p.elemento === 'Fuego') l.push("Duoxini: el mejor Monsterling específico para equipos de Fuego.");
+      if (p.elemento === 'Hielo') l.push("Red Shadow: el equivalente de Duoxini para Hielo, algo más débil.");
+      if (p.elemento === 'Tierra') l.push("Rock Fist Dude: la opción de Tierra, con un enlace y un rango condicionales.");
+    }
+    return l;
   }
 
   function crearFiltros(id, lista, tipo) {
@@ -1108,7 +1089,8 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
     var cont = document.getElementById('listaPersonajes');
     var q = texto.trim().toLowerCase();
     document.getElementById('contadorPoseidos').textContent =
-      'Tienes ' + contarPoseidos() + ' de ' + personajes.length + ' personajes.';
+      'Tienes ' + contarPoseidos() + ' de ' + personajes.length + ' personajes · ' +
+      Object.keys(fichas).length + ' con ficha detallada.';
     var lista = personajes.filter(function (p) {
       var tiene = !!poseidos[p.nombre];
       return (filtroZ === 'Todos' || p.rareza === filtroZ) &&
@@ -1126,20 +1108,13 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
       return;
     }
     lista.forEach(function (p) {
-      var tiene = !!poseidos[p.nombre];
       var d = document.createElement('div');
       d.className = 'card clic';
       d.setAttribute('role', 'button');
       d.tabIndex = 0;
       d.setAttribute('aria-label', 'Ver ficha de ' + p.nombre);
       var h = document.createElement('h3');
-      h.appendChild(document.createTextNode(p.nombre));
-      if (tiene) {
-        var aw = document.createElement('span');
-        aw.className = 'aw';
-        aw.textContent = ' A' + despDe(p);
-        h.appendChild(aw);
-      }
+      h.textContent = p.nombre;
       d.appendChild(h);
       [p.rareza, p.elemento, p.rol].forEach(function (t) {
         var s = document.createElement('span');
@@ -1153,11 +1128,13 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
         n.textContent = 'Nuevo';
         d.appendChild(n);
       }
-      if (tiene) {
-        var hb = document.createElement('span');
-        hb.className = 'tag lvl';
-        hb.textContent = 'Hab. ' + habsDe(p).join('/');
-        d.appendChild(hb);
+      if (poseidos[p.nombre] && dupesDe(p) > 0) {
+        var dp = document.createElement('span');
+        dp.className = 'tag new';
+        dp.textContent = '+' + dupesDe(p) + ' copias';
+        d.appendChild(dp);
+      }
+      if (poseidos[p.nombre]) {
         var bd = document.createElement('span');
         bd.className = 'badge-tengo';
         bd.setAttribute('aria-label', 'Lo tienes');
@@ -1176,108 +1153,48 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   var fichaEl = document.getElementById('ficha');
   var fichaActual = null;
   var fichaDisparador = null;
-  var despCont = document.getElementById('despBotones');
-  for (var dn = 0; dn <= MAX_DESP; dn++) {
-    (function (n) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = String(n);
-      b.setAttribute('aria-label', 'Despertar ' + n);
-      b.setAttribute('aria-pressed', 'false');
-      b.addEventListener('click', function () { cambiarDespertar(n); });
-      despCont.appendChild(b);
-    })(dn);
-  }
 
-  var HABS = ['Ataque básico', 'Cambio', 'Especial', 'Definitiva'];
-  var habMenosB = [], habMasB = [], habOut = [];
-  var habsCont = document.getElementById('habsGrid');
-  HABS.forEach(function (nombre, i) {
-    var cel = document.createElement('div');
-    cel.className = 'hab';
-    var et = document.createElement('span');
-    et.className = 'hab-nombre';
-    et.textContent = nombre;
-    var st = document.createElement('div');
-    st.className = 'stepper';
-    var menos = document.createElement('button');
-    menos.type = 'button';
-    menos.textContent = '−';
-    menos.setAttribute('aria-label', 'Bajar un nivel: ' + nombre.toLowerCase());
-    var out = document.createElement('output');
-    out.textContent = '—';
-    out.setAttribute('aria-live', 'polite');
-    var mas = document.createElement('button');
-    mas.type = 'button';
-    mas.textContent = '+';
-    mas.setAttribute('aria-label', 'Subir un nivel: ' + nombre.toLowerCase());
-    menos.addEventListener('click', function () { cambiarHab(i, -1); });
-    mas.addEventListener('click', function () { cambiarHab(i, 1); });
-    st.appendChild(menos);
-    st.appendChild(out);
-    st.appendChild(mas);
-    cel.appendChild(et);
-    cel.appendChild(st);
-    habsCont.appendChild(cel);
-    habMenosB.push(menos);
-    habMasB.push(mas);
-    habOut.push(out);
-  });
+  function bloqueLista(titulo, items, vacio, pie) {
+    var bl = document.createElement('div');
+    bl.className = 'ficha-bloque';
+    var h = document.createElement('h3');
+    h.textContent = titulo;
+    bl.appendChild(h);
+    if (items && items.length) {
+      var ul = document.createElement('ul');
+      items.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+      bl.appendChild(ul);
+    } else if (vacio) {
+      var v = document.createElement('p');
+      v.className = 'muted';
+      v.textContent = vacio;
+      bl.appendChild(v);
+    }
+    if (pie) {
+      var pp = document.createElement('p');
+      pp.className = 'muted sub';
+      pp.textContent = pie;
+      bl.appendChild(pp);
+    }
+    return bl;
+  }
 
   function pintarEstadoFicha() {
-    var p = fichaActual;
-    var tiene = !!(p && poseidos[p.nombre]);
-    document.getElementById('fichaCasilla').setAttribute('aria-checked', String(tiene));
-    var d = p ? despDe(p) : 0;
-    despCont.querySelectorAll('button').forEach(function (b, i) {
-      b.disabled = !tiene;
-      b.setAttribute('aria-pressed', String(tiene && i === d));
-    });
-    var niveles = tiene ? habsDe(p) : null;
-    var tope = tiene ? maxHab(p) : 0;
-    HABS.forEach(function (nombre, i) {
-      habOut[i].textContent = tiene ? String(niveles[i]) : '—';
-      habMenosB[i].disabled = !tiene || niveles[i] <= 1;
-      habMasB[i].disabled = !tiene || niveles[i] >= tope;
-    });
-  }
-
-  function pintarEquipos() {
-    var cont = document.getElementById('equipoFilas');
-    cont.innerHTML = '';
-    var filas = equiposDe(fichaActual.nombre);
-    filas.forEach(function (fila, i) {
-      var f = document.createElement('div');
-      f.className = 'fila-equipo';
-      for (var j = 0; j < 3; j++) {
-        (function (j) {
-          var nombre = fila[j] || '';
-          var pj = nombre ? buscarPersonaje(nombre) : null;
-          var b = document.createElement('button');
-          b.type = 'button';
-          b.className = 'slot slot-pj';
-          if (pj) {
-            b.classList.add('lleno');
-            b.setAttribute('aria-label', 'Equipo ' + (i + 1) + ', espacio ' + (j + 1) + ': ' + pj.nombre);
-            var ic = document.createElement('div');
-            ic.className = 'ico';
-            ic.style.background = colorDe(pj);
-            ic.textContent = pj.nombre.charAt(0).toUpperCase();
-            var nm = document.createElement('div');
-            nm.textContent = pj.nombre.split(':')[0];
-            b.appendChild(ic);
-            b.appendChild(nm);
-          } else {
-            b.setAttribute('aria-label', 'Equipo ' + (i + 1) + ', espacio ' + (j + 1) + ', vacío');
-          }
-          b.addEventListener('click', function () { abrirPicker(i, j); });
-          f.appendChild(b);
-        })(j);
-      }
-      cont.appendChild(f);
-    });
-    document.getElementById('equipoMas').disabled = filas.length >= MAX_FILAS_EQUIPO;
-    document.getElementById('equipoMenos').disabled = filas.length <= 1;
+    var b = document.getElementById('fichaPosesion');
+    var tiene = !!(fichaActual && poseidos[fichaActual.nombre]);
+    b.setAttribute('aria-pressed', String(tiene));
+    b.textContent = tiene ? '✓ Lo tengo' : 'Marcar como "Lo tengo"';
+    var n = fichaActual ? dupesDe(fichaActual) : 0;
+    document.getElementById('dupesValor').textContent = String(n);
+    document.getElementById('dupesMenos').disabled = !tiene || n <= 0;
+    document.getElementById('dupesMas').disabled = !tiene || n >= MAX_DUPES;
+    document.getElementById('dupesNota').textContent = tiene
+      ? 'Copias extra además de la primera. Máximo ' + MAX_DUPES + ' (las guías hablan de despertares de A0 a A6).'
+      : 'Marca el personaje como "Lo tengo" para anotar sus copias extra.';
   }
 
   function abrirFicha(p, disparador) {
@@ -1296,7 +1213,135 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
       tags.appendChild(s);
     });
     pintarEstadoFicha();
-    pintarEquipos();
+
+    var cont = document.getElementById('fichaContenido');
+    cont.innerHTML = '';
+    var f = fichas[p.nombre] || {};
+    var rolInfo = ROLES_INFO[p.rol];
+
+    /* Función en el equipo */
+    var fun = document.createElement('div');
+    fun.className = 'ficha-bloque';
+    var hf = document.createElement('h3');
+    hf.textContent = 'Función en el equipo';
+    fun.appendChild(hf);
+    if (f.resumen) {
+      var r = document.createElement('p');
+      r.textContent = f.resumen;
+      fun.appendChild(r);
+      if (f.puntos && f.puntos.length) {
+        var ul = document.createElement('ul');
+        f.puntos.forEach(function (t) {
+          var li = document.createElement('li');
+          li.textContent = t;
+          ul.appendChild(li);
+        });
+        fun.appendChild(ul);
+      }
+    } else {
+      if (rolInfo) {
+        var rg = document.createElement('p');
+        rg.textContent = p.rol + ' (' + rolInfo.subtitulo.toLowerCase() + '): ' + rolInfo.texto;
+        fun.appendChild(rg);
+      }
+      var nf = document.createElement('p');
+      nf.className = 'muted';
+      nf.textContent = 'Todavía no tengo una ficha detallada de este personaje: ninguna guía que consulté describe su kit con claridad. La iré completando.';
+      fun.appendChild(nf);
+    }
+    cont.appendChild(fun);
+
+    /* Equipamiento recomendado */
+    cont.appendChild(bloqueLista('Equipamiento recomendado', f.equipamiento, SIN_EQUIPAMIENTO));
+
+    /* Monsterlings recomendados: los del personaje y los generales de su rol */
+    var gen = monsterlingsGenerales(p);
+    var monst = document.createElement('div');
+    monst.className = 'ficha-bloque';
+    var hm = document.createElement('h3');
+    hm.textContent = 'Monsterlings recomendados';
+    monst.appendChild(hm);
+    if (f.monsterlings && f.monsterlings.length) {
+      var ulm = document.createElement('ul');
+      f.monsterlings.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ulm.appendChild(li);
+      });
+      monst.appendChild(ulm);
+    }
+    if (gen.length) {
+      var sub = document.createElement('p');
+      sub.className = 'muted sub';
+      sub.textContent = p.rol === 'Soporte' ? 'Generales para Soportes (Kaiden.gg):' : 'Generales para personajes de daño (Kaiden.gg):';
+      monst.appendChild(sub);
+      var ulg = document.createElement('ul');
+      gen.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ulg.appendChild(li);
+      });
+      monst.appendChild(ulg);
+    } else if (!(f.monsterlings && f.monsterlings.length)) {
+      var sm = document.createElement('p');
+      sm.className = 'muted';
+      sm.textContent = 'Su rol todavía no está confirmado, así que no puedo recomendar Monsterlings por rol.';
+      monst.appendChild(sm);
+    }
+    var pm = document.createElement('p');
+    pm.className = 'muted sub';
+    pm.textContent = AVISO_MONSTERLINGS;
+    monst.appendChild(pm);
+    cont.appendChild(monst);
+
+    /* Monstruo legendario recomendado */
+    cont.appendChild(bloqueLista('Monstruo legendario recomendado', f.legendario, SIN_LEGENDARIO));
+
+    /* Equipo recomendado */
+    var eq = document.createElement('div');
+    eq.className = 'ficha-bloque';
+    var he = document.createElement('h3');
+    he.textContent = 'Equipo recomendado';
+    eq.appendChild(he);
+    if (f.equipo && f.equipo.length) {
+      var ule = document.createElement('ul');
+      f.equipo.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ule.appendChild(li);
+      });
+      eq.appendChild(ule);
+    }
+    if (rolInfo) {
+      var sub2 = document.createElement('p');
+      sub2.className = 'muted sub';
+      sub2.textContent = 'Formatos de equipo según su rol (ZeroLuck):';
+      eq.appendChild(sub2);
+      var ulf = document.createElement('ul');
+      rolInfo.formatos.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ulf.appendChild(li);
+      });
+      eq.appendChild(ulf);
+    } else if (!(f.equipo && f.equipo.length)) {
+      var se = document.createElement('p');
+      se.className = 'muted';
+      se.textContent = 'Su rol todavía no está confirmado, así que no puedo sugerir un formato de equipo.';
+      eq.appendChild(se);
+    }
+    var pe = document.createElement('p');
+    pe.className = 'muted sub';
+    pe.textContent = AVISO_EQUIPO;
+    eq.appendChild(pe);
+    cont.appendChild(eq);
+
+    var nota = document.createElement('p');
+    nota.className = 'muted';
+    nota.style.marginTop = '12px';
+    nota.textContent = NOTA_FICHA;
+    cont.appendChild(nota);
+
     fichaEl.classList.add('show');
     document.getElementById('cerrarFicha').focus();
   }
@@ -1306,111 +1351,26 @@ footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 20p
   }
   document.getElementById('cerrarFicha').addEventListener('click', cerrarFicha);
   fichaEl.addEventListener('click', function (e) { if (e.target === fichaEl) cerrarFicha(); });
-
-  /* Casilla "Lo tengo" */
-  document.getElementById('fichaCasilla').addEventListener('click', function () {
+  document.getElementById('fichaPosesion').addEventListener('click', function () {
     if (!fichaActual) return;
-    var n = fichaActual.nombre;
-    if (poseidos[n]) {
-      delete poseidos[n];
-    } else {
-      poseidos[n] = true;
-      if (despertares[n] === undefined) despertares[n] = 0;
-      if (habilidades[n] === undefined) habilidades[n] = [1, 1, 1, 1];
-      guardarAlmacen('belana.despertar', despertares);
-      guardarAlmacen('belana.habilidades', habilidades);
-    }
-    guardarAlmacen('belana.poseidos', poseidos);
+    if (poseidos[fichaActual.nombre]) delete poseidos[fichaActual.nombre];
+    else poseidos[fichaActual.nombre] = true;
+    guardarPoseidos();
     pintarEstadoFicha();
     pintar();
   });
-
-  /* Despertar (0 a 6) y nivel de cada habilidad */
-  function cambiarDespertar(n) {
+  function cambiarDupes(delta) {
     if (!fichaActual || !poseidos[fichaActual.nombre]) return;
-    despertares[fichaActual.nombre] = n;
-    habilidades[fichaActual.nombre] = habsDe(fichaActual);
-    guardarAlmacen('belana.despertar', despertares);
-    guardarAlmacen('belana.habilidades', habilidades);
+    var n = Math.max(0, Math.min(MAX_DUPES, dupesDe(fichaActual) + delta));
+    dupes[fichaActual.nombre] = n;
+    guardarDupes();
     pintarEstadoFicha();
     pintar();
   }
-  function cambiarHab(i, delta) {
-    if (!fichaActual || !poseidos[fichaActual.nombre]) return;
-    var niveles = habsDe(fichaActual);
-    niveles[i] = Math.max(1, Math.min(maxHab(fichaActual), niveles[i] + delta));
-    habilidades[fichaActual.nombre] = niveles;
-    guardarAlmacen('belana.habilidades', habilidades);
-    pintarEstadoFicha();
-    pintar();
-  }
-
-  /* Equipo recomendado: elegir personaje para cada espacio y añadir equipos */
-  var pickerEl = document.getElementById('pickerEquipo');
-  var pickerPos = null;
-  function copiarFilas() {
-    return equiposDe(fichaActual.nombre).map(function (f) { return f.slice(); });
-  }
-  function asignarEspacio(nombre) {
-    if (!fichaActual || !pickerPos) return;
-    var filas = copiarFilas();
-    filas[pickerPos.i][pickerPos.j] = nombre;
-    guardarEquipos(fichaActual.nombre, filas);
-    cerrarPicker();
-    pintarEquipos();
-  }
-  function abrirPicker(i, j) {
-    pickerPos = { i: i, j: j };
-    var lista = document.getElementById('listaPicker');
-    lista.innerHTML = '';
-    var actual = equiposDe(fichaActual.nombre)[i][j];
-    personajes.forEach(function (p) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'elegible';
-      b.setAttribute('aria-pressed', String(p.nombre === actual));
-      var ico = document.createElement('div');
-      ico.className = 'ico';
-      ico.style.background = colorDe(p);
-      ico.textContent = p.nombre.charAt(0).toUpperCase();
-      var nom = document.createElement('div');
-      nom.textContent = p.nombre;
-      b.appendChild(ico);
-      b.appendChild(nom);
-      b.addEventListener('click', function () { asignarEspacio(p.nombre); });
-      lista.appendChild(b);
-    });
-    pickerEl.classList.add('show');
-    document.getElementById('cerrarPicker').focus();
-  }
-  function cerrarPicker() {
-    pickerEl.classList.remove('show');
-  }
-  document.getElementById('cerrarPicker').addEventListener('click', cerrarPicker);
-  document.getElementById('vaciarSlot').addEventListener('click', function () { asignarEspacio(''); });
-  pickerEl.addEventListener('click', function (e) { if (e.target === pickerEl) cerrarPicker(); });
-  document.getElementById('equipoMas').addEventListener('click', function () {
-    if (!fichaActual) return;
-    var filas = copiarFilas();
-    if (filas.length >= MAX_FILAS_EQUIPO) return;
-    filas.push(['', '', '']);
-    guardarEquipos(fichaActual.nombre, filas);
-    pintarEquipos();
-  });
-
-  document.getElementById('equipoMenos').addEventListener('click', function () {
-    if (!fichaActual) return;
-    var filas = copiarFilas();
-    if (filas.length <= 1) return;
-    filas.pop();
-    guardarEquipos(fichaActual.nombre, filas);
-    pintarEquipos();
-  });
-
+  document.getElementById('dupesMenos').addEventListener('click', function () { cambiarDupes(-1); });
+  document.getElementById('dupesMas').addEventListener('click', function () { cambiarDupes(1); });
   document.addEventListener('keydown', function (e) {
-    if (e.key !== 'Escape') return;
-    if (pickerEl.classList.contains('show')) cerrarPicker();
-    else if (fichaEl.classList.contains('show')) cerrarFicha();
+    if (e.key === 'Escape' && fichaEl.classList.contains('show')) cerrarFicha();
   });
 
   crearFiltros('filtrosRareza', rarezas, 'z');

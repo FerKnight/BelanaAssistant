@@ -1,17 +1,13 @@
 /* Service worker de Belana Assistant.
    Sube el número de VERSION cada vez que cambies index.html, los iconos o
    cualquier otro archivo, para que los dispositivos descarguen la versión nueva. */
-var VERSION = 'belana-assistant-v15';
+var VERSION = 'belana-assistant-v12';
 var ARCHIVOS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icon-192.png',
-  './icon-512.png',
-  './luchador.jpeg',
-  './destructor.jpeg',
-  './asesino.jpeg',
-  './soporte.jpeg'
+  './icon-512.png'
 ];
 
 self.addEventListener('install', function (e) {
@@ -21,7 +17,7 @@ self.addEventListener('install', function (e) {
       return Promise.all(ARCHIVOS.map(function (ruta) {
         return fetch(new Request(ruta, { cache: 'reload' })).then(function (resp) {
           if (resp.ok) return c.put(ruta, resp);
-        }).catch(function () { /* si un archivo no está, no se rompe la instalación */ });
+        });
       }));
     })
   );
