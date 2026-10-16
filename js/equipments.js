@@ -49,6 +49,7 @@ function renderEquipmentCards(equipmentsList) {
 
   return equipmentsList.map(e => {
     const hasSet4 = e.pieces === 4;
+    // Si es de 4 piezas muestra las 4, si es de 2 piezas muestra Casco y Pechera (o se pueden ajustar dinámicamente)
     const piecesList = hasSet4 ? ['casco', 'pechera', 'guantes', 'calzado'] : ['casco', 'pechera'];
 
     return `
@@ -86,11 +87,7 @@ function renderEquipmentCards(equipmentsList) {
               <strong class="text-purple-400 block text-[10px] uppercase font-mono tracking-wider mb-0.5">Conjunto de 4 piezas:</strong>
               <p class="text-slate-300 leading-relaxed">${e.set4}</p>
             </div>
-          ` : `
-            <div class="bg-slate-950/40 p-2 rounded-xl border border-slate-900 text-center">
-              <span class="text-[10px] text-slate-600 italic">No disponible para Conjunto de 4 piezas</span>
-            </div>
-          `}
+          ` : ''}
         </div>
       </div>`;
   }).join('');
