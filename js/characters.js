@@ -1,3 +1,19 @@
+function getObtainedCharacters() {
+  return JSON.parse(localStorage.getItem('belana_obtained_characters')) || [];
+}
+
+function toggleCharacterObtained(id, event) {
+  event.stopPropagation();
+  let obtained = getObtainedCharacters();
+  if (obtained.includes(id)) {
+    obtained = obtained.filter(charId => charId !== id);
+  } else {
+    obtained.push(id);
+  }
+  localStorage.setItem('belana_obtained_characters', JSON.stringify(obtained));
+  filterCharacters();
+}
+
 const CharactersSection = {
   render: () => {
     const obtained = getObtainedCharacters();
@@ -15,7 +31,6 @@ const CharactersSection = {
           </h2>
         </div>
 
-        <!-- CONTADOR DE COLECCIÓN -->
         <div class="flex items-center space-x-3 bg-slate-900 border border-brand-border px-4 py-2 rounded-xl">
           <i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i>
           <div>
@@ -27,7 +42,6 @@ const CharactersSection = {
         </div>
       </div>
 
-      <!-- PANEL DE FILTROS AVANZADOS COMBINABLES -->
       <div class="bg-brand-card border border-brand-border p-4 rounded-2xl space-y-4 shadow-lg">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -89,3 +103,83 @@ const CharactersSection = {
     </div>`;
   }
 };
+
+function renderCharacterCards(charactersList) {
+  if (charactersList.length === 0) {
+    return `<div class="col-span-full py-12 text-center text-slate-500 text-sm">No se encontraron personajes con los filtros seleccionados.</div>`;
+  }
+
+  const obtainedList = getObtainedCharacters();
+
+  return charactersList.map(c => {
+    const portrait = getPortraitPath(c.slug);
+    const isObtained = obtainedList.includes(c.id);
+
+    return `
+      <div onclick="openModal('${c.name}', '${c.element}', '${c.role}', '${c.skills}', '${c.desc}', '${portrait}')" 
+           class="bg-brand-card border ${isObtained ? 'border-cyan-500/70 bg-slate-900/80 shadow-lg shadow-cyan-500/5' : 'border-brand-border opacity-70 hover:opacity-100'} 
+                  p-4 rounded-xl hover:border-cyan-500/50 cursor-pointer transition flex space-x-4 items-center group relative overflow-hidden">
+        
+        <button onclick="toggleCharacterObtained('${c.id}', event)" title="${isObtained ? 'Marcar como no obtenido' : 'Marcar como obtenido'}" class="absolute top-2 right-2 p-1 z-10 rounded-lg hover:bg-slate-800 transition">
+          <i data-lucide="${isObtained ? 'check-square' : 'square'}" class="w-5 h-5 ${isObtained ? 'text-cyan-400' : 'text-slate-500'}"></i>
+        </button>
+
+        <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-16 h-16 rounded-xl object-cover border ${isObtained ? 'border-cyan-400' : 'border-slate-800'} group-hover:scale-105 transition flex-shrink-0 bg-slate-950">
+        
+        <div class="flex-grow min-w-0 pr-6">
+          <div class="flex justify-between items-start mb-1">
+            <h3 class="font-bold text-base ${isObtained ? 'text-white' : 'text-slate-400'} truncate">${c.name}</h3>
+            <span class="bg-indigo-500/20 text-indigo-300 text-[10px] px-2 py-0.5 rounded font-bold">${c.tier}</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-0.5">Elemento: <span class="text-cyan-400 font-semibold">${c.element}</span></p>
+          <p class="text-xs text-slate-400 truncate">Tipo: ${c.role}</p>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterCharacters() {
+  const nameInput = document.getElementById('filter-name');
+  const tierInput = document.getElementById('filter-tier');
+  const statusInput = document.getElementById('filter-obtained');
+
+  const nameQuery = nameInput ? nameInput.value.toLowerCase().trim() : '';
+  const tierQuery = tierInput ? tierInput.value : '';
+  const statusQuery = statusInput ? statusInput.value : '';
+
+  const selectedRoles = Array.from(document.querySelectorAll('.filter-role-cb:checked')).map(cb => cb.value);
+  const selectedElements = Array.from(document.querySelectorAll('.filter-elem-cb:checked')).map(cb => cb.value);
+
+  const obtainedList = getObtainedCharacters();
+
+  const filtered = DB.characters.filter(c => {
+    const matchesName = c.name.toLowerCase().includes(nameQuery);
+    const matchesTier = !tierQuery || c.tier === tierQuery;
+    const isObtained = obtainedList.includes(c.id);
+
+    const matchesStatus = !statusQuery || 
+      (statusQuery === 'obtained' && isObtained) || 
+      (statusQuery === 'missing' && !isObtained);
+
+    const matchesRole = selectedRoles.length === 0 || selectedRoles.includes(c.role);
+    const matchesElement = selectedElements.length === 0 || selectedElements.includes(c.element);
+
+    return matchesName && matchesTier && matchesStatus && matchesRole && matchesElement;
+  });
+
+  const gridEl = document.getElementById('characters-grid');
+  if (gridEl) {
+    gridEl.innerHTML = renderCharacterCards(filtered);
+  }
+
+  const total = DB.characters.length;
+  const count = obtainedList.length;
+  const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+  
+  const counterEl = document.getElementById('collection-counter');
+  if (counterEl) {
+    counterEl.innerHTML = `${count} / ${total} <span class="text-xs text-slate-400">(${percent}%)</span>`;
+  }
+
+  lucide.createIcons();
+}
