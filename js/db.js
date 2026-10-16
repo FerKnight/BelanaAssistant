@@ -31,18 +31,9 @@ const DB = {
     { id: 'c27', name: 'Vivian', slug: 'vivian', element: 'Fuego', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Soporte cálido con aumentos de daño de fuego al equipo.', desc: 'Personaje de elemento Fuego, rol Apoyo y grado 5 estrellas.' },
     { id: 'c28', name: 'Yeonhwa', slug: 'yeonhwa', element: 'Rayo', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Ataques sigilosos relámpago de daño crítico masivo.', desc: 'Personaje de elemento Rayo, rol Asesino y grado 5 estrellas.' }
   ],
-  equipments: [
-    { id: 'e1', name: 'Cañón Estelar C-01', slot: 'Arma', rarity: 'SSR', stat: '+25% Daño Cósmico', effect: 'Aumenta la velocidad de ataque un 15% al acertar golpes críticos.' },
-    { id: 'e2', name: 'Escudo de Plasma V2', slot: 'Defensa', rarity: 'SR', stat: '+18% DEF / +10% Vida', effect: 'Absorbe un pulso de daño equivalente al 12% de la vida máxima.' }
-  ],
-  monsterlings: [
-    { id: 'm1', name: 'Astro-Gato', habitat: 'Sector Nebulosa', type: 'Apoyo', passive: '+10% Regeneración de Energía', active: 'Cura un 8% de la vida máxima a todos los aliados en combate.' },
-    { id: 'm2', name: 'Drakon de Plasma', habitat: 'Núcleo Volcánico', type: 'Ataque', passive: '+20% Daño de Quemadura', active: 'Dispara un rayo concentrado de plasma en línea recta.' }
-  ],
-  artifacts: [
-    { id: 'a1', name: 'Set del Conquistador Estelar', type: 'Ofensivo', bonus2: '+15% Ataque Total', bonus4: '+35% Daño Crítico contra enemigos con debilidad elemental.' },
-    { id: 'a2', name: 'Set del Guardián Abisal', type: 'Defensivo', bonus2: '+20% Vida Máxima', bonus4: 'Otorga un escudo del 15% de vida al iniciar la batalla.' }
-  ]
+  equipments: [],
+  monsterlings: [],
+  artifacts: []
 };
 
 // Función para obtener la ruta normalizada de la imagen
