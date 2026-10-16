@@ -64,28 +64,22 @@ const CharactersSection = {
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-brand-border/50">
-          <div>
-            <label class="block text-[10px] font-semibold text-slate-400 mb-1">Tipo / Rol (Múltiple):</label>
-            <div class="flex flex-wrap gap-1.5" id="filter-roles-container">
-              ${['Asesino', 'Apoyo', 'Destructor', 'Luchador'].map(role => `
-                <label class="cursor-pointer bg-slate-900 border border-brand-border px-2 py-0.5 rounded text-[11px] font-medium text-slate-300 flex items-center space-x-1.5 hover:border-cyan-500/50 transition">
-                  <input type="checkbox" value="${role}" onchange="filterCharacters()" class="filter-role-cb rounded bg-slate-800 border-slate-700 text-cyan-500 w-3 h-3 focus:ring-0 focus:ring-offset-0">
-                  <span>${role}</span>
-                </label>
-              `).join('')}
-            </div>
+          <div class="flex flex-wrap gap-1.5 items-center" id="filter-roles-container">
+            ${['Asesino', 'Apoyo', 'Destructor', 'Luchador'].map(role => `
+              <label class="cursor-pointer bg-slate-900 border border-brand-border px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-300 flex items-center space-x-1.5 hover:border-cyan-500/50 transition">
+                <input type="checkbox" value="${role}" onchange="filterCharacters()" class="filter-role-cb rounded bg-slate-800 border-slate-700 text-cyan-500 w-3.5 h-3.5 focus:ring-0 focus:ring-offset-0">
+                <span>${role}</span>
+              </label>
+            `).join('')}
           </div>
 
-          <div>
-            <label class="block text-[10px] font-semibold text-slate-400 mb-1">Elemento (Múltiple):</label>
-            <div class="flex flex-wrap gap-1.5" id="filter-elements-container">
-              ${['Fuego', 'Rayo', 'Viento', 'Tierra', 'Hielo'].map(elem => `
-                <label class="cursor-pointer bg-slate-900 border border-brand-border px-2 py-0.5 rounded text-[11px] font-medium text-slate-300 flex items-center space-x-1.5 hover:border-cyan-500/50 transition">
-                  <input type="checkbox" value="${elem}" onchange="filterCharacters()" class="filter-elem-cb rounded bg-slate-800 border-slate-700 text-cyan-500 w-3 h-3 focus:ring-0 focus:ring-offset-0">
-                  <span>${elem}</span>
-                </label>
-              `).join('')}
-            </div>
+          <div class="flex flex-wrap gap-1.5 items-center" id="filter-elements-container">
+            ${['Fuego', 'Rayo', 'Viento', 'Tierra', 'Hielo'].map(elem => `
+              <label class="cursor-pointer bg-slate-900 border border-brand-border px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-300 flex items-center space-x-1.5 hover:border-cyan-500/50 transition">
+                <input type="checkbox" value="${elem}" onchange="filterCharacters()" class="filter-elem-cb rounded bg-slate-800 border-slate-700 text-cyan-500 w-3.5 h-3.5 focus:ring-0 focus:ring-offset-0">
+                <span>${elem}</span>
+              </label>
+            `).join('')}
           </div>
         </div>
       </div>
