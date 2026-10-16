@@ -40,9 +40,9 @@ const HomeSection = {
       </section>
 
       <!-- RESUMEN DE PROGRESO DE COLECCIÓN -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <section>
         <div onclick="navigate('characters')" class="bg-brand-card border border-brand-border hover:border-cyan-500/50 p-5 rounded-2xl cursor-pointer transition flex items-center justify-between">
-          <div class="space-y-1">
+          <div class="space-y-1 w-full max-w-xs">
             <span class="text-xs text-slate-400 font-medium">Personajes Obtenidos</span>
             <div class="text-2xl font-black text-white font-mono">${obtained.length} <span class="text-sm font-normal text-slate-500">/ ${total}</span></div>
             <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden mt-2 border border-slate-800">
@@ -51,17 +51,6 @@ const HomeSection = {
           </div>
           <div class="p-3 bg-cyan-500/10 text-cyan-400 rounded-xl">
             <i data-lucide="users" class="w-6 h-6"></i>
-          </div>
-        </div>
-
-        <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
-          <div class="space-y-1">
-            <span class="text-xs text-slate-400 font-medium">Base de Datos</span>
-            <div class="text-2xl font-black text-white font-mono">Mongil Star Dive</div>
-            <span class="text-xs text-cyan-400 font-mono">BelanaAssistant v1.7</span>
-          </div>
-          <div class="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl">
-            <i data-lucide="database" class="w-6 h-6"></i>
           </div>
         </div>
       </section>
