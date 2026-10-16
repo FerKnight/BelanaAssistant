@@ -40,8 +40,6 @@
   <!-- BARRA SUPERIOR (HEADER) -->
   <header class="bg-slate-900/90 backdrop-blur-md border-b border-brand-border sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      
-      <!-- Botón Abrir Menú Lateral -->
       <div class="flex items-center space-x-3">
         <button onclick="toggleDrawer(true)" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 transition active:scale-95">
           <i data-lucide="menu" class="w-6 h-6"></i>
@@ -60,7 +58,6 @@
         </div>
       </div>
 
-      <!-- Botón de Instalación PWA -->
       <button id="pwa-install-btn" class="hidden bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-2 shadow-lg shadow-cyan-500/20 transition transform active:scale-95">
         <i data-lucide="download" class="w-4 h-4"></i>
         <span class="hidden sm:inline">Instalar App</span>
@@ -68,7 +65,7 @@
     </div>
   </header>
 
-  <!-- MENÚ DESPLEGABLE LATERAL IZQUIERDO (DRAWER) -->
+  <!-- MENÚ DESPLEGABLE LATERAL (DRAWER) -->
   <div id="drawer-overlay" onclick="toggleDrawer(false)" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
   
   <aside id="drawer-menu" class="fixed top-0 left-0 h-full w-72 bg-slate-900 border-r border-brand-border z-50 -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-2xl">
@@ -87,7 +84,7 @@
     </div>
 
     <div class="p-4 border-t border-brand-border text-xs text-slate-500 text-center">
-      BelanaAssistant v1.4 • Database Updated
+      BelanaAssistant v1.6 • Separate Files
     </div>
   </aside>
 
@@ -107,19 +104,14 @@
       </h3>
 
       <div class="space-y-4">
-        <!-- Selección de Avatar Unificada -->
         <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-2">Seleccionar Avatar (Retratos de Personajes):</label>
+          <label class="block text-xs font-semibold text-slate-400 mb-2">Seleccionar Avatar:</label>
           <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-48 overflow-y-auto p-1 scrollbar-none" id="avatar-selector-container"></div>
         </div>
-
-        <!-- Nombre de Usuario -->
         <div>
           <label class="block text-xs font-semibold text-slate-400 mb-1">Nombre de Comandante:</label>
           <input type="text" id="input-username" class="w-full bg-slate-900 border border-brand-border rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-400">
         </div>
-
-        <!-- Código de Amistad -->
         <div>
           <label class="block text-xs font-semibold text-slate-400 mb-1">Código de Amistad:</label>
           <input type="text" id="input-friend-code" placeholder="EJ: MSD-9982-1042" class="w-full bg-slate-900 border border-brand-border rounded-xl px-3 py-2 text-sm font-mono text-cyan-400 focus:outline-none focus:border-cyan-400">
@@ -132,7 +124,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE DETALLES GENERAL -->
+  <!-- MODAL DE DETALLES -->
   <div id="modal-container" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-brand-card border border-brand-border rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
       <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50">
@@ -142,72 +134,23 @@
     </div>
   </div>
 
-  <!-- FOOTER PRINCIPAL -->
+  <!-- FOOTER -->
   <footer class="bg-slate-900 border-t border-brand-border py-6 text-center text-xs text-slate-500 space-y-1">
     <p>© 2026 BelanaAssistant. Guía PWA para Mongil Star Dive.</p>
     <p class="text-[11px] text-slate-600">Alojado gratuitamente en GitHub Pages.</p>
   </footer>
 
-  <!-- SCRIPT BASE DE DATOS Y LÓGICA MODULAR -->
+  <!-- CARGA DE ARCHIVOS JAVASCRIPT MODULARES -->
+  <script src="js/db.js"></script>
+  <script src="js/home.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/equipments.js"></script>
+  <script src="js/monsterlings.js"></script>
+  <script src="js/artifacts.js"></script>
+
+  <!-- LÓGICA PRINCIPAL Y CONTROLADOR DE LA APLICACIÓN -->
   <script>
-    // =======================================================
-    // 1. BASE DE DATOS MODULAR & RUTA UNIFICADA DE RETRATOS
-    // =======================================================
-    const DEFAULT_AVATAR = 'https://cdn-icons-png.flaticon.com/512/3659/3659738.png';
-
-    const DB = {
-      characters: [
-        { id: 'c1', name: 'Angel', slug: 'angel', element: 'Fuego', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Angel.', desc: 'Personaje de elemento Fuego, rol Asesino y grado 4 estrellas.' },
-        { id: 'c2', name: 'Benjamin', slug: 'benjamin', element: 'Rayo', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Benjamin.', desc: 'Personaje de elemento Rayo, rol Asesino y grado 4 estrellas.' },
-        { id: 'c3', name: 'Bonnie', slug: 'bonnie', element: 'Viento', tier: '4★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Bonnie.', desc: 'Personaje de elemento Viento, rol Apoyo y grado 4 estrellas.' },
-        { id: 'c4', name: 'Brisshell', slug: 'brisshell', element: 'Tierra', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Brisshell.', desc: 'Personaje de elemento Tierra, rol Asesino y grado 5 estrellas.' },
-        { id: 'c5', name: 'Cloud', slug: 'cloud', element: 'Hielo', tier: '4★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Cloud.', desc: 'Personaje de elemento Hielo, rol Destructor y grado 4 estrellas.' },
-        { id: 'c6', name: 'Daisy', slug: 'daisy', element: 'Tierra', tier: '4★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Daisy.', desc: 'Personaje de elemento Tierra, rol Apoyo y grado 4 estrellas.' },
-        { id: 'c7', name: 'Ellie', slug: 'ellie', element: 'Tierra', tier: '4★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Ellie.', desc: 'Personaje de elemento Tierra, rol Destructor y grado 4 estrellas.' },
-        { id: 'c8', name: 'Esther', slug: 'esther', element: 'Viento', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Esther.', desc: 'Personaje de elemento Viento, rol Asesino y grado 5 estrellas.' },
-        { id: 'c9', name: 'Flare', slug: 'flare', element: 'Fuego', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Flare.', desc: 'Personaje de elemento Fuego, rol Destructor y grado 5 estrellas.' },
-        { id: 'c10', name: 'Francis', slug: 'francis', element: 'Tierra', tier: '4★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Francis.', desc: 'Personaje de elemento Tierra, rol Apoyo y grado 4 estrellas.' },
-        { id: 'c11', name: 'Francis Verano', slug: 'francis_verano', element: 'Tierra', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Francis Verano.', desc: 'Personaje de elemento Tierra, rol Apoyo y grado 5 estrellas.' },
-        { id: 'c12', name: 'Gabi', slug: 'gabi', element: 'Tierra', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Gabi.', desc: 'Personaje de elemento Tierra, rol Luchador y grado 5 estrellas.' },
-        { id: 'c13', name: 'Isabella', slug: 'isabella', element: 'Hielo', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Isabella.', desc: 'Personaje de elemento Hielo, rol Destructor y grado 5 estrellas.' },
-        { id: 'c14', name: 'Jiwon', slug: 'jiwon', element: 'Viento', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Jiwon.', desc: 'Personaje de elemento Viento, rol Apoyo y grado 5 estrellas.' },
-        { id: 'c15', name: 'Leeho', slug: 'leeho', element: 'Fuego', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Leeho.', desc: 'Personaje de elemento Fuego, rol Asesino y grado 4 estrellas.' },
-        { id: 'c16', name: 'Mabel', slug: 'mabel', element: 'Rayo', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Mabel.', desc: 'Personaje de elemento Rayo, rol Destructor y grado 5 estrellas.' },
-        { id: 'c17', name: 'Mina', slug: 'mina', element: 'Fuego', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Mina.', desc: 'Personaje de elemento Fuego, rol Luchador y grado 5 estrellas.' },
-        { id: 'c18', name: 'Nagi', slug: 'nagi', element: 'Viento', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Nagi.', desc: 'Personaje de elemento Viento, rol Destructor y grado 5 estrellas.' },
-        { id: 'c19', name: 'Narae', slug: 'narae', element: 'Hielo', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Narae.', desc: 'Personaje de elemento Hielo, rol Apoyo y grado 5 estrellas.' },
-        { id: 'c20', name: 'Ophelia', slug: 'ophelia', element: 'Hielo', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Ophelia.', desc: 'Personaje de elemento Hielo, rol Luchador y grado 5 estrellas.' },
-        { id: 'c21', name: 'Pippa', slug: 'pippa', element: 'Rayo', tier: '4★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Pippa.', desc: 'Personaje de elemento Rayo, rol Luchador y grado 4 estrellas.' },
-        { id: 'c22', name: 'Rene', slug: 'rene', element: 'Fuego', tier: '4★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Rene.', desc: 'Personaje de elemento Fuego, rol Luchador y grado 4 estrellas.' },
-        { id: 'c23', name: 'Roc', slug: 'roc', element: 'Rayo', tier: '4★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Roc.', desc: 'Personaje de elemento Rayo, rol Luchador y grado 4 estrellas.' },
-        { id: 'c24', name: 'Rosaria', slug: 'rosaria', element: 'Fuego', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Rosaria.', desc: 'Personaje de elemento Fuego, rol Asesino y grado 5 estrellas.' },
-        { id: 'c25', name: 'Sylvia', slug: 'sylvia', element: 'Hielo', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Sylvia.', desc: 'Personaje de elemento Hielo, rol Asesino y grado 4 estrellas.' },
-        { id: 'c26', name: 'Tate', slug: 'tate', element: 'Viento', tier: '4★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Tate.', desc: 'Personaje de elemento Viento, rol Luchador y grado 4 estrellas.' },
-        { id: 'c27', name: 'Valerie', slug: 'valerie', element: 'Tierra', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Valerie.', desc: 'Personaje de elemento Tierra, rol Destructor y grado 5 estrellas.' },
-        { id: 'c28', name: 'William', slug: 'william', element: 'Viento', tier: '4★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de William.', desc: 'Personaje de elemento Viento, rol Destructor y grado 4 estrellas.' }
-      ],
-      equipments: [
-        { id: 'e1', name: 'Cañón Estelar C-01', slot: 'Arma', rarity: 'SSR', stat: '+25% Daño Cósmico', effect: 'Aumenta la velocidad de ataque un 15% al acertar golpes críticos.' },
-        { id: 'e2', name: 'Escudo de Plasma V2', slot: 'Defensa', rarity: 'SR', stat: '+18% DEF / +10% Vida', effect: 'Absorbe un pulso de daño equivalente al 12% de la vida máxima.' }
-      ],
-      monsterlings: [
-        { id: 'm1', name: 'Astro-Gato', habitat: 'Sector Nebulosa', type: 'Apoyo', passive: '+10% Regeneración de Energía', active: 'Cura un 8% de la vida máxima a todos los aliados en combate.' },
-        { id: 'm2', name: 'Drakon de Plasma', habitat: 'Núcleo Volcánico', type: 'Ataque', passive: '+20% Daño de Quemadura', active: 'Dispara un rayo concentrado de plasma en línea recta.' }
-      ],
-      artifacts: [
-        { id: 'a1', name: 'Set del Conquistador Estelar', type: 'Ofensivo', bonus2: '+15% Ataque Total', bonus4: '+35% Daño Crítico contra enemigos con debilidad elemental.' },
-        { id: 'a2', name: 'Set del Guardián Abisal', type: 'Defensivo', bonus2: '+20% Vida Máxima', bonus4: 'Otorga un escudo del 15% de vida al iniciar la batalla.' }
-      ]
-    };
-
-    // Ruta unificada para los retratos de los personajes
-    function getPortraitPath(slug) {
-      return `assets/images/Character_Portrait/portrait_${slug}_00.png`;
-    }
-
-    // =======================================================
-    // 2. GESTIÓN DE PERFIL DE USUARIO
-    // =======================================================
+    // Configuración inicial de usuario
     let userProfile = JSON.parse(localStorage.getItem('belana_user_profile')) || {
       name: 'Comandante',
       friendCode: 'MSD-7741-9023',
@@ -264,172 +207,15 @@
       alert('¡Código de amistad copiado al portapapeles!');
     }
 
-    // =======================================================
-    // 3. MÓDULOS DE NAVEGACIÓN
-    // =======================================================
+    // Módulos conectados
     const Modules = {
-      home: {
-        title: 'Inicio',
-        icon: 'home',
-        render: () => `
-          <div class="space-y-6">
-            <!-- TARJETA DE PERFIL DE USUARIO -->
-            <section class="bg-brand-card border border-brand-border rounded-2xl p-6 relative overflow-hidden shadow-xl">
-              <div class="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
-              
-              <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 relative z-10">
-                <div class="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 text-center sm:text-left">
-                  <div class="relative">
-                    <img src="${userProfile.avatar}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-20 h-20 rounded-2xl border-2 border-cyan-400 object-cover shadow-lg shadow-cyan-500/20">
-                    <button onclick="openProfileModal()" class="absolute -bottom-1 -right-1 bg-cyan-500 text-slate-950 p-1.5 rounded-lg hover:bg-cyan-400 transition">
-                      <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-                    </button>
-                  </div>
-                  <div>
-                    <span class="text-xs text-cyan-400 font-mono tracking-wider uppercase font-semibold">Perfil de Jugador</span>
-                    <h2 class="text-2xl font-black text-white">${userProfile.name}</h2>
-                    <div class="flex items-center justify-center sm:justify-start space-x-2 mt-1">
-                      <span class="bg-slate-900 border border-brand-border px-2.5 py-1 rounded-lg text-xs font-mono text-slate-300">
-                        ${userProfile.friendCode}
-                      </span>
-                      <button onclick="copyFriendCode()" title="Copiar Código" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 transition">
-                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <button onclick="openProfileModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-brand-border px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center space-x-2">
-                  <i data-lucide="user-cog" class="w-4 h-4 text-cyan-400"></i>
-                  <span>Editar Perfil</span>
-                </button>
-              </div>
-            </section>
-
-            <!-- HERO BANNER PRINCIPAL -->
-            <section class="relative overflow-hidden rounded-3xl border border-brand-border bg-gradient-to-br from-slate-900 via-slate-900/90 to-indigo-950/50 p-8 shadow-2xl">
-              <div class="relative z-10 max-w-2xl space-y-4">
-                <div class="inline-flex items-center space-x-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs px-3 py-1 rounded-full font-mono">
-                  <i data-lucide="bot" class="w-3.5 h-3.5"></i>
-                  <span>BelanaAssistant v1.4</span>
-                </div>
-                <h1 class="text-2xl md:text-4xl font-black text-white leading-tight">
-                  Explora las Estrellas en <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Mongil Star Dive</span>
-                </h1>
-                <p class="text-slate-400 text-sm">
-                  Usa el menú lateral para consultar personajes, equipamientos, monsterlings y conjuntos de artefactos.
-                </p>
-                <button onclick="toggleDrawer(true)" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center space-x-2 shadow-lg shadow-cyan-500/20">
-                  <i data-lucide="menu" class="w-4 h-4"></i>
-                  <span>Abrir Menú de Navegación</span>
-                </button>
-              </div>
-            </section>
-          </div>`
-      },
-      characters: {
-        title: 'Personajes',
-        icon: 'users',
-        render: () => `
-          <div class="space-y-6">
-            <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
-              <i data-lucide="users" class="text-cyan-400 w-6 h-6"></i>
-              <span>Directorio de Personajes</span>
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              ${DB.characters.map(c => {
-                const portrait = getPortraitPath(c.slug);
-                return `
-                  <div onclick="openModal('${c.name}', '${c.element}', '${c.role}', '${c.skills}', '${c.desc}', '${portrait}')" class="bg-brand-card border border-brand-border p-5 rounded-xl hover:border-cyan-500/50 cursor-pointer transition flex space-x-4 items-center">
-                    <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-16 h-16 rounded-xl object-cover border border-brand-border flex-shrink-0">
-                    <div class="flex-grow min-w-0">
-                      <div class="flex justify-between items-start mb-1">
-                        <h3 class="font-bold text-base text-white truncate">${c.name}</h3>
-                        <span class="bg-indigo-500/20 text-indigo-300 text-[10px] px-2 py-0.5 rounded font-bold">${c.tier}</span>
-                      </div>
-                      <p class="text-xs text-slate-400 mb-1">Elemento: <span class="text-cyan-400 font-semibold">${c.element}</span></p>
-                      <p class="text-xs text-slate-400 truncate">Tipo: ${c.role}</p>
-                    </div>
-                  </div>`;
-              }).join('')}
-            </div>
-          </div>`
-      },
-      equipments: {
-        title: 'Equipamientos',
-        icon: 'shield',
-        render: () => `
-          <div class="space-y-6">
-            <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
-              <i data-lucide="shield" class="text-cyan-400 w-6 h-6"></i>
-              <span>Catálogo de Equipamiento</span>
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              ${DB.equipments.map(e => `
-                <div class="bg-brand-card border border-brand-border p-5 rounded-xl space-y-2">
-                  <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-lg text-white">${e.name}</h3>
-                    <span class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded font-bold">${e.rarity}</span>
-                  </div>
-                  <p class="text-xs text-slate-400">Ranura: ${e.slot} | Atributo: <span class="text-amber-400 font-semibold">${e.stat}</span></p>
-                  <p class="text-sm text-slate-300">${e.effect}</p>
-                </div>
-              `).join('')}
-            </div>
-          </div>`
-      },
-      monsterlings: {
-        title: 'Monsterlings',
-        icon: 'bug',
-        render: () => `
-          <div class="space-y-6">
-            <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
-              <i data-lucide="bug" class="text-purple-400 w-6 h-6"></i>
-              <span>Guía de Monsterlings</span>
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              ${DB.monsterlings.map(m => `
-                <div class="bg-brand-card border border-brand-border p-5 rounded-xl space-y-2">
-                  <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-lg text-white">${m.name}</h3>
-                    <span class="bg-purple-500/20 text-purple-300 text-xs px-2 py-0.5 rounded">${m.type}</span>
-                  </div>
-                  <p class="text-xs text-slate-400">Hábitat: <span class="text-purple-400">${m.habitat}</span></p>
-                  <p class="text-xs text-slate-300"><strong class="text-cyan-400">Pasiva:</strong> ${m.passive}</p>
-                  <p class="text-xs text-slate-300"><strong class="text-indigo-400">Activa:</strong> ${m.active}</p>
-                </div>
-              `).join('')}
-            </div>
-          </div>`
-      },
-      artifacts: {
-        title: 'Artefactos',
-        icon: 'gem',
-        render: () => `
-          <div class="space-y-6">
-            <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
-              <i data-lucide="gem" class="text-amber-400 w-6 h-6"></i>
-              <span>Conjuntos de Artefactos</span>
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              ${DB.artifacts.map(a => `
-                <div class="bg-brand-card border border-brand-border p-5 rounded-xl space-y-3">
-                  <h3 class="font-bold text-lg text-white">${a.name}</h3>
-                  <span class="inline-block bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded">${a.type}</span>
-                  <div class="space-y-1 text-xs">
-                    <p class="text-slate-300"><strong class="text-amber-400">Efecto 2 Pcs:</strong> ${a.bonus2}</p>
-                    <p class="text-slate-300"><strong class="text-amber-400">Efecto 4 Pcs:</strong> ${a.bonus4}</p>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          </div>`
-      }
+      home: { title: 'Inicio', icon: 'home', render: HomeSection.render },
+      characters: { title: 'Personajes', icon: 'users', render: CharactersSection.render },
+      equipments: { title: 'Equipamientos', icon: 'shield', render: EquipmentsSection.render },
+      monsterlings: { title: 'Monsterlings', icon: 'bug', render: MonsterlingsSection.render },
+      artifacts: { title: 'Artefactos', icon: 'gem', render: ArtifactsSection.render }
     };
 
-    // =======================================================
-    // 4. ENRUTADOR Y CONTROL DE MENÚ
-    // =======================================================
     let activeModule = 'home';
 
     function toggleDrawer(open) {
@@ -467,7 +253,6 @@
       }).join('');
     }
 
-    // Modal Manager
     function openModal(title, element, role, skills, desc, portrait) {
       const modal = document.getElementById('modal-container');
       const content = document.getElementById('modal-content');
