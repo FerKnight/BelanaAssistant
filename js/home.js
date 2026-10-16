@@ -11,33 +11,46 @@ const HomeSection = {
         
         <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 relative z-10">
           <div class="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 text-center sm:text-left">
-            <div class="relative group cursor-pointer" onclick="openAvatarSelectorModal()" title="Cambiar Avatar">
-              <img src="${userProfile.avatar}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-20 h-20 rounded-2xl border-2 border-cyan-400 object-cover shadow-lg shadow-cyan-500/20 group-hover:border-cyan-300 transition">
-              <div class="absolute inset-0 bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                <i data-lucide="camera" class="w-5 h-5 text-white"></i>
+            
+            <!-- TOCAR FOTO DE AVATAR APERTURA DE SELECTOR -->
+            <div class="relative group cursor-pointer" onclick="openAvatarSelectorModal()" title="Toca para cambiar la foto de avatar">
+              <img src="${userProfile.avatar}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-20 h-20 rounded-2xl border-2 border-cyan-400 object-cover shadow-lg shadow-cyan-500/20 group-hover:border-cyan-300 transition bg-slate-950">
+              <div class="absolute inset-0 bg-black/50 rounded-2xl opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                <i data-lucide="camera" class="w-6 h-6 text-cyan-400"></i>
               </div>
             </div>
+
+            <!-- INFORMACIÓN EDITABLE DEL JUGADOR -->
             <div>
               <span class="text-xs text-cyan-400 font-mono tracking-wider uppercase font-semibold">Perfil de Jugador</span>
-              <h2 class="text-2xl font-black text-white">${userProfile.name}</h2>
-              <div class="flex items-center justify-center sm:justify-start space-x-2 mt-1">
-                <span class="bg-slate-900 border border-brand-border px-2.5 py-1 rounded-lg text-xs font-mono text-slate-300">
+              
+              <!-- NOMBRE EDITABLE -->
+              <div class="flex items-center justify-center sm:justify-start space-x-2 mt-0.5">
+                <h2 class="text-2xl font-black text-white leading-tight">${userProfile.name}</h2>
+                <button onclick="openEditNameModal()" title="Editar Nombre" class="p-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-cyan-400 transition">
+                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <!-- CÓDIGO DE AMISTAD EDITABLE -->
+              <div class="flex items-center justify-center sm:justify-start space-x-2 mt-2">
+                <span class="bg-slate-900 border border-brand-border px-2.5 py-1 rounded-lg text-xs font-mono text-cyan-400">
                   ${userProfile.friendCode}
                 </span>
-                <button onclick="copyFriendCode()" title="Copiar Código" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 transition">
+                <button onclick="openEditCodeModal()" title="Editar Código" class="p-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-cyan-400 transition">
+                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="copyFriendCode()" title="Copiar Código" class="p-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-cyan-400 transition">
                   <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
+
             </div>
           </div>
-
-          <button onclick="openProfileModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-brand-border px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center space-x-2">
-            <i data-lucide="user-cog" class="w-4 h-4 text-cyan-400"></i>
-            <span>Editar Perfil</span>
-          </button>
         </div>
       </section>
 
+      <!-- BARRA DE PROGRESO COLECCIÓN -->
       <section>
         <div onclick="navigate('characters')" class="bg-brand-card border border-brand-border hover:border-cyan-500/50 p-5 rounded-2xl cursor-pointer transition flex items-center justify-between">
           <div class="space-y-1 w-full max-w-xs">
