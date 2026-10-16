@@ -87,7 +87,7 @@
     </div>
 
     <div class="p-4 border-t border-brand-border text-xs text-slate-500 text-center">
-      BelanaAssistant v1.3 • Unified Portraits
+      BelanaAssistant v1.4 • Database Updated
     </div>
   </aside>
 
@@ -157,39 +157,34 @@
 
     const DB = {
       characters: [
-        {
-          id: 'c1',
-          name: 'Astraea',
-          slug: 'astraea',
-          element: 'Cósmico',
-          tier: 'S+',
-          role: 'DPS Principal',
-          weapon: 'Mano Celestial',
-          skills: 'Crea un agujero negro que atrae enemigos e inflige gran daño en área.',
-          desc: 'Comandante estelar capacitada para el control masivo de hordas.'
-        },
-        {
-          id: 'c2',
-          name: 'Ignis Prime',
-          slug: 'ignis_prime',
-          element: 'Plasma',
-          tier: 'S',
-          role: 'Sub-DPS',
-          weapon: 'Lanzallamas Plasma',
-          skills: 'Sobrecalienta armaduras enemigas causando explosiones en cadena.',
-          desc: 'Especialista en demolición y reducción de defensas pesadas.'
-        },
-        {
-          id: 'c3',
-          name: 'Nox',
-          slug: 'nox',
-          element: 'Vacío',
-          tier: 'A',
-          role: 'Soporte',
-          weapon: 'Orbe Abisal',
-          skills: 'Genera escudos protectores y amplifica el daño crítico aliado.',
-          desc: 'Entidad de las sombras que potencia la supervivencia del equipo.'
-        }
+        { id: 'c1', name: 'Angel', slug: 'angel', element: 'Fuego', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Angel.', desc: 'Personaje de elemento Fuego, rol Asesino y grado 4 estrellas.' },
+        { id: 'c2', name: 'Benjamin', slug: 'benjamin', element: 'Rayo', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Benjamin.', desc: 'Personaje de elemento Rayo, rol Asesino y grado 4 estrellas.' },
+        { id: 'c3', name: 'Bonnie', slug: 'bonnie', element: 'Viento', tier: '4★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Bonnie.', desc: 'Personaje de elemento Viento, rol Apoyo y grado 4 estrellas.' },
+        { id: 'c4', name: 'Brisshell', slug: 'brisshell', element: 'Tierra', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Brisshell.', desc: 'Personaje de elemento Tierra, rol Asesino y grado 5 estrellas.' },
+        { id: 'c5', name: 'Cloud', slug: 'cloud', element: 'Hielo', tier: '4★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Cloud.', desc: 'Personaje de elemento Hielo, rol Destructor y grado 4 estrellas.' },
+        { id: 'c6', name: 'Daisy', slug: 'daisy', element: 'Tierra', tier: '4★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Daisy.', desc: 'Personaje de elemento Tierra, rol Apoyo y grado 4 estrellas.' },
+        { id: 'c7', name: 'Ellie', slug: 'ellie', element: 'Tierra', tier: '4★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Ellie.', desc: 'Personaje de elemento Tierra, rol Destructor y grado 4 estrellas.' },
+        { id: 'c8', name: 'Esther', slug: 'esther', element: 'Viento', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Esther.', desc: 'Personaje de elemento Viento, rol Asesino y grado 5 estrellas.' },
+        { id: 'c9', name: 'Flare', slug: 'flare', element: 'Fuego', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Flare.', desc: 'Personaje de elemento Fuego, rol Destructor y grado 5 estrellas.' },
+        { id: 'c10', name: 'Francis', slug: 'francis', element: 'Tierra', tier: '4★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Francis.', desc: 'Personaje de elemento Tierra, rol Apoyo y grado 4 estrellas.' },
+        { id: 'c11', name: 'Francis Verano', slug: 'francis_verano', element: 'Tierra', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Francis Verano.', desc: 'Personaje de elemento Tierra, rol Apoyo y grado 5 estrellas.' },
+        { id: 'c12', name: 'Gabi', slug: 'gabi', element: 'Tierra', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Gabi.', desc: 'Personaje de elemento Tierra, rol Luchador y grado 5 estrellas.' },
+        { id: 'c13', name: 'Isabella', slug: 'isabella', element: 'Hielo', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Isabella.', desc: 'Personaje de elemento Hielo, rol Destructor y grado 5 estrellas.' },
+        { id: 'c14', name: 'Jiwon', slug: 'jiwon', element: 'Viento', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Jiwon.', desc: 'Personaje de elemento Viento, rol Apoyo y grado 5 estrellas.' },
+        { id: 'c15', name: 'Leeho', slug: 'leeho', element: 'Fuego', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Leeho.', desc: 'Personaje de elemento Fuego, rol Asesino y grado 4 estrellas.' },
+        { id: 'c16', name: 'Mabel', slug: 'mabel', element: 'Rayo', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Mabel.', desc: 'Personaje de elemento Rayo, rol Destructor y grado 5 estrellas.' },
+        { id: 'c17', name: 'Mina', slug: 'mina', element: 'Fuego', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Mina.', desc: 'Personaje de elemento Fuego, rol Luchador y grado 5 estrellas.' },
+        { id: 'c18', name: 'Nagi', slug: 'nagi', element: 'Viento', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Nagi.', desc: 'Personaje de elemento Viento, rol Destructor y grado 5 estrellas.' },
+        { id: 'c19', name: 'Narae', slug: 'narae', element: 'Hielo', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Habilidad especial de Narae.', desc: 'Personaje de elemento Hielo, rol Apoyo y grado 5 estrellas.' },
+        { id: 'c20', name: 'Ophelia', slug: 'ophelia', element: 'Hielo', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Ophelia.', desc: 'Personaje de elemento Hielo, rol Luchador y grado 5 estrellas.' },
+        { id: 'c21', name: 'Pippa', slug: 'pippa', element: 'Rayo', tier: '4★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Pippa.', desc: 'Personaje de elemento Rayo, rol Luchador y grado 4 estrellas.' },
+        { id: 'c22', name: 'Rene', slug: 'rene', element: 'Fuego', tier: '4★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Rene.', desc: 'Personaje de elemento Fuego, rol Luchador y grado 4 estrellas.' },
+        { id: 'c23', name: 'Roc', slug: 'roc', element: 'Rayo', tier: '4★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Roc.', desc: 'Personaje de elemento Rayo, rol Luchador y grado 4 estrellas.' },
+        { id: 'c24', name: 'Rosaria', slug: 'rosaria', element: 'Fuego', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Rosaria.', desc: 'Personaje de elemento Fuego, rol Asesino y grado 5 estrellas.' },
+        { id: 'c25', name: 'Sylvia', slug: 'sylvia', element: 'Hielo', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Habilidad especial de Sylvia.', desc: 'Personaje de elemento Hielo, rol Asesino y grado 4 estrellas.' },
+        { id: 'c26', name: 'Tate', slug: 'tate', element: 'Viento', tier: '4★', role: 'Luchador', weapon: 'Por definir', skills: 'Habilidad especial de Tate.', desc: 'Personaje de elemento Viento, rol Luchador y grado 4 estrellas.' },
+        { id: 'c27', name: 'Valerie', slug: 'valerie', element: 'Tierra', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de Valerie.', desc: 'Personaje de elemento Tierra, rol Destructor y grado 5 estrellas.' },
+        { id: 'c28', name: 'William', slug: 'william', element: 'Viento', tier: '4★', role: 'Destructor', weapon: 'Por definir', skills: 'Habilidad especial de William.', desc: 'Personaje de elemento Viento, rol Destructor y grado 4 estrellas.' }
       ],
       equipments: [
         { id: 'e1', name: 'Cañón Estelar C-01', slot: 'Arma', rarity: 'SSR', stat: '+25% Daño Cósmico', effect: 'Aumenta la velocidad de ataque un 15% al acertar golpes críticos.' },
@@ -205,7 +200,7 @@
       ]
     };
 
-    // Función auxiliar para obtener la ruta unificada del retrato de cada personaje
+    // Ruta unificada para los retratos de los personajes
     function getPortraitPath(slug) {
       return `assets/images/Character_Portrait/portrait_${slug}_00.png`;
     }
@@ -316,7 +311,7 @@
               <div class="relative z-10 max-w-2xl space-y-4">
                 <div class="inline-flex items-center space-x-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs px-3 py-1 rounded-full font-mono">
                   <i data-lucide="bot" class="w-3.5 h-3.5"></i>
-                  <span>BelanaAssistant v1.3</span>
+                  <span>BelanaAssistant v1.4</span>
                 </div>
                 <h1 class="text-2xl md:text-4xl font-black text-white leading-tight">
                   Explora las Estrellas en <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Mongil Star Dive</span>
@@ -353,7 +348,7 @@
                         <span class="bg-indigo-500/20 text-indigo-300 text-[10px] px-2 py-0.5 rounded font-bold">${c.tier}</span>
                       </div>
                       <p class="text-xs text-slate-400 mb-1">Elemento: <span class="text-cyan-400 font-semibold">${c.element}</span></p>
-                      <p class="text-xs text-slate-400 truncate">Rol: ${c.role}</p>
+                      <p class="text-xs text-slate-400 truncate">Tipo: ${c.role}</p>
                     </div>
                   </div>`;
               }).join('')}
@@ -481,7 +476,7 @@
           <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-16 h-16 rounded-xl object-cover border border-cyan-400 flex-shrink-0">
           <div>
             <h3 class="text-2xl font-bold text-white">${title}</h3>
-            <p class="text-xs text-cyan-400">Elemento: ${element} | Rol: ${role}</p>
+            <p class="text-xs text-cyan-400">Elemento: ${element} | Tipo: ${role}</p>
           </div>
         </div>
         <div class="space-y-3 text-sm text-slate-300">
