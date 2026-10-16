@@ -42,6 +42,7 @@ const CharactersSection = {
         </div>
       </div>
 
+      <!-- PANEL DE FILTROS AVANZADOS COMBINABLES -->
       <div class="bg-brand-card border border-brand-border p-4 rounded-2xl space-y-4 shadow-lg">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -97,7 +98,7 @@ const CharactersSection = {
         </div>
       </div>
 
-      <div id="characters-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div id="characters-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         ${renderCharacterCards(DB.characters)}
       </div>
     </div>`;
@@ -117,23 +118,29 @@ function renderCharacterCards(charactersList) {
 
     return `
       <div onclick="openModal('${c.name}', '${c.element}', '${c.role}', '${c.skills}', '${c.desc}', '${portrait}')" 
-           class="bg-brand-card border ${isObtained ? 'border-cyan-500/70 bg-slate-900/80 shadow-lg shadow-cyan-500/5' : 'border-brand-border opacity-70 hover:opacity-100'} 
-                  p-4 rounded-xl hover:border-cyan-500/50 cursor-pointer transition flex space-x-4 items-center group relative overflow-hidden">
+           class="bg-brand-card border ${isObtained ? 'border-cyan-500/70 bg-slate-900/80 shadow-md shadow-cyan-500/5' : 'border-brand-border opacity-70 hover:opacity-100'} 
+                  p-3 rounded-xl hover:border-cyan-500/50 cursor-pointer transition flex space-x-3 items-center group relative overflow-hidden">
         
-        <button onclick="toggleCharacterObtained('${c.id}', event)" title="${isObtained ? 'Marcar como no obtenido' : 'Marcar como obtenido'}" class="absolute top-2 right-2 p-1 z-10 rounded-lg hover:bg-slate-800 transition">
-          <i data-lucide="${isObtained ? 'check-square' : 'square'}" class="w-5 h-5 ${isObtained ? 'text-cyan-400' : 'text-slate-500'}"></i>
-        </button>
-
-        <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-16 h-16 rounded-xl object-cover border ${isObtained ? 'border-cyan-400' : 'border-slate-800'} group-hover:scale-105 transition flex-shrink-0 bg-slate-950">
-        
-        <div class="flex-grow min-w-0 pr-6">
-          <div class="flex justify-between items-start mb-1">
-            <h3 class="font-bold text-base ${isObtained ? 'text-white' : 'text-slate-400'} truncate">${c.name}</h3>
-            <span class="bg-indigo-500/20 text-indigo-300 text-[10px] px-2 py-0.5 rounded font-bold">${c.tier}</span>
-          </div>
-          <p class="text-xs text-slate-400 mb-0.5">Elemento: <span class="text-cyan-400 font-semibold">${c.element}</span></p>
-          <p class="text-xs text-slate-400 truncate">Tipo: ${c.role}</p>
+        <!-- ÍCONO DEL PERSONAJE CON EL GRADO EN LA ESQUINA SUPERIOR IZQUIERDA -->
+        <div class="relative flex-shrink-0">
+          <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-14 h-14 rounded-lg object-cover border ${isObtained ? 'border-cyan-400' : 'border-slate-800'} group-hover:scale-105 transition bg-slate-950">
+          <span class="absolute top-0.5 left-0.5 bg-black/80 text-amber-300 text-[9px] font-bold px-1 py-0.2 rounded backdrop-blur-sm border border-amber-500/30 leading-none">
+            ${c.tier}
+          </span>
         </div>
+        
+        <!-- INFORMACIÓN DEL PERSONAJE -->
+        <div class="flex-grow min-w-0 pr-6">
+          <h3 class="font-bold text-sm ${isObtained ? 'text-white' : 'text-slate-300'} truncate">${c.name}</h3>
+          <div class="text-xs text-slate-400 font-medium truncate mt-0.5">
+            <span class="text-cyan-400">${c.element}</span> • <span>${c.role}</span>
+          </div>
+        </div>
+
+        <!-- BOTÓN CHECK DE OBTENIDO -->
+        <button onclick="toggleCharacterObtained('${c.id}', event)" title="${isObtained ? 'Marcar como no obtenido' : 'Marcar como obtenido'}" class="absolute top-2 right-2 p-1 z-10 rounded-lg hover:bg-slate-800/80 transition">
+          <i data-lucide="${isObtained ? 'check-square' : 'square'}" class="w-4 h-4 ${isObtained ? 'text-cyan-400' : 'text-slate-500'}"></i>
+        </button>
       </div>`;
   }).join('');
 }
