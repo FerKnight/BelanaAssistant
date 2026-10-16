@@ -22,6 +22,11 @@ function getEquipmentIconPath(slug, piece) {
   return `assets/images/Equipment_Icon/${slug}_${piece}.png`;
 }
 
+function getMonsterlingIconPath(slug) {
+  if (!slug) return DEFAULT_AVATAR;
+  return `assets/images/Monsterling_Icon/monsterling_${slug}_00.png`;
+}
+
 const DB = {
   characters: typeof CHARACTERS_DB !== 'undefined' ? CHARACTERS_DB : [],
   equipments: typeof EQUIPMENTS_DB !== 'undefined' ? EQUIPMENTS_DB : [],
