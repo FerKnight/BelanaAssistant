@@ -57,7 +57,7 @@ function clearSlotItem(charId, slotKey, event) {
   openCharacterDetailModal(charId);
 }
 
-// Selector flotante para Equipamientos, Artefactos, Monsterlings y Personajes
+// Selector flotante con buscador en tiempo real para Equipamientos, Artefactos, Monsterlings y Personajes
 function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
   const character = DB.characters.find(c => c.id === charId);
   const modal = document.createElement('div');
@@ -68,7 +68,6 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
 
   if (slotType === 'equipment') {
     if (slotCategory === 'Artefacto') {
-      // Filtrar artefactos exclusivamente por el rol del personaje
       const charRole = character ? character.role.toLowerCase() : '';
       const artifactItems = DB.artifacts.filter(a => a.role.toLowerCase() === charRole);
 
@@ -77,7 +76,7 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
         : artifactItems.map(a => {
             const iconPath = getArtifactIconPath(a.name);
             return `
-            <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${a.name}', rarity:'${a.rarity}', role:'${a.role}'}); document.getElementById('selector-overlay').remove();"
+            <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${a.name}', rarity:'${a.rarity}', role:'${a.role}', image:'${iconPath}'}); document.getElementById('selector-overlay').remove();"
                  class="p-2 bg-slate-900 border border-brand-border rounded-xl hover:border-amber-400 cursor-pointer transition flex items-center space-x-2.5">
               <img src="${iconPath}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-9 h-9 rounded-lg object-cover bg-slate-950 p-0.5 border border-slate-800 flex-shrink-0">
               <div class="min-w-0 flex-1">
@@ -96,38 +95,37 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
           <div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">${itemsHtml}</div>
         </div>`;
     } else {
-      // Equipamiento regular (Casco, Pechera, Guantes, Calzado)
+      // Equipamiento regular (Casco, Pechera, Guantes, Calzado) con buscador integrado
       const equipItems = DB.equipments.filter(e => e.slot === slotCategory);
-      const itemsHtml = equipItems.length === 0 
-        ? `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay equipamientos registrados para: ${slotCategory}</p>`
-        : equipItems.map(e => `
-          <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${e.name}', rarity:'${e.rarity}', stat:'${e.stat}'}); document.getElementById('selector-overlay').remove();"
-               class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-cyan-400 cursor-pointer transition flex items-center justify-between">
-            <div>
-              <h4 class="text-xs font-bold text-white">${e.name}</h4>
-              <span class="text-[10px] text-slate-400">${e.stat}</span>
-            </div>
-            <span class="text-[10px] font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">${e.rarity}</span>
-          </div>`).join('');
-
-      bodyContent = `<div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">${itemsHtml}</div>`;
+      
+      bodyContent = `
+        <div class="space-y-2">
+          <div class="relative">
+            <i data-lucide="search" class="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-500"></i>
+            <input type="text" id="slot-equip-search" placeholder="Buscar ${slotCategory.toLowerCase()}..." oninput="filterSlotEquipments('${charId}', '${slotKey}', '${slotCategory}')" 
+                   class="w-full bg-slate-900 border border-brand-border rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
+          </div>
+          <div id="slot-equip-grid" class="grid grid-cols-1 gap-2 max-h-56 overflow-y-auto pr-1">
+            ${renderSlotEquipmentList(equipItems, charId, slotKey)}
+          </div>
+        </div>`;
     }
 
   } else if (slotType === 'monsterling') {
     const isLegendary = slotCategory === 'Legendario';
     const monsterItems = DB.monsterlings.filter(m => !isLegendary || m.rarity === 'Legendario');
-    const itemsHtml = monsterItems.length === 0
-      ? `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay Monsterlings ${isLegendary ? 'Legendarios' : ''} registrados.</p>`
-      : monsterItems.map(m => `
-        <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${m.name}', type:'${m.type}', rarity:'${m.rarity}'}); document.getElementById('selector-overlay').remove();"
-             class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-purple-400 cursor-pointer transition flex items-center justify-between">
-          <div>
-            <h4 class="text-xs font-bold text-white">${m.name}</h4>
-            <span class="text-[10px] text-purple-400">${m.type} • ${m.rarity}</span>
-          </div>
-        </div>`).join('');
-
-    bodyContent = `<div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">${itemsHtml}</div>`;
+    
+    bodyContent = `
+      <div class="space-y-2">
+        <div class="relative">
+          <i data-lucide="search" class="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-500"></i>
+          <input type="text" id="slot-monster-search" placeholder="Buscar monsterling..." oninput="filterSlotMonsters('${charId}', '${slotKey}', ${isLegendary})" 
+                 class="w-full bg-slate-900 border border-brand-border rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-400">
+        </div>
+        <div id="slot-monster-grid" class="grid grid-cols-1 gap-2 max-h-56 overflow-y-auto pr-1">
+          ${renderSlotMonsterList(monsterItems, charId, slotKey)}
+        </div>
+      </div>`;
 
   } else if (slotType === 'character') {
     bodyContent = `
@@ -168,6 +166,45 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
 
 let activeSlotElemFilter = '';
 
+function renderSlotEquipmentList(list, charId, slotKey) {
+  if (list.length === 0) return `<p class="text-center text-slate-500 text-xs py-4">No se encontraron equipamientos.</p>`;
+  return list.map(e => `
+    <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${e.name}', rarity:'${e.rarity}', stat:'${e.stat}'}); document.getElementById('selector-overlay').remove();"
+         class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-cyan-400 cursor-pointer transition flex items-center justify-between">
+      <div>
+        <h4 class="text-xs font-bold text-white">${e.name}</h4>
+        <span class="text-[10px] text-slate-400">${e.stat}</span>
+      </div>
+      <span class="text-[10px] font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">${e.rarity}</span>
+    </div>`).join('');
+}
+
+function filterSlotEquipments(charId, slotKey, slotCategory) {
+  const query = document.getElementById('slot-equip-search').value.toLowerCase().trim();
+  const list = DB.equipments.filter(e => e.slot === slotCategory && e.name.toLowerCase().includes(query));
+  const grid = document.getElementById('slot-equip-grid');
+  if (grid) grid.innerHTML = renderSlotEquipmentList(list, charId, slotKey);
+}
+
+function renderSlotMonsterList(list, charId, slotKey) {
+  if (list.length === 0) return `<p class="text-center text-slate-500 text-xs py-4">No se encontraron monsterlings.</p>`;
+  return list.map(m => `
+    <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${m.name}', type:'${m.type}', rarity:'${m.rarity}'}); document.getElementById('selector-overlay').remove();"
+         class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-purple-400 cursor-pointer transition flex items-center justify-between">
+      <div>
+        <h4 class="text-xs font-bold text-white">${m.name}</h4>
+        <span class="text-[10px] text-purple-400">${m.type} • ${m.rarity}</span>
+      </div>
+    </div>`).join('');
+}
+
+function filterSlotMonsters(charId, slotKey, isLegendary) {
+  const query = document.getElementById('slot-monster-search').value.toLowerCase().trim();
+  const list = DB.monsterlings.filter(m => (!isLegendary || m.rarity === 'Legendario') && m.name.toLowerCase().includes(query));
+  const grid = document.getElementById('slot-monster-grid');
+  if (grid) grid.innerHTML = renderSlotMonsterList(list, charId, slotKey);
+}
+
 function renderSlotCharacterList(list, charId, slotKey) {
   return list.map(c => {
     const portrait = getPortraitPath(c.slug);
@@ -200,7 +237,7 @@ function filterSlotCharacters(charId, slotKey, elemFilter = activeSlotElemFilter
   }
 }
 
-// Modal principal de detalles y builds del personaje
+// Modal principal de detalles y builds del personaje con nombres debajo de cada slot
 function openCharacterDetailModal(charId) {
   const character = DB.characters.find(c => c.id === charId);
   if (!character) return;
@@ -209,7 +246,7 @@ function openCharacterDetailModal(charId) {
   const buildData = getCharacterBuildData(charId);
   const equipCategories = ['Casco', 'Pechera', 'Guantes', 'Calzado', 'Artefacto'];
 
-  // 1. EQUIPAMIENTO RECOMENDADO (5to recuadro exclusivo Artefacto con borde dorado)
+  // 1. EQUIPAMIENTO RECOMENDADO (Casco, Pechera, Guantes, Calzado, Artefacto con nombres debajo)
   let equipmentsHtml = '';
   for (let r = 0; r < buildData.equipmentsRows; r++) {
     equipmentsHtml += `<div class="grid grid-cols-5 gap-2">`;
@@ -218,27 +255,31 @@ function openCharacterDetailModal(charId) {
       const category = equipCategories[c];
       const isGold = c === 4; // 5to recuadro Artefacto
       const selected = buildData[slotKey];
+      const itemName = selected ? selected.name : category;
 
       equipmentsHtml += `
-        <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'equipment', '${category}')"
-             class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${isGold ? 'border-amber-400/90 shadow-md shadow-amber-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-cyan-400 transition group relative mx-auto overflow-hidden">
-          ${selected ? `
-            ${isGold ? `<img src="${getArtifactIconPath(selected.name)}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full object-cover rounded-lg">` : `
-              <span class="text-[9px] font-bold text-cyan-300 truncate w-full text-center px-0.5 leading-tight">${selected.name}</span>
+        <div class="flex flex-col items-center">
+          <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'equipment', '${category}')"
+               class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${isGold ? 'border-amber-400/90 shadow-md shadow-amber-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-cyan-400 transition group relative overflow-hidden">
+            ${selected ? `
+              ${isGold && selected.image ? `<img src="${selected.image}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full object-cover rounded-lg">` : `
+                <span class="text-[9px] font-bold text-cyan-300 truncate w-full text-center px-0.5 leading-tight">${selected.name}</span>
+              `}
+              <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition z-10">
+                <i data-lucide="x" class="w-2.5 h-2.5"></i>
+              </button>
+            ` : `
+              <i data-lucide="plus" class="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transition"></i>
             `}
-            <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition z-10">
-              <i data-lucide="x" class="w-2.5 h-2.5"></i>
-            </button>
-          ` : `
-            <i data-lucide="plus" class="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transition"></i>
-            <span class="text-[8px] ${isGold ? 'text-amber-400 font-bold' : 'text-slate-500'} font-mono leading-none mt-0.5">${category}</span>
-          `}
+          </div>
+          <!-- Nombre debajo del recuadro -->
+          <span class="text-[9px] text-slate-400 mt-1 text-center truncate w-14 leading-tight" title="${itemName}">${itemName}</span>
         </div>`;
     }
     equipmentsHtml += `</div>`;
   }
 
-  // 2. MONSTERLINGS RECOMENDADOS (1ro dorado, 4to azul)
+  // 2. MONSTERLINGS RECOMENDADOS (con nombres debajo)
   let monsterlingsHtml = '';
   for (let r = 0; r < buildData.monsterlingsRows; r++) {
     monsterlingsHtml += `<div class="grid grid-cols-4 gap-2">`;
@@ -247,42 +288,46 @@ function openCharacterDetailModal(charId) {
       const isGold = c === 0;
       const isBlue = c === 3;
       const selected = buildData[slotKey];
+      const defaultMonsterLabel = isGold ? 'Top 1' : isBlue ? 'Legendario' : '#' + (c + 1);
+      const itemName = selected ? selected.name : defaultMonsterLabel;
 
       let borderColor = 'border-brand-border';
       if (isGold) borderColor = 'border-amber-400/90 shadow-md shadow-amber-500/10';
       if (isBlue) borderColor = 'border-blue-500/90 shadow-md shadow-blue-500/10';
 
       monsterlingsHtml += `
-        <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'monsterling', '${isBlue ? 'Legendario' : 'Normal'}')"
-             class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${borderColor} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-purple-400 transition group relative mx-auto">
-          ${selected ? `
-            <span class="text-[9px] font-bold text-purple-300 truncate w-full text-center px-0.5 leading-tight">${selected.name}</span>
-            <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition z-10">
-              <i data-lucide="x" class="w-2.5 h-2.5"></i>
-            </button>
-          ` : `
-            <i data-lucide="plus" class="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition"></i>
-            <span class="text-[8px] ${isGold ? 'text-amber-400 font-bold' : isBlue ? 'text-blue-400 font-bold' : 'text-slate-500'} font-mono leading-none mt-0.5">
-              ${isGold ? 'Top 1' : isBlue ? 'Legendario' : '#' + (c + 1)}
-            </span>
-          `}
+        <div class="flex flex-col items-center">
+          <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'monsterling', '${isBlue ? 'Legendario' : 'Normal'}')"
+               class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${borderColor} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-purple-400 transition group relative">
+            ${selected ? `
+              <span class="text-[9px] font-bold text-purple-300 truncate w-full text-center px-0.5 leading-tight">${selected.name}</span>
+              <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition z-10">
+                <i data-lucide="x" class="w-2.5 h-2.5"></i>
+              </button>
+            ` : `
+              <i data-lucide="plus" class="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition"></i>
+            `}
+          </div>
+          <!-- Nombre debajo del recuadro -->
+          <span class="text-[9px] text-slate-400 mt-1 text-center truncate w-14 leading-tight" title="${itemName}">${itemName}</span>
         </div>`;
     }
     monsterlingsHtml += `</div>`;
   }
 
-  // 3. EQUIPO RECOMENDADO
+  // 3. EQUIPO RECOMENDADO (con nombres debajo)
   let teamsHtml = '';
   for (let r = 0; r < buildData.teamsRows; r++) {
     teamsHtml += `<div class="grid grid-cols-3 gap-2">`;
     for (let c = 0; c < 3; c++) {
       const slotKey = `tm_${r}_${c}`;
       const selected = buildData[slotKey];
+      const itemName = selected ? selected.name : 'Slot ' + (c + 1);
 
       teamsHtml += `
-        <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'character', 'Personaje')"
-             class="flex flex-col items-center justify-center cursor-pointer group relative mx-auto">
-          <div class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border border-brand-border flex items-center justify-center p-0.5 hover:border-amber-400 transition relative overflow-hidden">
+        <div class="flex flex-col items-center">
+          <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'character', 'Personaje')"
+               class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border border-brand-border flex items-center justify-center p-0.5 cursor-pointer hover:border-amber-400 transition relative overflow-hidden group">
             ${selected ? `
               <img src="${getPortraitPath(selected.slug)}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full object-cover rounded-lg">
               <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute top-0.5 right-0.5 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition z-10">
@@ -292,9 +337,8 @@ function openCharacterDetailModal(charId) {
               <i data-lucide="user-plus" class="w-4 h-4 text-slate-500 group-hover:text-amber-400 transition"></i>
             `}
           </div>
-          <span class="text-[9px] font-semibold ${selected ? 'text-white' : 'text-slate-500'} truncate w-14 text-center mt-1 leading-none">
-            ${selected ? selected.name : 'Slot ' + (c + 1)}
-          </span>
+          <!-- Nombre debajo del recuadro -->
+          <span class="text-[9px] text-slate-400 mt-1 text-center truncate w-14 leading-tight" title="${itemName}">${itemName}</span>
         </div>`;
     }
     teamsHtml += `</div>`;
@@ -336,7 +380,7 @@ function openCharacterDetailModal(charId) {
             </button>
           </div>
         </div>
-        <div class="space-y-2">${equipmentsHtml}</div>
+        <div class="space-y-3">${equipmentsHtml}</div>
       </div>
 
       <!-- MONSTERLINGS RECOMENDADOS -->
@@ -356,7 +400,7 @@ function openCharacterDetailModal(charId) {
             </button>
           </div>
         </div>
-        <div class="space-y-2">${monsterlingsHtml}</div>
+        <div class="space-y-3">${monsterlingsHtml}</div>
       </div>
 
       <!-- EQUIPO RECOMENDADO -->
@@ -376,7 +420,7 @@ function openCharacterDetailModal(charId) {
             </button>
           </div>
         </div>
-        <div class="space-y-2">${teamsHtml}</div>
+        <div class="space-y-3">${teamsHtml}</div>
       </div>
     </div>`;
 
