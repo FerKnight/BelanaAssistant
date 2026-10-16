@@ -28,8 +28,8 @@ const EquipmentsSection = {
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Filtrar por Tipo de Conjunto:</label>
             <select id="filter-eq-type" onchange="filterEquipments()" class="w-full bg-slate-900 border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
               <option value="">Todos los equipamientos</option>
-              <option value="set2">Con Conjunto de 2</option>
-              <option value="set4">Con Conjunto de 4</option>
+              <option value="set2">Conjunto de 2 piezas</option>
+              <option value="set4">Conjunto de 4 piezas</option>
             </select>
           </div>
         </div>
@@ -48,18 +48,31 @@ function renderEquipmentCards(equipmentsList) {
   }
 
   return equipmentsList.map(e => {
-    const iconPath = typeof getEquipmentIconPath === 'function' ? getEquipmentIconPath(e.name) : DEFAULT_AVATAR;
-    const hasSet4 = e.set4 && e.set4.trim() !== '';
+    const hasSet4 = e.pieces === 4;
+    const piecesList = hasSet4 ? ['casco', 'pechera', 'guantes', 'calzado'] : ['casco', 'pechera'];
 
     return `
-      <div class="bg-brand-card border border-brand-border p-3 rounded-2xl flex flex-col justify-between space-y-3 hover:border-cyan-500/50 transition">
-        <div class="flex items-center space-x-3 border-b border-brand-border/60 pb-2.5">
-          <img src="${iconPath}" onerror="this.src='${DEFAULT_AVATAR}'" 
-               class="w-12 h-12 object-cover rounded-xl border border-slate-800 bg-slate-950 p-0.5 flex-shrink-0">
-          <div class="min-w-0 flex-1">
-            <h3 class="font-bold text-sm text-white truncate">${e.name}</h3>
-            <span class="text-[10px] text-cyan-400 font-mono">Set de Equipamiento</span>
+      <div class="bg-brand-card border border-brand-border p-3.5 rounded-2xl flex flex-col justify-between space-y-3 hover:border-cyan-500/50 transition">
+        <div class="flex items-center justify-between border-b border-brand-border/60 pb-2.5">
+          <div>
+            <h3 class="font-bold text-sm text-white">${e.name}</h3>
+            <span class="text-[10px] text-cyan-400 font-mono">Set de ${e.pieces} piezas</span>
           </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg ${hasSet4 ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30' : 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30'}">
+            ${hasSet4 ? '4 Piezas' : '2 Piezas'}
+          </span>
+        </div>
+
+        <!-- VISTA PREVIA DE LAS PIEZAS Y SUS ICONOS -->
+        <div class="grid grid-cols-${piecesList.length} gap-2 py-1">
+          ${piecesList.map(piece => {
+            const iconPath = getEquipmentIconPath(e.slug, piece);
+            return `
+              <div class="flex flex-col items-center bg-slate-900/90 border border-brand-border p-2 rounded-xl group hover:border-cyan-400 transition">
+                <img src="${iconPath}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-10 h-10 object-cover rounded-lg bg-slate-950 p-0.5 border border-slate-800 group-hover:scale-105 transition mb-1">
+                <span class="text-[9px] text-slate-300 font-semibold capitalize truncate w-full text-center">${piece}</span>
+              </div>`;
+          }).join('')}
         </div>
 
         <div class="space-y-2 text-xs">
@@ -97,9 +110,9 @@ function filterEquipments() {
     let matchesType = true;
 
     if (typeQuery === 'set2') {
-      matchesType = e.set2 && e.set2.trim() !== '';
+      matchesType = e.pieces === 2;
     } else if (typeQuery === 'set4') {
-      matchesType = e.set4 && e.set4.trim() !== '';
+      matchesType = e.pieces === 4;
     }
 
     return matchesName && matchesType;
