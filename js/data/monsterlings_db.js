@@ -1,0 +1,1 @@
+const MONSTERLINGS_DB = [];
