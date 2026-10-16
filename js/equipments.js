@@ -33,6 +33,19 @@ const EquipmentsSection = {
             </select>
           </div>
         </div>
+
+        <!-- FILTROS COMBINABLES POR ELEMENTO -->
+        <div class="pt-2 border-t border-brand-border/50">
+          <label class="block text-[11px] font-semibold text-slate-400 mb-1.5">Filtrar por Elemento (Combinables):</label>
+          <div class="flex flex-wrap gap-1.5 items-center" id="filter-eq-elements-container">
+            ${['Fuego', 'Hielo', 'Rayo', 'Viento', 'Tierra'].map(elem => `
+              <label class="cursor-pointer bg-slate-900 border border-brand-border px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-300 flex items-center space-x-1.5 hover:border-cyan-500/50 transition">
+                <input type="checkbox" value="${elem.toLowerCase()}" onchange="filterEquipments()" class="filter-eq-elem-cb rounded bg-slate-800 border-slate-700 text-cyan-500 w-3.5 h-3.5 focus:ring-0 focus:ring-offset-0">
+                <span>${elem}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
       </div>
 
       <div id="equipments-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -49,8 +62,7 @@ function renderEquipmentCards(equipmentsList) {
 
   return equipmentsList.map(e => {
     const hasSet4 = e.pieces === 4;
-    // Si es de 4 piezas muestra las 4, si es de 2 piezas muestra Casco y Pechera (o se pueden ajustar dinámicamente)
-    const piecesList = hasSet4 ? ['casco', 'pechera', 'guantes', 'calzado'] : ['casco', 'pechera'];
+    const piecesList = hasSet4 ? ['casco', 'pechera', 'guantes', 'calzado'] : (e.slotParts || ['casco', 'pechera']);
 
     return `
       <div class="bg-brand-card border border-brand-border p-3.5 rounded-2xl flex flex-col justify-between space-y-3 hover:border-cyan-500/50 transition">
@@ -100,6 +112,8 @@ function filterEquipments() {
   const nameQuery = nameInput ? nameInput.value.toLowerCase().trim() : '';
   const typeQuery = typeInput ? typeInput.value : '';
 
+  const selectedElements = Array.from(document.querySelectorAll('.filter-eq-elem-cb:checked')).map(cb => cb.value);
+
   const list = (typeof DB !== 'undefined' && DB.equipments) ? DB.equipments : [];
 
   const filtered = list.filter(e => {
@@ -112,7 +126,11 @@ function filterEquipments() {
       matchesType = e.pieces === 4;
     }
 
-    return matchesName && matchesType;
+    // Comprobar elementos (busca coincidencia en el nombre o descripción de los sets)
+    const combinedText = `${e.name} ${e.set2} ${e.set4}`.toLowerCase();
+    const matchesElement = selectedElements.length === 0 || selectedElements.some(elem => combinedText.includes(elem));
+
+    return matchesName && matchesType && matchesElement;
   });
 
   const gridEl = document.getElementById('equipments-grid');
