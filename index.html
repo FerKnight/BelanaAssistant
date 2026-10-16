@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BelanaAssistant - Mongil Star Dive</title>
+  <title>BelanaAssistant</title>
 
   <!-- Configuración PWA -->
   <link rel="manifest" href="manifest.json">
@@ -53,7 +53,6 @@
             <span class="font-extrabold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
               BelanaAssistant
             </span>
-            <span class="block text-[10px] text-cyan-400/80 font-mono tracking-widest uppercase">Mongil Star Dive Guide</span>
           </div>
         </div>
       </div>
@@ -84,7 +83,7 @@
     </div>
 
     <div class="p-4 border-t border-brand-border text-xs text-slate-500 text-center">
-      BelanaAssistant v1.6 • Separate Files
+      BelanaAssistant
     </div>
   </aside>
 
@@ -136,8 +135,7 @@
 
   <!-- FOOTER -->
   <footer class="bg-slate-900 border-t border-brand-border py-6 text-center text-xs text-slate-500 space-y-1">
-    <p>© 2026 BelanaAssistant. Guía PWA para Mongil Star Dive.</p>
-    <p class="text-[11px] text-slate-600">Alojado gratuitamente en GitHub Pages.</p>
+    <p>© 2026 BelanaAssistant.</p>
   </footer>
 
   <!-- CARGA DE ARCHIVOS JAVASCRIPT MODULARES -->
@@ -150,7 +148,6 @@
 
   <!-- LÓGICA PRINCIPAL Y CONTROLADOR DE LA APLICACIÓN -->
   <script>
-    // Configuración inicial de usuario
     let userProfile = JSON.parse(localStorage.getItem('belana_user_profile')) || {
       name: 'Comandante',
       friendCode: 'MSD-7741-9023',
@@ -207,7 +204,6 @@
       alert('¡Código de amistad copiado al portapapeles!');
     }
 
-    // Módulos conectados
     const Modules = {
       home: { title: 'Inicio', icon: 'home', render: HomeSection.render },
       characters: { title: 'Personajes', icon: 'users', render: CharactersSection.render },
@@ -278,10 +274,8 @@
       document.getElementById('modal-container').classList.add('hidden');
     }
 
-    // Inicialización
     navigate('home');
 
-    // Registro PWA & Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW Error:', err));
     }
