@@ -57,7 +57,7 @@ function clearSlotItem(charId, slotKey, event) {
   openCharacterDetailModal(charId);
 }
 
-// Selector flotante con buscador en tiempo real para Equipamientos, Artefactos, Monsterlings y Personajes
+// Selector flotante robusto con buscador y respaldo para Equipamientos, Artefactos y Monsterlings
 function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
   const character = DB.characters.find(c => c.id === charId);
   const modal = document.createElement('div');
@@ -69,20 +69,21 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
   if (slotType === 'equipment') {
     if (slotCategory === 'Artefacto') {
       const charRole = character ? character.role.toLowerCase() : '';
-      const artifactItems = DB.artifacts.filter(a => a.role.toLowerCase() === charRole);
+      let artifactItems = DB.artifacts ? DB.artifacts.filter(a => a.role && a.role.toLowerCase() === charRole) : [];
+      if (artifactItems.length === 0 && DB.artifacts) artifactItems = DB.artifacts;
 
       const itemsHtml = artifactItems.length === 0 
-        ? `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay artefactos registrados para el rol: <strong class="text-amber-400">${character ? character.role : ''}</strong></p>`
+        ? `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay artefactos registrados.</p>`
         : artifactItems.map(a => {
-            const iconPath = getArtifactIconPath(a.name);
+            const iconPath = typeof getArtifactIconPath === 'function' ? getArtifactIconPath(a.name) : (a.image || '');
             return `
-            <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${a.name}', rarity:'${a.rarity}', role:'${a.role}', image:'${iconPath}'}); document.getElementById('selector-overlay').remove();"
+            <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${a.name}', rarity:'${a.rarity || ''}', role:'${a.role || ''}', image:'${iconPath}'}); document.getElementById('selector-overlay').remove();"
                  class="p-2 bg-slate-900 border border-brand-border rounded-xl hover:border-amber-400 cursor-pointer transition flex items-center space-x-2.5">
-              <img src="${iconPath}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-9 h-9 rounded-lg object-cover bg-slate-950 p-0.5 border border-slate-800 flex-shrink-0">
+              <img src="${iconPath}" onerror="this.src='${typeof DEFAULT_AVATAR !== 'undefined' ? DEFAULT_AVATAR : ''}'" class="w-9 h-9 rounded-lg object-cover bg-slate-950 p-0.5 border border-slate-800 flex-shrink-0">
               <div class="min-w-0 flex-1">
                 <div class="flex items-center space-x-1.5 mb-0.5">
-                  <span class="text-[9px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded">${a.rarity}</span>
-                  <span class="text-[9px] text-cyan-400 font-medium uppercase">${a.role}</span>
+                  <span class="text-[9px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded">${a.rarity || 'Rareza'}</span>
+                  <span class="text-[9px] text-cyan-400 font-medium uppercase">${a.role || ''}</span>
                 </div>
                 <h4 class="text-xs font-bold text-white truncate">${a.name}</h4>
               </div>
@@ -91,12 +92,15 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
 
       bodyContent = `
         <div class="space-y-2">
-          <p class="text-[11px] text-slate-400">Artefactos compatibles con rol <span class="text-amber-400 font-bold">${character ? character.role : ''}</span>:</p>
+          <p class="text-[11px] text-slate-400">Selecciona un artefacto para <span class="text-amber-400 font-bold">${character ? character.role : ''}</span>:</p>
           <div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">${itemsHtml}</div>
         </div>`;
     } else {
-      // Equipamiento regular (Casco, Pechera, Guantes, Calzado) con buscador integrado
-      const equipItems = DB.equipments.filter(e => e.slot === slotCategory);
+      // Equipamiento regular (Casco, Pechera, Guantes, Calzado)
+      let equipItems = DB.equipments ? DB.equipments.filter(e => e.slot && e.slot.toLowerCase() === slotCategory.toLowerCase()) : [];
+      if (equipItems.length === 0 && DB.equipments) {
+        equipItems = DB.equipments;
+      }
       
       bodyContent = `
         <div class="space-y-2">
@@ -113,7 +117,8 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
 
   } else if (slotType === 'monsterling') {
     const isLegendary = slotCategory === 'Legendario';
-    const monsterItems = DB.monsterlings.filter(m => !isLegendary || m.rarity === 'Legendario');
+    let monsterItems = DB.monsterlings ? DB.monsterlings.filter(m => !isLegendary || m.rarity === 'Legendario') : [];
+    if (monsterItems.length === 0 && DB.monsterlings) monsterItems = DB.monsterlings;
     
     bodyContent = `
       <div class="space-y-2">
@@ -161,46 +166,50 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
     </div>`;
 
   document.body.appendChild(modal);
-  lucide.createIcons();
+  if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-let activeSlotElemFilter = '';
-
 function renderSlotEquipmentList(list, charId, slotKey) {
-  if (list.length === 0) return `<p class="text-center text-slate-500 text-xs py-4">No se encontraron equipamientos.</p>`;
+  if (!list || list.length === 0) return `<p class="text-center text-slate-500 text-xs py-4">No se encontraron equipamientos.</p>`;
   return list.map(e => `
-    <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${e.name}', rarity:'${e.rarity}', stat:'${e.stat}'}); document.getElementById('selector-overlay').remove();"
+    <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${e.name}', rarity:'${e.rarity || ''}', stat:'${e.stat || ''}'}); document.getElementById('selector-overlay').remove();"
          class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-cyan-400 cursor-pointer transition flex items-center justify-between">
       <div>
         <h4 class="text-xs font-bold text-white">${e.name}</h4>
-        <span class="text-[10px] text-slate-400">${e.stat}</span>
+        <span class="text-[10px] text-slate-400">${e.stat || ''}</span>
       </div>
-      <span class="text-[10px] font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">${e.rarity}</span>
+      <span class="text-[10px] font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">${e.rarity || ''}</span>
     </div>`).join('');
 }
 
 function filterSlotEquipments(charId, slotKey, slotCategory) {
   const query = document.getElementById('slot-equip-search').value.toLowerCase().trim();
-  const list = DB.equipments.filter(e => e.slot === slotCategory && e.name.toLowerCase().includes(query));
+  let list = DB.equipments ? DB.equipments.filter(e => (!e.slot || e.slot.toLowerCase() === slotCategory.toLowerCase()) && e.name.toLowerCase().includes(query)) : [];
+  if (list.length === 0 && DB.equipments) {
+    list = DB.equipments.filter(e => e.name.toLowerCase().includes(query));
+  }
   const grid = document.getElementById('slot-equip-grid');
   if (grid) grid.innerHTML = renderSlotEquipmentList(list, charId, slotKey);
 }
 
 function renderSlotMonsterList(list, charId, slotKey) {
-  if (list.length === 0) return `<p class="text-center text-slate-500 text-xs py-4">No se encontraron monsterlings.</p>`;
+  if (!list || list.length === 0) return `<p class="text-center text-slate-500 text-xs py-4">No se encontraron monsterlings.</p>`;
   return list.map(m => `
-    <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${m.name}', type:'${m.type}', rarity:'${m.rarity}'}); document.getElementById('selector-overlay').remove();"
+    <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${m.name}', type:'${m.type || ''}', rarity:'${m.rarity || ''}'}); document.getElementById('selector-overlay').remove();"
          class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-purple-400 cursor-pointer transition flex items-center justify-between">
       <div>
         <h4 class="text-xs font-bold text-white">${m.name}</h4>
-        <span class="text-[10px] text-purple-400">${m.type} • ${m.rarity}</span>
+        <span class="text-[10px] text-purple-400">${m.type || ''} • ${m.rarity || ''}</span>
       </div>
     </div>`).join('');
 }
 
 function filterSlotMonsters(charId, slotKey, isLegendary) {
   const query = document.getElementById('slot-monster-search').value.toLowerCase().trim();
-  const list = DB.monsterlings.filter(m => (!isLegendary || m.rarity === 'Legendario') && m.name.toLowerCase().includes(query));
+  let list = DB.monsterlings ? DB.monsterlings.filter(m => (!isLegendary || m.rarity === 'Legendario') && m.name.toLowerCase().includes(query)) : [];
+  if (list.length === 0 && DB.monsterlings) {
+    list = DB.monsterlings.filter(m => m.name.toLowerCase().includes(query));
+  }
   const grid = document.getElementById('slot-monster-grid');
   if (grid) grid.innerHTML = renderSlotMonsterList(list, charId, slotKey);
 }
