@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mongil-star-dive-v1';
+const CACHE_NAME = 'belana-assistant-v1';
 const ASSETS = [
   './',
   './index.html',
