@@ -14,6 +14,180 @@ function toggleCharacterObtained(id, event) {
   filterCharacters();
 }
 
+// Configuración predeterminada de slots dinámicos por personaje
+function getCharacterConfig(charId) {
+  const configs = JSON.parse(localStorage.getItem('belana_char_configs')) || {};
+  if (!configs[charId]) {
+    configs[charId] = {
+      equipmentsCount: 5,
+      monsterlingsCount: 4,
+      teamsCount: 3
+    };
+  }
+  return configs[charId];
+}
+
+function updateCharacterConfig(charId, key, delta) {
+  const configs = JSON.parse(localStorage.getItem('belana_char_configs')) || {};
+  if (!configs[charId]) {
+    configs[charId] = { equipmentsCount: 5, monsterlingsCount: 4, teamsCount: 3 };
+  }
+  const current = configs[charId][key];
+  if (current + delta >= 1 && current + delta <= 12) {
+    configs[charId][key] = current + delta;
+    localStorage.setItem('belana_char_configs', JSON.stringify(configs));
+    openCharacterDetailModal(charId);
+  }
+}
+
+// Abrir Modal de Detalles con Secciones Interactivas
+function openCharacterDetailModal(charId) {
+  const character = DB.characters.find(c => c.id === charId);
+  if (!character) return;
+
+  const portrait = getPortraitPath(character.slug);
+  const config = getCharacterConfig(charId);
+
+  // Generar HTML de slots de Equipamientos (El 5to con borde dorado)
+  let equipmentsHtml = '';
+  for (let i = 1; i <= config.equipmentsCount; i++) {
+    const isGold = i === 5;
+    equipmentsHtml += `
+      <div class="flex items-center justify-between p-2.5 bg-slate-900/90 rounded-xl border ${isGold ? 'border-amber-400/80 shadow-md shadow-amber-500/10' : 'border-brand-border'}">
+        <div class="flex items-center space-x-2">
+          <div class="w-7 h-7 rounded-lg bg-slate-800 border ${isGold ? 'border-amber-400 text-amber-300 font-bold' : 'border-slate-700 text-slate-400'} flex items-center justify-center text-xs">
+            #${i}
+          </div>
+          <span class="text-xs ${isGold ? 'text-amber-200 font-semibold' : 'text-slate-300'}">Slot Equipamiento ${i}</span>
+        </div>
+        <i data-lucide="plus-circle" class="w-4 h-4 text-slate-500 hover:text-cyan-400 cursor-pointer transition"></i>
+      </div>`;
+  }
+
+  // Generar HTML de slots de Monsterlings (El 1ero con borde rojo)
+  let monsterlingsHtml = '';
+  for (let i = 1; i <= config.monsterlingsCount; i++) {
+    const isRed = i === 1;
+    monsterlingsHtml += `
+      <div class="flex items-center justify-between p-2.5 bg-slate-900/90 rounded-xl border ${isRed ? 'border-red-500/80 shadow-md shadow-red-500/10' : 'border-brand-border'}">
+        <div class="flex items-center space-x-2">
+          <div class="w-7 h-7 rounded-lg bg-slate-800 border ${isRed ? 'border-red-500 text-red-400 font-bold' : 'border-slate-700 text-slate-400'} flex items-center justify-center text-xs">
+            #${i}
+          </div>
+          <span class="text-xs ${isRed ? 'text-red-200 font-semibold' : 'text-slate-300'}">Slot Monsterling ${i}</span>
+        </div>
+        <i data-lucide="plus-circle" class="w-4 h-4 text-slate-500 hover:text-purple-400 cursor-pointer transition"></i>
+      </div>`;
+  }
+
+  // Generar HTML de slots de Equipos (3 slots por defecto)
+  let teamsHtml = '';
+  for (let i = 1; i <= config.teamsCount; i++) {
+    teamsHtml += `
+      <div class="p-3 bg-slate-900/90 rounded-xl border border-brand-border space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-1.5">
+          <span class="font-semibold text-cyan-400">Composición #${i}</span>
+          <i data-lucide="users" class="w-3.5 h-3.5 text-slate-500"></i>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+          <div class="h-10 bg-slate-800 rounded-lg border border-dashed border-slate-700 flex items-center justify-center text-slate-500 text-[10px]">+</div>
+          <div class="h-10 bg-slate-800 rounded-lg border border-dashed border-slate-700 flex items-center justify-center text-slate-500 text-[10px]">+</div>
+          <div class="h-10 bg-slate-800 rounded-lg border border-dashed border-slate-700 flex items-center justify-center text-slate-500 text-[10px]">+</div>
+          <div class="h-10 bg-slate-800 rounded-lg border border-dashed border-slate-700 flex items-center justify-center text-slate-500 text-[10px]">+</div>
+        </div>
+      </div>`;
+  }
+
+  const modal = document.getElementById('modal-container');
+  const content = document.getElementById('modal-content');
+
+  content.innerHTML = `
+    <!-- CABECERA DE PERSONAJE -->
+    <div class="flex items-center space-x-3 pb-3 border-b border-brand-border">
+      <div class="relative w-14 h-14 flex-shrink-0">
+        <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full rounded-xl object-cover border border-cyan-400 bg-slate-950">
+        <span class="absolute top-0.5 left-0.5 bg-black/85 text-amber-300 text-[8px] font-bold px-1.5 py-0.5 rounded border border-amber-500/30 leading-none">
+          ${character.tier}
+        </span>
+      </div>
+      <div>
+        <h3 class="text-xl font-extrabold text-white leading-tight">${character.name}</h3>
+        <p class="text-xs text-cyan-400 font-medium mt-0.5">${character.element} • ${character.role}</p>
+      </div>
+    </div>
+
+    <div class="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
+      <!-- SECCIÓN: EQUIPAMIENTOS RECOMENDADOS -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-xl border border-brand-border">
+          <span class="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
+            <i data-lucide="shield" class="w-4 h-4 text-cyan-400"></i>
+            <span>Equipamientos recomendados</span>
+          </span>
+          <div class="flex items-center space-x-1">
+            <button onclick="updateCharacterConfig('${charId}', 'equipmentsCount', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+              <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+            </button>
+            <span class="text-xs font-mono font-bold text-cyan-400 px-1.5">${config.equipmentsCount}</span>
+            <button onclick="updateCharacterConfig('${charId}', 'equipmentsCount', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          ${equipmentsHtml}
+        </div>
+      </div>
+
+      <!-- SECCIÓN: MONSTERLINGS RECOMENDADOS -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-xl border border-brand-border">
+          <span class="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
+            <i data-lucide="bug" class="w-4 h-4 text-purple-400"></i>
+            <span>Monsterlings recomendados</span>
+          </span>
+          <div class="flex items-center space-x-1">
+            <button onclick="updateCharacterConfig('${charId}', 'monsterlingsCount', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+              <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+            </button>
+            <span class="text-xs font-mono font-bold text-purple-400 px-1.5">${config.monsterlingsCount}</span>
+            <button onclick="updateCharacterConfig('${charId}', 'monsterlingsCount', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          ${monsterlingsHtml}
+        </div>
+      </div>
+
+      <!-- SECCIÓN: EQUIPOS RECOMENDADOS -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-xl border border-brand-border">
+          <span class="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
+            <i data-lucide="users" class="w-4 h-4 text-amber-400"></i>
+            <span>Equipos recomendados</span>
+          </span>
+          <div class="flex items-center space-x-1">
+            <button onclick="updateCharacterConfig('${charId}', 'teamsCount', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+              <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+            </button>
+            <span class="text-xs font-mono font-bold text-amber-400 px-1.5">${config.teamsCount}</span>
+            <button onclick="updateCharacterConfig('${charId}', 'teamsCount', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+        <div class="space-y-2">
+          ${teamsHtml}
+        </div>
+      </div>
+    </div>`;
+
+  modal.classList.remove('hidden');
+  lucide.createIcons();
+}
+
 const CharactersSection = {
   render: () => {
     const obtained = getObtainedCharacters();
@@ -104,7 +278,7 @@ function renderCharacterCards(charactersList) {
     const isObtained = obtainedList.includes(c.id);
 
     return `
-      <div onclick="openModal('${c.name}', '${c.element}', '${c.role}', '${c.skills}', '${c.desc}', '${portrait}')" 
+      <div onclick="openCharacterDetailModal('${c.id}')" 
            class="bg-brand-card border ${isObtained ? 'border-cyan-500/60 bg-slate-900/90 shadow-md shadow-cyan-500/5' : 'border-brand-border opacity-75 hover:opacity-100'} 
                   p-3 rounded-2xl hover:border-cyan-500/40 cursor-pointer transition flex flex-col items-center text-center group relative aspect-square justify-between">
         
