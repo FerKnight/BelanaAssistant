@@ -1,12 +1,11 @@
 const HomeSection = {
   render: () => {
-    const obtained = JSON.parse(localStorage.getItem('belana_obtained_characters')) || [];
+    const obtained = getObtainedCharacters();
     const total = DB.characters.length;
     const percent = total > 0 ? Math.round((obtained.length / total) * 100) : 0;
 
     return `
     <div class="space-y-6">
-      <!-- TARJETA DE PERFIL -->
       <section class="bg-brand-card border border-brand-border rounded-2xl p-6 relative overflow-hidden shadow-xl">
         <div class="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
         
@@ -39,7 +38,6 @@ const HomeSection = {
         </div>
       </section>
 
-      <!-- RESUMEN DE PROGRESO DE COLECCIÓN -->
       <section>
         <div onclick="navigate('characters')" class="bg-brand-card border border-brand-border hover:border-cyan-500/50 p-5 rounded-2xl cursor-pointer transition flex items-center justify-between">
           <div class="space-y-1 w-full max-w-xs">
