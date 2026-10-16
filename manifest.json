@@ -1,6 +1,6 @@
 {
-  "short_name": "StarDivePWA",
-  "name": "Mongil Star Dive - Guía PWA",
+  "short_name": "BelanaApp",
+  "name": "BelanaAssistant - Mongil Star Dive Guide",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3659/3659738.png",
@@ -9,8 +9,8 @@
     }
   ],
   "start_url": "./index.html",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
   "display": "standalone",
   "orientation": "portrait"
 }
