@@ -87,7 +87,7 @@
     </div>
 
     <div class="p-4 border-t border-brand-border text-xs text-slate-500 text-center">
-      BelanaAssistant v1.1 • Profile System
+      BelanaAssistant v1.3 • Unified Portraits
     </div>
   </aside>
 
@@ -107,10 +107,10 @@
       </h3>
 
       <div class="space-y-4">
-        <!-- Selección de Avatar -->
+        <!-- Selección de Avatar Unificada -->
         <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-2">Seleccionar Avatar:</label>
-          <div class="grid grid-cols-4 gap-3" id="avatar-selector-container"></div>
+          <label class="block text-xs font-semibold text-slate-400 mb-2">Seleccionar Avatar (Retratos de Personajes):</label>
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-48 overflow-y-auto p-1 scrollbar-none" id="avatar-selector-container"></div>
         </div>
 
         <!-- Nombre de Usuario -->
@@ -151,19 +151,72 @@
   <!-- SCRIPT BASE DE DATOS Y LÓGICA MODULAR -->
   <script>
     // =======================================================
-    // 1. GESTIÓN DE PERFIL DE USUARIO & AVATARES
+    // 1. BASE DE DATOS MODULAR & RUTA UNIFICADA DE RETRATOS
     // =======================================================
-    const AVATARS = [
-      { id: 'av1', src: 'assets/avatars/avatar1.png', name: 'Astraea' },
-      { id: 'av2', src: 'assets/avatars/avatar2.png', name: 'Ignis' },
-      { id: 'av3', src: 'assets/avatars/avatar3.png', name: 'Nox' },
-      { id: 'av4', src: 'assets/avatars/avatar4.png', name: 'Piloto' }
-    ];
+    const DEFAULT_AVATAR = 'https://cdn-icons-png.flaticon.com/512/3659/3659738.png';
 
+    const DB = {
+      characters: [
+        {
+          id: 'c1',
+          name: 'Astraea',
+          slug: 'astraea',
+          element: 'Cósmico',
+          tier: 'S+',
+          role: 'DPS Principal',
+          weapon: 'Mano Celestial',
+          skills: 'Crea un agujero negro que atrae enemigos e inflige gran daño en área.',
+          desc: 'Comandante estelar capacitada para el control masivo de hordas.'
+        },
+        {
+          id: 'c2',
+          name: 'Ignis Prime',
+          slug: 'ignis_prime',
+          element: 'Plasma',
+          tier: 'S',
+          role: 'Sub-DPS',
+          weapon: 'Lanzallamas Plasma',
+          skills: 'Sobrecalienta armaduras enemigas causando explosiones en cadena.',
+          desc: 'Especialista en demolición y reducción de defensas pesadas.'
+        },
+        {
+          id: 'c3',
+          name: 'Nox',
+          slug: 'nox',
+          element: 'Vacío',
+          tier: 'A',
+          role: 'Soporte',
+          weapon: 'Orbe Abisal',
+          skills: 'Genera escudos protectores y amplifica el daño crítico aliado.',
+          desc: 'Entidad de las sombras que potencia la supervivencia del equipo.'
+        }
+      ],
+      equipments: [
+        { id: 'e1', name: 'Cañón Estelar C-01', slot: 'Arma', rarity: 'SSR', stat: '+25% Daño Cósmico', effect: 'Aumenta la velocidad de ataque un 15% al acertar golpes críticos.' },
+        { id: 'e2', name: 'Escudo de Plasma V2', slot: 'Defensa', rarity: 'SR', stat: '+18% DEF / +10% Vida', effect: 'Absorbe un pulso de daño equivalente al 12% de la vida máxima.' }
+      ],
+      monsterlings: [
+        { id: 'm1', name: 'Astro-Gato', habitat: 'Sector Nebulosa', type: 'Apoyo', passive: '+10% Regeneración de Energía', active: 'Cura un 8% de la vida máxima a todos los aliados en combate.' },
+        { id: 'm2', name: 'Drakon de Plasma', habitat: 'Núcleo Volcánico', type: 'Ataque', passive: '+20% Daño de Quemadura', active: 'Dispara un rayo concentrado de plasma en línea recta.' }
+      ],
+      artifacts: [
+        { id: 'a1', name: 'Set del Conquistador Estelar', type: 'Ofensivo', bonus2: '+15% Ataque Total', bonus4: '+35% Daño Crítico contra enemigos con debilidad elemental.' },
+        { id: 'a2', name: 'Set del Guardián Abisal', type: 'Defensivo', bonus2: '+20% Vida Máxima', bonus4: 'Otorga un escudo del 15% de vida al iniciar la batalla.' }
+      ]
+    };
+
+    // Función auxiliar para obtener la ruta unificada del retrato de cada personaje
+    function getPortraitPath(slug) {
+      return `assets/images/Character_Portrait/portrait_${slug}_00.png`;
+    }
+
+    // =======================================================
+    // 2. GESTIÓN DE PERFIL DE USUARIO
+    // =======================================================
     let userProfile = JSON.parse(localStorage.getItem('belana_user_profile')) || {
       name: 'Comandante',
       friendCode: 'MSD-7741-9023',
-      avatar: 'assets/avatars/avatar1.png'
+      avatar: getPortraitPath(DB.characters[0].slug)
     };
 
     let tempSelectedAvatar = userProfile.avatar;
@@ -195,16 +248,19 @@
 
     function renderAvatarSelector() {
       const container = document.getElementById('avatar-selector-container');
-      container.innerHTML = AVATARS.map(av => `
-        <div onclick="selectAvatar('${av.src}')" class="cursor-pointer border-2 ${tempSelectedAvatar === av.src ? 'border-cyan-400 bg-cyan-500/10' : 'border-brand-border bg-slate-900'} rounded-xl p-1.5 transition text-center group">
-          <img src="${av.src}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3659/3659738.png'" class="w-12 h-12 rounded-lg mx-auto object-cover mb-1 group-hover:scale-105 transition">
-          <span class="text-[10px] text-slate-400 block truncate">${av.name}</span>
-        </div>
-      `).join('');
+      container.innerHTML = DB.characters.map(char => {
+        const portrait = getPortraitPath(char.slug);
+        const isSelected = tempSelectedAvatar === portrait;
+        return `
+          <div onclick="selectAvatar('${portrait}')" class="cursor-pointer border-2 ${isSelected ? 'border-cyan-400 bg-cyan-500/10' : 'border-brand-border bg-slate-900'} rounded-xl p-1.5 transition text-center group">
+            <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-12 h-12 rounded-lg mx-auto object-cover mb-1 group-hover:scale-105 transition">
+            <span class="text-[10px] text-slate-300 font-semibold block truncate">${char.name}</span>
+          </div>`;
+      }).join('');
     }
 
-    function selectAvatar(src) {
-      tempSelectedAvatar = src;
+    function selectAvatar(path) {
+      tempSelectedAvatar = path;
       renderAvatarSelector();
     }
 
@@ -212,29 +268,6 @@
       navigator.clipboard.writeText(userProfile.friendCode);
       alert('¡Código de amistad copiado al portapapeles!');
     }
-
-    // =======================================================
-    // 2. BASE DE DATOS MODULAR
-    // =======================================================
-    const DB = {
-      characters: [
-        { id: 'c1', name: 'Astraea', element: 'Cósmico', tier: 'S+', role: 'DPS Principal', weapon: 'Mano Celestial', skills: 'Crea un agujero negro que atrae enemigos e inflige gran daño en área.', desc: 'Comandante estelar capacitada para el control masivo de hordas.' },
-        { id: 'c2', name: 'Ignis Prime', element: 'Plasma', tier: 'S', role: 'Sub-DPS', weapon: 'Lanzallamas Plasma', skills: 'Sobrecalienta armaduras enemigas causando explosiones en cadena.', desc: 'Especialista en demolición y reducción de defensas pesadas.' },
-        { id: 'c3', name: 'Nox', element: 'Vacío', tier: 'A', role: 'Soporte', weapon: 'Orbe Abisal', skills: 'Genera escudos protectores y amplifica el daño crítico aliado.', desc: 'Entidad de las sombras que potencia la supervivencia del equipo.' }
-      ],
-      equipments: [
-        { id: 'e1', name: 'Cañón Estelar C-01', slot: 'Arma', rarity: 'SSR', stat: '+25% Daño Cósmico', effect: 'Aumenta la velocidad de ataque un 15% al acertar golpes críticos.' },
-        { id: 'e2', name: 'Escudo de Plasma V2', slot: 'Defensa', rarity: 'SR', stat: '+18% DEF / +10% Vida', effect: 'Absorbe un pulso de daño equivalente al 12% de la vida máxima.' }
-      ],
-      monsterlings: [
-        { id: 'm1', name: 'Astro-Gato', habitat: 'Sector Nebulosa', type: 'Apoyo', passive: '+10% Regeneración de Energía', active: 'Cura un 8% de la vida máxima a todos los aliados en combate.' },
-        { id: 'm2', name: 'Drakon de Plasma', habitat: 'Núcleo Volcánico', type: 'Ataque', passive: '+20% Daño de Quemadura', active: 'Dispara un rayo concentrado de plasma en línea recta.' }
-      ],
-      artifacts: [
-        { id: 'a1', name: 'Set del Conquistador Estelar', type: 'Ofensivo', bonus2: '+15% Ataque Total', bonus4: '+35% Daño Crítico contra enemigos con debilidad elemental.' },
-        { id: 'a2', name: 'Set del Guardián Abisal', type: 'Defensivo', bonus2: '+20% Vida Máxima', bonus4: 'Otorga un escudo del 15% de vida al iniciar la batalla.' }
-      ]
-    };
 
     // =======================================================
     // 3. MÓDULOS DE NAVEGACIÓN
@@ -252,7 +285,7 @@
               <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 relative z-10">
                 <div class="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 text-center sm:text-left">
                   <div class="relative">
-                    <img src="${userProfile.avatar}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3659/3659738.png'" class="w-20 h-20 rounded-2xl border-2 border-cyan-400 object-cover shadow-lg shadow-cyan-500/20">
+                    <img src="${userProfile.avatar}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-20 h-20 rounded-2xl border-2 border-cyan-400 object-cover shadow-lg shadow-cyan-500/20">
                     <button onclick="openProfileModal()" class="absolute -bottom-1 -right-1 bg-cyan-500 text-slate-950 p-1.5 rounded-lg hover:bg-cyan-400 transition">
                       <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
                     </button>
@@ -283,7 +316,7 @@
               <div class="relative z-10 max-w-2xl space-y-4">
                 <div class="inline-flex items-center space-x-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs px-3 py-1 rounded-full font-mono">
                   <i data-lucide="bot" class="w-3.5 h-3.5"></i>
-                  <span>BelanaAssistant v1.1</span>
+                  <span>BelanaAssistant v1.3</span>
                 </div>
                 <h1 class="text-2xl md:text-4xl font-black text-white leading-tight">
                   Explora las Estrellas en <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Mongil Star Dive</span>
@@ -309,16 +342,21 @@
               <span>Directorio de Personajes</span>
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              ${DB.characters.map(c => `
-                <div onclick="openModal('${c.name}', '${c.element}', '${c.role}', '${c.skills}', '${c.desc}')" class="bg-brand-card border border-brand-border p-5 rounded-xl hover:border-cyan-500/50 cursor-pointer transition">
-                  <div class="flex justify-between items-start mb-2">
-                    <h3 class="font-bold text-lg text-white">${c.name}</h3>
-                    <span class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-0.5 rounded font-bold">${c.tier}</span>
-                  </div>
-                  <p class="text-xs text-slate-400 mb-2">Elemento: <span class="text-cyan-400">${c.element}</span> \vert{} Rol:${c.role}</p>
-                  <p class="text-sm text-slate-300 line-clamp-2">${c.desc}</p>
-                </div>
-              `).join('')}
+              ${DB.characters.map(c => {
+                const portrait = getPortraitPath(c.slug);
+                return `
+                  <div onclick="openModal('${c.name}', '${c.element}', '${c.role}', '${c.skills}', '${c.desc}', '${portrait}')" class="bg-brand-card border border-brand-border p-5 rounded-xl hover:border-cyan-500/50 cursor-pointer transition flex space-x-4 items-center">
+                    <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-16 h-16 rounded-xl object-cover border border-brand-border flex-shrink-0">
+                    <div class="flex-grow min-w-0">
+                      <div class="flex justify-between items-start mb-1">
+                        <h3 class="font-bold text-base text-white truncate">${c.name}</h3>
+                        <span class="bg-indigo-500/20 text-indigo-300 text-[10px] px-2 py-0.5 rounded font-bold">${c.tier}</span>
+                      </div>
+                      <p class="text-xs text-slate-400 mb-1">Elemento: <span class="text-cyan-400 font-semibold">${c.element}</span></p>
+                      <p class="text-xs text-slate-400 truncate">Rol: ${c.role}</p>
+                    </div>
+                  </div>`;
+              }).join('')}
             </div>
           </div>`
       },
@@ -435,12 +473,17 @@
     }
 
     // Modal Manager
-    function openModal(title, element, role, skills, desc) {
+    function openModal(title, element, role, skills, desc, portrait) {
       const modal = document.getElementById('modal-container');
       const content = document.getElementById('modal-content');
       content.innerHTML = `
-        <h3 class="text-2xl font-bold text-white mb-1">${title}</h3>
-        <p class="text-xs text-cyan-400 mb-3">Elemento: ${element} | Rol: ${role}</p>
+        <div class="flex items-center space-x-4 mb-3">
+          <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-16 h-16 rounded-xl object-cover border border-cyan-400 flex-shrink-0">
+          <div>
+            <h3 class="text-2xl font-bold text-white">${title}</h3>
+            <p class="text-xs text-cyan-400">Elemento: ${element} | Rol: ${role}</p>
+          </div>
+        </div>
         <div class="space-y-3 text-sm text-slate-300">
           <p><strong>Descripción:</strong> ${desc}</p>
           <div class="p-3 bg-slate-900 rounded-lg border border-slate-800">
