@@ -19,26 +19,17 @@ const CharactersSection = {
     const obtained = getObtainedCharacters();
     const total = DB.characters.length;
     const count = obtained.length;
-    const percent = total > 0 ? Math.round((count / total) * 100) : 0;
 
     return `
     <div class="space-y-6">
+      <!-- ENCABEZADO CON TÍTULO Y CONTADOR INTEGRADO -->
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-brand-card border border-brand-border p-4 rounded-2xl">
-        <div>
-          <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
-            <i data-lucide="users" class="text-cyan-400 w-6 h-6"></i>
-            <span>Personajes</span>
-          </h2>
-        </div>
-
-        <div class="flex items-center space-x-3 bg-slate-900 border border-brand-border px-4 py-2 rounded-xl">
-          <i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i>
-          <div>
-            <span class="text-xs text-slate-400 block font-medium">Progreso Colección</span>
-            <span id="collection-counter" class="text-sm font-bold text-cyan-400 font-mono">
-              ${count} / ${total} <span class="text-xs text-slate-400">(${percent}%)</span>
-            </span>
-          </div>
+        <div class="flex items-center space-x-3">
+          <i data-lucide="users" class="text-cyan-400 w-6 h-6"></i>
+          <h2 class="text-2xl font-bold text-white">Personajes</h2>
+          <span id="collection-counter" class="text-sm font-bold text-cyan-400 bg-slate-900 border border-brand-border px-3 py-1 rounded-xl font-mono">
+            ${count}/${total}
+          </span>
         </div>
       </div>
 
@@ -181,11 +172,10 @@ function filterCharacters() {
 
   const total = DB.characters.length;
   const count = obtainedList.length;
-  const percent = total > 0 ? Math.round((count / total) * 100) : 0;
   
   const counterEl = document.getElementById('collection-counter');
   if (counterEl) {
-    counterEl.innerHTML = `${count} / ${total} <span class="text-xs text-slate-400">(${percent}%)</span>`;
+    counterEl.textContent = `${count}/${total}`;
   }
 
   lucide.createIcons();
