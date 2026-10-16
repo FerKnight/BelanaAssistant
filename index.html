@@ -1,154 +1,332 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mongil Star Dive - Guía PWA</title>
-  <!-- Manifest & PWA Theme -->
+  <title>BelanaAssistant - Mongil Star Dive</title>
+
+  <!-- Configuración PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#090d16">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <!-- Tailwind CSS & Lucide Icons -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Estilos e Iconos -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
 
-  <!-- NAVBAR -->
-  <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800 sticky top-0 z-50">
-    <div class="max-w-6xl mx-mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <i data-lucide="sparkles" class="text-cyan-400"></i>
-        <span class="font-bold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500">
-          MONGIL STAR DIVE
-        </span>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#090d16',
+              card: '#111827',
+              border: '#1f293d',
+              cyan: '#06b6d4',
+              purple: '#8b5cf6',
+              gold: '#f59e0b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-brand-bg text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
+
+  <!-- BARRA SUPERIOR (HEADER) -->
+  <header class="bg-slate-900/90 backdrop-blur-md border-b border-brand-border sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      
+      <!-- Botón Abrir Menú Lateral -->
+      <div class="flex items-center space-x-3">
+        <button onclick="toggleDrawer(true)" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 transition active:scale-95">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        
+        <div class="flex items-center space-x-2 cursor-pointer" onclick="navigate('home')">
+          <div class="p-2 bg-gradient-to-tr from-cyan-500 to-purple-600 rounded-lg shadow-lg shadow-cyan-500/20">
+            <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+          </div>
+          <div>
+            <span class="font-extrabold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
+              BelanaAssistant
+            </span>
+            <span class="block text-[10px] text-cyan-400/80 font-mono tracking-widest uppercase">Mongil Star Dive Guide</span>
+          </div>
+        </div>
       </div>
-      <!-- Botón Instalar PWA -->
-      <button id="pwa-install-btn" class="hidden bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-sm flex items-center space-x-1 shadow-lg transition">
+
+      <!-- Botón de Instalación PWA -->
+      <button id="pwa-install-btn" class="hidden bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-2 shadow-lg shadow-cyan-500/20 transition transform active:scale-95">
         <i data-lucide="download" class="w-4 h-4"></i>
-        <span>Instalar App</span>
+        <span class="hidden sm:inline">Instalar App</span>
       </button>
     </div>
-    <!-- Navegación Modular (generada dinámicamente) -->
-    <nav id="nav-container" class="flex overflow-x-auto border-t border-slate-800/60 px-4 scrollbar-none"></nav>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL DINÁMICO -->
-  <main id="app-content" class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full"></main>
+  <!-- MENÚ DESPLEGABLE LATERAL IZQUIERDO (DRAWER) -->
+  <div id="drawer-overlay" onclick="toggleDrawer(false)" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  
+  <aside id="drawer-menu" class="fixed top-0 left-0 h-full w-72 bg-slate-900 border-r border-brand-border z-50 -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-2xl">
+    <div>
+      <!-- Header del Drawer -->
+      <div class="p-5 border-b border-brand-border flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="sparkles" class="w-5 h-5 text-cyan-400"></i>
+          <span class="font-bold text-white tracking-wide">Navegación</span>
+        </div>
+        <button onclick="toggleDrawer(false)" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
 
-  <!-- FOOTER -->
-  <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-    <p>© 2026 Mongil Star Dive Guide. PWA Modular para GitHub Pages.</p>
+      <!-- Opciones del Menú -->
+      <nav id="drawer-nav-container" class="p-4 space-y-2"></nav>
+    </div>
+
+    <!-- Footer del Drawer -->
+    <div class="p-4 border-t border-brand-border text-xs text-slate-500 text-center">
+      BelanaAssistant v1.0 • PWA Ready
+    </div>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL DINÁMICO -->
+  <main id="app-content" class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full"></main>
+
+  <!-- MODAL DE DETALLES -->
+  <div id="modal-container" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-brand-card border border-brand-border rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER PRINCIPAL -->
+  <footer class="bg-slate-900 border-t border-brand-border py-6 text-center text-xs text-slate-500 space-y-1">
+    <p>© 2026 BelanaAssistant. Guía PWA para Mongil Star Dive.</p>
+    <p class="text-[11px] text-slate-600">Alojado gratuitamente en GitHub Pages.</p>
   </footer>
 
-  <!-- SCRIPT MODULAR PRINCIPAL -->
+  <!-- SCRIPT BASE DE DATOS Y LÓGICA MODULAR -->
   <script>
     // =======================================================
-    // 1. BASE DE DATOS MODULAR (Modifica aquí para actualizar)
+    // 1. BASE DE DATOS MODULAR
     // =======================================================
     const DB = {
       characters: [
-        { id: 'c1', name: 'Astraea', element: 'Cosmic', tier: 'S+', role: 'DPS Principal', desc: 'Controla el flujo gravitacional para infligir gran daño en área.' },
-        { id: 'c2', name: 'Ignis Prime', element: 'Plasma', tier: 'S', role: 'Sub-DPS', desc: 'Aplica estados de combustión continuos a objetivos prioritarios.' },
-        { id: 'c3', name: 'Nox', element: 'Void', tier: 'A', role: 'Soporte', desc: 'Debilita escudos enemigos y amplifica el daño crítico del equipo.' }
+        { id: 'c1', name: 'Astraea', element: 'Cósmico', tier: 'S+', role: 'DPS Principal', weapon: 'Mano Celestial', skills: 'Crea un agujero negro que atrae enemigos e inflige gran daño en área.', desc: 'Comandante estelar capacitada para el control masivo de hordas.' },
+        { id: 'c2', name: 'Ignis Prime', element: 'Plasma', tier: 'S', role: 'Sub-DPS', weapon: 'Lanzallamas Plasma', skills: 'Sobrecalienta armaduras enemigas causando explosiones en cadena.', desc: 'Especialista en demolición y reducción de defensas pesadas.' },
+        { id: 'c3', name: 'Nox', element: 'Vacío', tier: 'A', role: 'Soporte', weapon: 'Orbe Abisal', skills: 'Genera escudos protectores y amplifica el daño crítico aliado.', desc: 'Entidad de las sombras que potencia la supervivencia del equipo.' }
       ],
-      calculator: { expBook: 1000, coinRate: 50 }
+      equipments: [
+        { id: 'e1', name: 'Cañón Estelar C-01', slot: 'Arma', rarity: 'SSR', stat: '+25% Daño Cósmico', effect: 'Aumenta la velocidad de ataque un 15% al acertar golpes críticos.' },
+        { id: 'e2', name: 'Escudo de Plasma V2', slot: 'Defensa', rarity: 'SR', stat: '+18% DEF / +10% Vida', effect: 'Absorbe un pulso de daño equivalente al 12% de la vida máxima.' }
+      ],
+      monsterlings: [
+        { id: 'm1', name: 'Astro-Gato', habitat: 'Sector Nebulosa', type: 'Apoyo', passive: '+10% Regeneración de Energía', active: 'Cura un 8% de la vida máxima a todos los aliados en combate.' },
+        { id: 'm2', name: 'Drakon de Plasma', habitat: 'Núcleo Volcánico', type: 'Ataque', passive: '+20% Daño de Quemadura', active: 'Dispara un rayo concentrado de plasma en línea recta.' }
+      ],
+      artifacts: [
+        { id: 'a1', name: 'Set del Conquistador Estelar', type: 'Ofensivo', bonus2: '+15% Ataque Total', bonus4: '+35% Daño Crítico contra enemigos con debilidad elemental.' },
+        { id: 'a2', name: 'Set del Guardián Abisal', type: 'Defensivo', bonus2: '+20% Vida Máxima', bonus4: 'Otorga un escudo del 15% de vida al iniciar la batalla.' }
+      ]
     };
 
     // =======================================================
-    // 2. REGISTRO DE MÓDULOS (Añade nuevas pestañas aquí)
+    // 2. MÓDULOS DE NAVEGACIÓN
     // =======================================================
     const Modules = {
       home: {
         title: 'Inicio',
         icon: 'home',
         render: () => `
-          <section class="space-y-6">
-            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 p-8 rounded-2xl text-center space-y-4">
-              <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">Guía Oficial Mongil Star Dive</h1>
-              <p class="text-slate-400 max-w-xl mx-auto">Explora unidades, estadísticas, combinaciones meta y calcula materiales de ascensión directamente en esta PWA.</p>
-            </div>
-          </section>`
+          <div class="space-y-8">
+            <section class="relative overflow-hidden rounded-3xl border border-brand-border bg-gradient-to-br from-slate-900 via-slate-900/90 to-indigo-950/50 p-8 md:p-12 shadow-2xl">
+              <div class="relative z-10 max-w-2xl space-y-4">
+                <div class="inline-flex items-center space-x-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs px-3 py-1 rounded-full font-mono">
+                  <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+                  <span>BelanaAssistant Activo</span>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-black text-white leading-tight">
+                  Bienvenido a <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Mongil Star Dive</span>
+                </h1>
+                <p class="text-slate-400 text-sm md:text-base">
+                  Usa el menú lateral desplegable a la izquierda para explorar la base de datos de unidades, equipamientos, monsterlings y conjuntos de artefactos.
+                </p>
+                <button onclick="toggleDrawer(true)" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center space-x-2 shadow-lg shadow-cyan-500/20">
+                  <i data-lucide="menu" class="w-4 h-4"></i>
+                  <span>Abrir Menú de Navegación</span>
+                </button>
+              </div>
+            </section>
+          </div>`
       },
       characters: {
         title: 'Personajes',
         icon: 'users',
         render: () => `
-          <section class="space-y-4">
-            <h2 class="text-xl font-bold text-cyan-400 mb-4">Unidades Registradas</h2>
+          <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
+              <i data-lucide="users" class="text-cyan-400 w-6 h-6"></i>
+              <span>Directorio de Personajes</span>
+            </h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               ${DB.characters.map(c => `
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-cyan-500/50 transition">
+                <div onclick="openModal('${c.name}', '${c.element}', '${c.role}', '${c.skills}', '${c.desc}')" class="bg-brand-card border border-brand-border p-5 rounded-xl hover:border-cyan-500/50 cursor-pointer transition">
                   <div class="flex justify-between items-start mb-2">
-                    <h3 class="font-bold text-lg">${c.name}</h3>
-                    <span class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-1 rounded font-bold">${c.tier}</span>
+                    <h3 class="font-bold text-lg text-white">${c.name}</h3>
+                    <span class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-0.5 rounded font-bold">${c.tier}</span>
                   </div>
                   <p class="text-xs text-slate-400 mb-2">Elemento: <span class="text-cyan-400">${c.element}</span> \vert{} Rol:${c.role}</p>
-                  <p class="text-sm text-slate-300">${c.desc}</p>
+                  <p class="text-sm text-slate-300 line-clamp-2">${c.desc}</p>
                 </div>
               `).join('')}
             </div>
-          </section>`
+          </div>`
       },
-      calc: {
-        title: 'Calculadora',
-        icon: 'calculator',
+      equipments: {
+        title: 'Equipamientos',
+        icon: 'shield',
         render: () => `
-          <section class="bg-slate-900 border border-slate-800 p-6 rounded-xl max-w-md mx-auto space-y-4">
-            <h2 class="text-xl font-bold text-cyan-400">Calculadora de Materiales</h2>
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Nivel Objetivo:</label>
-              <input id="target-lvl" type="number" value="50" min="1" max="100" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-cyan-400 font-bold" oninput="updateCalc()">
+          <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
+              <i data-lucide="shield" class="text-cyan-400 w-6 h-6"></i>
+              <span>Catálogo de Equipamiento</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${DB.equipments.map(e => `
+                <div class="bg-brand-card border border-brand-border p-5 rounded-xl space-y-2">
+                  <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-white">${e.name}</h3>
+                    <span class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded font-bold">${e.rarity}</span>
+                  </div>
+                  <p class="text-xs text-slate-400">Ranura: ${e.slot} | Atributo: <span class="text-amber-400 font-semibold">${e.stat}</span></p>
+                  <p class="text-sm text-slate-300">${e.effect}</p>
+                </div>
+              `).join('')}
             </div>
-            <div id="calc-result" class="bg-slate-950 p-4 rounded border border-slate-800 text-sm space-y-1"></div>
-          </section>`,
-        init: () => window.updateCalc()
-      }
-    };
-
-    // Funciones globales para módulos
-    window.updateCalc = () => {
-      const lvl = parseInt(document.getElementById('target-lvl')?.value || 0);
-      const res = document.getElementById('calc-result');
-      if (res) {
-        res.innerHTML = `
-          <p>Manuales de EXP: <span class="text-cyan-400 font-bold">${lvl * DB.calculator.expBook}</span></p>
-          <p>Monedas Necesarias: <span class="text-amber-400 font-bold">${lvl * DB.calculator.coinRate * 10}</span></p>`;
+          </div>`
+      },
+      monsterlings: {
+        title: 'Monsterlings',
+        icon: 'bug',
+        render: () => `
+          <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
+              <i data-lucide="bug" class="text-purple-400 w-6 h-6"></i>
+              <span>Guía de Monsterlings</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${DB.monsterlings.map(m => `
+                <div class="bg-brand-card border border-brand-border p-5 rounded-xl space-y-2">
+                  <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-white">${m.name}</h3>
+                    <span class="bg-purple-500/20 text-purple-300 text-xs px-2 py-0.5 rounded">${m.type}</span>
+                  </div>
+                  <p class="text-xs text-slate-400">Hábitat: <span class="text-purple-400">${m.habitat}</span></p>
+                  <p class="text-xs text-slate-300"><strong class="text-cyan-400">Pasiva:</strong> ${m.passive}</p>
+                  <p class="text-xs text-slate-300"><strong class="text-indigo-400">Activa:</strong> ${m.active}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>`
+      },
+      artifacts: {
+        title: 'Artefactos',
+        icon: 'gem',
+        render: () => `
+          <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
+              <i data-lucide="gem" class="text-amber-400 w-6 h-6"></i>
+              <span>Conjuntos de Artefactos</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${DB.artifacts.map(a => `
+                <div class="bg-brand-card border border-brand-border p-5 rounded-xl space-y-3">
+                  <h3 class="font-bold text-lg text-white">${a.name}</h3>
+                  <span class="inline-block bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded">${a.type}</span>
+                  <div class="space-y-1 text-xs">
+                    <p class="text-slate-300"><strong class="text-amber-400">Efecto 2 Pcs:</strong> ${a.bonus2}</p>
+                    <p class="text-slate-300"><strong class="text-amber-400">Efecto 4 Pcs:</strong> ${a.bonus4}</p>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>`
       }
     };
 
     // =======================================================
-    // 3. ENRUTADOR DINÁMICO
+    // 3. ENRUTADOR Y CONTROL DE MENÚ
     // =======================================================
     let activeModule = 'home';
-    function navigate(modKey) {
-      if (!Modules[modKey]) return;
-      activeModule = modKey;
-      document.getElementById('app-content').innerHTML = Modules[modKey].render();
-      if (Modules[modKey].init) Modules[modKey].init();
-      renderNav();
-      lucide.createIcons();
+
+    function toggleDrawer(open) {
+      const drawer = document.getElementById('drawer-menu');
+      const overlay = document.getElementById('drawer-overlay');
+      if (open) {
+        drawer.classList.remove('-translate-x-full');
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+      } else {
+        drawer.classList.add('-translate-x-full');
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+      }
     }
 
-    function renderNav() {
-      const container = document.getElementById('nav-container');
+    function navigate(key) {
+      if (!Modules[key]) return;
+      activeModule = key;
+      document.getElementById('app-content').innerHTML = Modules[key].render();
+      renderDrawerNav();
+      toggleDrawer(false);
+      lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderDrawerNav() {
+      const container = document.getElementById('drawer-nav-container');
       container.innerHTML = Object.keys(Modules).map(key => {
         const mod = Modules[key];
         const isActive = key === activeModule;
         return `
-          <button onclick="navigate('${key}')" class="flex items-center space-x-2 px-4 py-3 border-b-2 text-sm whitespace-nowrap transition ${isActive ? 'border-cyan-400 text-cyan-400 font-bold' : 'border-transparent text-slate-400 hover:text-slate-200'}">
-            <i data-lucide="${mod.icon}" class="w-4 h-4"></i>
+          <button onclick="navigate('${key}')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition ${isActive ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}">
+            <i data-lucide="${mod.icon}" class="w-5 h-5"></i>
             <span>${mod.title}</span>
           </button>`;
       }).join('');
     }
 
-    // Inicializar Navegación
+    // Modal Manager
+    function openModal(title, element, role, skills, desc) {
+      const modal = document.getElementById('modal-container');
+      const content = document.getElementById('modal-content');
+      content.innerHTML = `
+        <h3 class="text-2xl font-bold text-white mb-1">${title}</h3>
+        <p class="text-xs text-cyan-400 mb-3">Elemento: ${element} | Rol: ${role}</p>
+        <div class="space-y-3 text-sm text-slate-300">
+          <p><strong>Descripción:</strong> ${desc}</p>
+          <div class="p-3 bg-slate-900 rounded-lg border border-slate-800">
+            <strong class="text-indigo-400 block mb-1">Habilidad Especial:</strong>
+            ${skills}
+          </div>
+        </div>`;
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-container').classList.add('hidden');
+    }
+
+    // Inicialización
     navigate('home');
 
-    // =======================================================
-    // 4. REGISTRO PWA / SERVICE WORKER
-    // =======================================================
+    // Registro PWA & Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW Error:', err));
     }
@@ -158,11 +336,13 @@
       e.preventDefault();
       deferredPrompt = e;
       const btn = document.getElementById('pwa-install-btn');
-      btn.classList.remove('hidden');
-      btn.addEventListener('click', () => {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(() => btn.classList.add('hidden'));
-      });
+      if (btn) {
+        btn.classList.remove('hidden');
+        btn.addEventListener('click', () => {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(() => btn.classList.add('hidden'));
+        });
+      }
     });
   </script>
 </body>
