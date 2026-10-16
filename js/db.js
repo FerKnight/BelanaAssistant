@@ -17,16 +17,9 @@ function getArtifactIconPath(name) {
   return `assets/images/Artifact_Icon/artifact_${slug}_00.png`;
 }
 
-function getEquipmentIconPath(name) {
-  if (!name) return DEFAULT_AVATAR;
-  const slug = name.toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/ñ/g, 'n')
-    .replace(/[^a-z0-9]/g, '_')
-    .replace(/_+/g, '_')
-    .replace(/^_+|_+$/g, '');
-    
-  return `assets/images/Equipment_Icon/equipment_${slug}_00.png`;
+function getEquipmentIconPath(slug, piece) {
+  if (!slug || !piece) return DEFAULT_AVATAR;
+  return `assets/images/Equipment_Icon/${slug}_${piece}.png`;
 }
 
 const DB = {
