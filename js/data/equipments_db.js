@@ -1,0 +1,1 @@
+const EQUIPMENTS_DB = [];
