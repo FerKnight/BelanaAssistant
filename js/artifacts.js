@@ -1,5 +1,8 @@
 const ArtifactsSection = {
-  render: () => `
+  render: () => {
+    const list = (typeof DB !== 'undefined' && DB.artifacts) ? DB.artifacts : [];
+
+    return `
     <div class="space-y-4">
       <!-- ENCABEZADO -->
       <div class="flex items-center justify-between bg-brand-card border border-brand-border px-4 py-3 rounded-2xl">
@@ -7,12 +10,12 @@ const ArtifactsSection = {
           <i data-lucide="gem" class="text-amber-400 w-5 h-5"></i>
           <h2 class="text-xl font-bold text-white">Artefactos</h2>
           <span id="artifacts-counter" class="text-xs font-bold text-amber-400 bg-slate-900 border border-brand-border px-2.5 py-0.5 rounded-lg font-mono">
-            ${DB.artifacts ? DB.artifacts.length : 0}
+            ${list.length}
           </span>
         </div>
       </div>
 
-      <!-- FILTROS DE ARTEFACTOS -->
+      <!-- PANEL DE FILTROS -->
       <div class="bg-brand-card border border-brand-border p-3.5 rounded-2xl space-y-3 shadow-lg">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
@@ -45,33 +48,40 @@ const ArtifactsSection = {
         </div>
       </div>
 
-      <!-- CONTENEDOR DE TARJETAS -->
+      <!-- GRILLA DE ARTEFACTOS -->
       <div id="artifacts-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-        ${renderArtifactCards(DB.artifacts || [])}
+        ${renderArtifactCards(list)}
       </div>
-    </div>`
+    </div>`;
+  }
 };
 
 function renderArtifactCards(artifactsList) {
   if (!artifactsList || artifactsList.length === 0) {
-    return `<div class="col-span-full py-10 text-center text-slate-500 text-xs">No se encontraron artefactos con los filtros seleccionados.</div>`;
+    return `<div class="col-span-full py-10 text-center text-slate-500 text-xs">No se encontraron artefactos registrados o seleccionados.</div>`;
   }
 
   return artifactsList.map(a => {
     const is5Star = a.rarity === '5★';
+    // Obtener ruta de la imagen según el nombre del artefacto
+    const iconPath = typeof getArtifactIconPath === 'function' ? getArtifactIconPath(a.name) : '';
+
     return `
-      <div class="bg-brand-card border ${is5Star ? 'border-amber-500/50 bg-slate-900/90' : 'border-brand-border'} p-3 rounded-xl flex items-center justify-between space-x-3 group relative overflow-hidden hover:border-amber-400/80 transition">
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center space-x-2 mb-0.5">
-            <span class="bg-black/80 text-amber-300 text-[9px] font-bold px-1.5 py-0.5 rounded border border-amber-500/30 leading-none">
-              ${a.rarity}
-            </span>
-            <span class="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider">${a.role}</span>
-          </div>
-          <h3 class="font-bold text-xs text-white truncate group-hover:text-amber-300 transition">${a.name}</h3>
+      <div class="bg-brand-card border ${is5Star ? 'border-amber-500/50 bg-slate-900/90' : 'border-brand-border'} p-2.5 rounded-xl flex items-center space-x-3 group relative overflow-hidden hover:border-amber-400/80 transition">
+        
+        <!-- ICONO / IMAGEN DEL ARTEFACTO -->
+        <div class="relative w-12 h-12 flex-shrink-0">
+          <img src="${iconPath}" onerror="this.src='${typeof DEFAULT_AVATAR !== 'undefined' ? DEFAULT_AVATAR : 'https://cdn-icons-png.flaticon.com/512/3659/3659738.png'}'" 
+               class="w-full h-full object-cover rounded-lg border border-slate-800 bg-slate-950 p-0.5 group-hover:scale-105 transition">
+          <span class="absolute top-0.5 left-0.5 bg-black/85 text-amber-300 text-[8px] font-bold px-1 py-0.2 rounded border border-amber-500/30 leading-none">
+            ${a.rarity}
+          </span>
         </div>
-        <div class="p-2 bg-slate-800/80 rounded-lg text-amber-400 border border-slate-700/50 flex-shrink-0">
-          <i data-lucide="gem" class="w-4 h-4"></i>
+
+        <!-- INFORMACIÓN DEL ARTEFACTO -->
+        <div class="min-w-0 flex-1">
+          <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-wider block mb-0.5">${a.role}</span>
+          <h3 class="font-bold text-xs text-white truncate leading-tight group-hover:text-amber-300 transition">${a.name}</h3>
         </div>
       </div>`;
   }).join('');
@@ -86,7 +96,9 @@ function filterArtifacts() {
 
   const selectedRoles = Array.from(document.querySelectorAll('.filter-art-role-cb:checked')).map(cb => cb.value.toLowerCase());
 
-  const filtered = DB.artifacts.filter(a => {
+  const list = (typeof DB !== 'undefined' && DB.artifacts) ? DB.artifacts : [];
+
+  const filtered = list.filter(a => {
     const matchesName = a.name.toLowerCase().includes(nameQuery);
     const matchesRarity = !rarityQuery || a.rarity === rarityQuery;
     const matchesRole = selectedRoles.length === 0 || selectedRoles.includes(a.role.toLowerCase());
@@ -104,5 +116,7 @@ function filterArtifacts() {
     counterEl.textContent = filtered.length;
   }
 
-  lucide.createIcons();
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 }
