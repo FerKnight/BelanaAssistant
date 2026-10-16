@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mongil Star Dive - Guía PWA</title>
+  <!-- Manifest & PWA Theme -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
+
+  <!-- NAVBAR -->
+  <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800 sticky top-0 z-50">
+    <div class="max-w-6xl mx-mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <i data-lucide="sparkles" class="text-cyan-400"></i>
+        <span class="font-bold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500">
+          MONGIL STAR DIVE
+        </span>
+      </div>
+      <!-- Botón Instalar PWA -->
+      <button id="pwa-install-btn" class="hidden bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-sm flex items-center space-x-1 shadow-lg transition">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        <span>Instalar App</span>
+      </button>
+    </div>
+    <!-- Navegación Modular (generada dinámicamente) -->
+    <nav id="nav-container" class="flex overflow-x-auto border-t border-slate-800/60 px-4 scrollbar-none"></nav>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL DINÁMICO -->
+  <main id="app-content" class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full"></main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    <p>© 2026 Mongil Star Dive Guide. PWA Modular para GitHub Pages.</p>
+  </footer>
+
+  <!-- SCRIPT MODULAR PRINCIPAL -->
+  <script>
+    // =======================================================
+    // 1. BASE DE DATOS MODULAR (Modifica aquí para actualizar)
+    // =======================================================
+    const DB = {
+      characters: [
+        { id: 'c1', name: 'Astraea', element: 'Cosmic', tier: 'S+', role: 'DPS Principal', desc: 'Controla el flujo gravitacional para infligir gran daño en área.' },
+        { id: 'c2', name: 'Ignis Prime', element: 'Plasma', tier: 'S', role: 'Sub-DPS', desc: 'Aplica estados de combustión continuos a objetivos prioritarios.' },
+        { id: 'c3', name: 'Nox', element: 'Void', tier: 'A', role: 'Soporte', desc: 'Debilita escudos enemigos y amplifica el daño crítico del equipo.' }
+      ],
+      calculator: { expBook: 1000, coinRate: 50 }
+    };
+
+    // =======================================================
+    // 2. REGISTRO DE MÓDULOS (Añade nuevas pestañas aquí)
+    // =======================================================
+    const Modules = {
+      home: {
+        title: 'Inicio',
+        icon: 'home',
+        render: () => `
+          <section class="space-y-6">
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 p-8 rounded-2xl text-center space-y-4">
+              <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">Guía Oficial Mongil Star Dive</h1>
+              <p class="text-slate-400 max-w-xl mx-auto">Explora unidades, estadísticas, combinaciones meta y calcula materiales de ascensión directamente en esta PWA.</p>
+            </div>
+          </section>`
+      },
+      characters: {
+        title: 'Personajes',
+        icon: 'users',
+        render: () => `
+          <section class="space-y-4">
+            <h2 class="text-xl font-bold text-cyan-400 mb-4">Unidades Registradas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              ${DB.characters.map(c => `
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-cyan-500/50 transition">
+                  <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-bold text-lg">${c.name}</h3>
+                    <span class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-1 rounded font-bold">${c.tier}</span>
+                  </div>
+                  <p class="text-xs text-slate-400 mb-2">Elemento: <span class="text-cyan-400">${c.element}</span> \vert{} Rol:${c.role}</p>
+                  <p class="text-sm text-slate-300">${c.desc}</p>
+                </div>
+              `).join('')}
+            </div>
+          </section>`
+      },
+      calc: {
+        title: 'Calculadora',
+        icon: 'calculator',
+        render: () => `
+          <section class="bg-slate-900 border border-slate-800 p-6 rounded-xl max-w-md mx-auto space-y-4">
+            <h2 class="text-xl font-bold text-cyan-400">Calculadora de Materiales</h2>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Nivel Objetivo:</label>
+              <input id="target-lvl" type="number" value="50" min="1" max="100" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-cyan-400 font-bold" oninput="updateCalc()">
+            </div>
+            <div id="calc-result" class="bg-slate-950 p-4 rounded border border-slate-800 text-sm space-y-1"></div>
+          </section>`,
+        init: () => window.updateCalc()
+      }
+    };
+
+    // Funciones globales para módulos
+    window.updateCalc = () => {
+      const lvl = parseInt(document.getElementById('target-lvl')?.value || 0);
+      const res = document.getElementById('calc-result');
+      if (res) {
+        res.innerHTML = `
+          <p>Manuales de EXP: <span class="text-cyan-400 font-bold">${lvl * DB.calculator.expBook}</span></p>
+          <p>Monedas Necesarias: <span class="text-amber-400 font-bold">${lvl * DB.calculator.coinRate * 10}</span></p>`;
+      }
+    };
+
+    // =======================================================
+    // 3. ENRUTADOR DINÁMICO
+    // =======================================================
+    let activeModule = 'home';
+    function navigate(modKey) {
+      if (!Modules[modKey]) return;
+      activeModule = modKey;
+      document.getElementById('app-content').innerHTML = Modules[modKey].render();
+      if (Modules[modKey].init) Modules[modKey].init();
+      renderNav();
+      lucide.createIcons();
+    }
+
+    function renderNav() {
+      const container = document.getElementById('nav-container');
+      container.innerHTML = Object.keys(Modules).map(key => {
+        const mod = Modules[key];
+        const isActive = key === activeModule;
+        return `
+          <button onclick="navigate('${key}')" class="flex items-center space-x-2 px-4 py-3 border-b-2 text-sm whitespace-nowrap transition ${isActive ? 'border-cyan-400 text-cyan-400 font-bold' : 'border-transparent text-slate-400 hover:text-slate-200'}">
+            <i data-lucide="${mod.icon}" class="w-4 h-4"></i>
+            <span>${mod.title}</span>
+          </button>`;
+      }).join('');
+    }
+
+    // Inicializar Navegación
+    navigate('home');
+
+    // =======================================================
+    // 4. REGISTRO PWA / SERVICE WORKER
+    // =======================================================
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW Error:', err));
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('pwa-install-btn');
+      btn.classList.remove('hidden');
+      btn.addEventListener('click', () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => btn.classList.add('hidden'));
+      });
+    });
+  </script>
+</body>
+</html>
