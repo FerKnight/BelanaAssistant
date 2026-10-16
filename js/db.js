@@ -74,4 +74,14 @@ const DB = {
 function getPortraitPath(slug) {
   const cleanSlug = slug.toLowerCase().trim().replace(/\s+/g, '_');
   return `assets/images/Character_Portrait/portrait_${cleanSlug}_00.png`;
+function getArtifactIconPath(name) {
+  if (!name) return DEFAULT_AVATAR;
+  const slug = name.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/ñ/g, 'n')
+    .replace(/[^a-z0-9]/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '');
+    
+  return `assets/images/Artifact_Icon/artifact_${slug}_00.png`;
 }
