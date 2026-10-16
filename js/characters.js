@@ -14,14 +14,14 @@ function toggleCharacterObtained(id, event) {
   filterCharacters();
 }
 
-// Configuración predeterminada de slots dinámicos por personaje
+// Configuración predeterminada de filas dinámicas por personaje
 function getCharacterConfig(charId) {
   const configs = JSON.parse(localStorage.getItem('belana_char_configs')) || {};
   if (!configs[charId]) {
     configs[charId] = {
-      equipmentsCount: 5,
-      monsterlingsCount: 4,
-      teamsCount: 3
+      equipmentsRows: 1, // 1 fila = 5 recuadros
+      monsterlingsRows: 1, // 1 fila = 4 recuadros
+      teamsRows: 1 // 1 fila = 3 recuadros
     };
   }
   return configs[charId];
@@ -30,17 +30,17 @@ function getCharacterConfig(charId) {
 function updateCharacterConfig(charId, key, delta) {
   const configs = JSON.parse(localStorage.getItem('belana_char_configs')) || {};
   if (!configs[charId]) {
-    configs[charId] = { equipmentsCount: 5, monsterlingsCount: 4, teamsCount: 3 };
+    configs[charId] = { equipmentsRows: 1, monsterlingsRows: 1, teamsRows: 1 };
   }
-  const current = configs[charId][key];
-  if (current + delta >= 1 && current + delta <= 12) {
+  const current = configs[charId][key] || 1;
+  if (current + delta >= 1 && current + delta <= 5) {
     configs[charId][key] = current + delta;
     localStorage.setItem('belana_char_configs', JSON.stringify(configs));
     openCharacterDetailModal(charId);
   }
 }
 
-// Abrir Modal de Detalles con Secciones Interactivas
+// Abrir Modal de Detalles con Secciones Horizontales
 function openCharacterDetailModal(charId) {
   const character = DB.characters.find(c => c.id === charId);
   if (!character) return;
@@ -48,54 +48,48 @@ function openCharacterDetailModal(charId) {
   const portrait = getPortraitPath(character.slug);
   const config = getCharacterConfig(charId);
 
-  // Generar HTML de slots de Equipamientos (El 5to con borde dorado)
+  // 1. EQUIPAMIENTOS RECOMENDADOS (Filas horizontales de 5 recuadros, el 5to con borde dorado)
   let equipmentsHtml = '';
-  for (let i = 1; i <= config.equipmentsCount; i++) {
-    const isGold = i === 5;
-    equipmentsHtml += `
-      <div class="flex items-center justify-between p-2.5 bg-slate-900/90 rounded-xl border ${isGold ? 'border-amber-400/80 shadow-md shadow-amber-500/10' : 'border-brand-border'}">
-        <div class="flex items-center space-x-2">
-          <div class="w-7 h-7 rounded-lg bg-slate-800 border ${isGold ? 'border-amber-400 text-amber-300 font-bold' : 'border-slate-700 text-slate-400'} flex items-center justify-center text-xs">
-            #${i}
-          </div>
-          <span class="text-xs ${isGold ? 'text-amber-200 font-semibold' : 'text-slate-300'}">Slot Equipamiento ${i}</span>
-        </div>
-        <i data-lucide="plus-circle" class="w-4 h-4 text-slate-500 hover:text-cyan-400 cursor-pointer transition"></i>
-      </div>`;
+  for (let r = 0; r < config.equipmentsRows; r++) {
+    equipmentsHtml += `<div class="grid grid-cols-5 gap-2">`;
+    for (let c = 1; c <= 5; c++) {
+      const isGold = c === 5;
+      equipmentsHtml += `
+        <div class="aspect-square bg-slate-900/90 rounded-xl border ${isGold ? 'border-amber-400/80 shadow-md shadow-amber-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-cyan-400 transition group relative">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-slate-500 group-hover:text-cyan-400 mb-1 transition"></i>
+          <span class="text-[9px] ${isGold ? 'text-amber-300 font-bold' : 'text-slate-400'} font-mono">#${c}</span>
+        </div>`;
+    }
+    equipmentsHtml += `</div>`;
   }
 
-  // Generar HTML de slots de Monsterlings (El 1ero con borde rojo)
+  // 2. MONSTERLINGS RECOMENDADOS (Filas horizontales de 4 recuadros, el 1ero con borde rojo)
   let monsterlingsHtml = '';
-  for (let i = 1; i <= config.monsterlingsCount; i++) {
-    const isRed = i === 1;
-    monsterlingsHtml += `
-      <div class="flex items-center justify-between p-2.5 bg-slate-900/90 rounded-xl border ${isRed ? 'border-red-500/80 shadow-md shadow-red-500/10' : 'border-brand-border'}">
-        <div class="flex items-center space-x-2">
-          <div class="w-7 h-7 rounded-lg bg-slate-800 border ${isRed ? 'border-red-500 text-red-400 font-bold' : 'border-slate-700 text-slate-400'} flex items-center justify-center text-xs">
-            #${i}
-          </div>
-          <span class="text-xs ${isRed ? 'text-red-200 font-semibold' : 'text-slate-300'}">Slot Monsterling ${i}</span>
-        </div>
-        <i data-lucide="plus-circle" class="w-4 h-4 text-slate-500 hover:text-purple-400 cursor-pointer transition"></i>
-      </div>`;
+  for (let r = 0; r < config.monsterlingsRows; r++) {
+    monsterlingsHtml += `<div class="grid grid-cols-4 gap-2">`;
+    for (let c = 1; c <= 4; c++) {
+      const isRed = (r === 0 && c === 1); // Solo el primer slot del set principal o de cada fila
+      monsterlingsHtml += `
+        <div class="aspect-square bg-slate-900/90 rounded-xl border ${isRed ? 'border-red-500/80 shadow-md shadow-red-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-purple-400 transition group relative">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-slate-500 group-hover:text-purple-400 mb-1 transition"></i>
+          <span class="text-[9px] ${isRed ? 'text-red-400 font-bold' : 'text-slate-400'} font-mono">#${c}</span>
+        </div>`;
+    }
+    monsterlingsHtml += `</div>`;
   }
 
-  // Generar HTML de slots de Equipos (3 slots por defecto)
+  // 3. EQUIPOS RECOMENDADOS (Filas horizontales de 3 recuadros)
   let teamsHtml = '';
-  for (let i = 1; i <= config.teamsCount; i++) {
-    teamsHtml += `
-      <div class="p-3 bg-slate-900/90 rounded-xl border border-brand-border space-y-2">
-        <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-1.5">
-          <span class="font-semibold text-cyan-400">Composición #${i}</span>
-          <i data-lucide="users" class="w-3.5 h-3.5 text-slate-500"></i>
-        </div>
-        <div class="grid grid-cols-4 gap-2">
-          <div class="h-10 bg-slate-800 rounded-lg border border-dashed border-slate-700 flex items-center justify-center text-slate-500 text-[10px]">+</div>
-          <div class="h-10 bg-slate-800 rounded-lg border border-dashed border-slate-700 flex items-center justify-center text-slate-500 text-[10px]">+</div>
-          <div class="h-10 bg-slate-800 rounded-lg border border-dashed border-slate-700 flex items-center justify-center text-slate-500 text-[10px]">+</div>
-          <div class="h-10 bg-slate-800 rounded-lg border border-dashed border-slate-700 flex items-center justify-center text-slate-500 text-[10px]">+</div>
-        </div>
-      </div>`;
+  for (let r = 0; r < config.teamsRows; r++) {
+    teamsHtml += `<div class="grid grid-cols-3 gap-2">`;
+    for (let c = 1; c <= 3; c++) {
+      teamsHtml += `
+        <div class="aspect-square bg-slate-900/90 rounded-xl border border-brand-border flex flex-col items-center justify-center p-1 cursor-pointer hover:border-amber-400 transition group relative">
+          <i data-lucide="users" class="w-4 h-4 text-slate-500 group-hover:text-amber-400 mb-1 transition"></i>
+          <span class="text-[9px] text-slate-400 font-mono">Equipo #${c}</span>
+        </div>`;
+    }
+    teamsHtml += `</div>`;
   }
 
   const modal = document.getElementById('modal-container');
@@ -125,16 +119,16 @@ function openCharacterDetailModal(charId) {
             <span>Equipamientos recomendados</span>
           </span>
           <div class="flex items-center space-x-1">
-            <button onclick="updateCharacterConfig('${charId}', 'equipmentsCount', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+            <button onclick="updateCharacterConfig('${charId}', 'equipmentsRows', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Quitar fila">
               <i data-lucide="minus" class="w-3.5 h-3.5"></i>
             </button>
-            <span class="text-xs font-mono font-bold text-cyan-400 px-1.5">${config.equipmentsCount}</span>
-            <button onclick="updateCharacterConfig('${charId}', 'equipmentsCount', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+            <span class="text-xs font-mono font-bold text-cyan-400 px-1.5">${config.equipmentsRows}</span>
+            <button onclick="updateCharacterConfig('${charId}', 'equipmentsRows', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Añadir fila">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             </button>
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div class="space-y-2">
           ${equipmentsHtml}
         </div>
       </div>
@@ -147,16 +141,16 @@ function openCharacterDetailModal(charId) {
             <span>Monsterlings recomendados</span>
           </span>
           <div class="flex items-center space-x-1">
-            <button onclick="updateCharacterConfig('${charId}', 'monsterlingsCount', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+            <button onclick="updateCharacterConfig('${charId}', 'monsterlingsRows', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Quitar fila">
               <i data-lucide="minus" class="w-3.5 h-3.5"></i>
             </button>
-            <span class="text-xs font-mono font-bold text-purple-400 px-1.5">${config.monsterlingsCount}</span>
-            <button onclick="updateCharacterConfig('${charId}', 'monsterlingsCount', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+            <span class="text-xs font-mono font-bold text-purple-400 px-1.5">${config.monsterlingsRows}</span>
+            <button onclick="updateCharacterConfig('${charId}', 'monsterlingsRows', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Añadir fila">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             </button>
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div class="space-y-2">
           ${monsterlingsHtml}
         </div>
       </div>
@@ -169,11 +163,11 @@ function openCharacterDetailModal(charId) {
             <span>Equipos recomendados</span>
           </span>
           <div class="flex items-center space-x-1">
-            <button onclick="updateCharacterConfig('${charId}', 'teamsCount', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+            <button onclick="updateCharacterConfig('${charId}', 'teamsRows', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Quitar fila">
               <i data-lucide="minus" class="w-3.5 h-3.5"></i>
             </button>
-            <span class="text-xs font-mono font-bold text-amber-400 px-1.5">${config.teamsCount}</span>
-            <button onclick="updateCharacterConfig('${charId}', 'teamsCount', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95">
+            <span class="text-xs font-mono font-bold text-amber-400 px-1.5">${config.teamsRows}</span>
+            <button onclick="updateCharacterConfig('${charId}', 'teamsRows', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Añadir fila">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             </button>
           </div>
