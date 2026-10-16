@@ -14,79 +14,212 @@ function toggleCharacterObtained(id, event) {
   filterCharacters();
 }
 
-// Configuración predeterminada de filas dinámicas por personaje
-function getCharacterConfig(charId) {
-  const configs = JSON.parse(localStorage.getItem('belana_char_configs')) || {};
-  if (!configs[charId]) {
-    configs[charId] = {
-      equipmentsRows: 1, // 1 fila = 5 recuadros
-      monsterlingsRows: 1, // 1 fila = 4 recuadros
-      teamsRows: 1 // 1 fila = 3 recuadros
+// Configuración de builds/slots asignados por personaje
+function getCharacterBuildData(charId) {
+  const builds = JSON.parse(localStorage.getItem('belana_char_builds')) || {};
+  if (!builds[charId]) {
+    builds[charId] = {
+      equipmentsRows: 1,
+      monsterlingsRows: 1,
+      teamsRows: 1,
+      selectedEquipments: {},
+      selectedMonsterlings: {},
+      selectedTeams: {}
     };
   }
-  return configs[charId];
+  return builds[charId];
 }
 
-function updateCharacterConfig(charId, key, delta) {
-  const configs = JSON.parse(localStorage.getItem('belana_char_configs')) || {};
-  if (!configs[charId]) {
-    configs[charId] = { equipmentsRows: 1, monsterlingsRows: 1, teamsRows: 1 };
-  }
-  const current = configs[charId][key] || 1;
+function saveCharacterBuildData(charId, buildData) {
+  const builds = JSON.parse(localStorage.getItem('belana_char_builds')) || {};
+  builds[charId] = buildData;
+  localStorage.setItem('belana_char_builds', JSON.stringify(builds));
+}
+
+function updateCharacterRows(charId, key, delta) {
+  const buildData = getCharacterBuildData(charId);
+  const current = buildData[key] || 1;
   if (current + delta >= 1 && current + delta <= 5) {
-    configs[charId][key] = current + delta;
-    localStorage.setItem('belana_char_configs', JSON.stringify(configs));
+    buildData[key] = current + delta;
+    saveCharacterBuildData(charId, buildData);
     openCharacterDetailModal(charId);
   }
 }
 
-// Abrir Modal de Detalles con Secciones Horizontales
+// Asignar objeto a slot
+function selectSlotItem(charId, slotKey, itemData) {
+  const buildData = getCharacterBuildData(charId);
+  buildData[slotKey] = itemData;
+  saveCharacterBuildData(charId, buildData);
+  openCharacterDetailModal(charId);
+}
+
+// Quitar objeto de slot
+function clearSlotItem(charId, slotKey, event) {
+  event.stopPropagation();
+  const buildData = getCharacterBuildData(charId);
+  delete buildData[slotKey];
+  saveCharacterBuildData(charId, buildData);
+  openCharacterDetailModal(charId);
+}
+
+// Abrir Selector Flotante de Selección para Equipamientos / Monsterlings / Personajes
+function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
+  const modal = document.createElement('div');
+  modal.id = 'selector-overlay';
+  modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+
+  let itemsHtml = '';
+
+  if (slotType === 'equipment') {
+    // Lista filtrada por categoría
+    const equipItems = DB.equipments.filter(e => !slotCategory || e.slot === slotCategory);
+    if (equipItems.length === 0) {
+      itemsHtml = `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay ítems registrados para: ${slotCategory}</p>`;
+    } else {
+      itemsHtml = equipItems.map(e => `
+        <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${e.name}', rarity:'${e.rarity}'}); document.getElementById('selector-overlay').remove();"
+             class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-cyan-400 cursor-pointer transition flex items-center justify-between">
+          <div>
+            <h4 class="text-xs font-bold text-white">${e.name}</h4>
+            <span class="text-[10px] text-slate-400">${e.stat}</span>
+          </div>
+          <span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">${e.rarity}</span>
+        </div>
+      `).join('');
+    }
+  } else if (slotType === 'monsterling') {
+    const isLegendary = slotCategory === 'Legendario';
+    const monsterItems = DB.monsterlings.filter(m => !isLegendary || m.rarity === 'Legendario');
+    if (monsterItems.length === 0) {
+      itemsHtml = `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay Monsterlings ${isLegendary ? 'Legendarios' : ''} disponibles.</p>`;
+    } else {
+      itemsHtml = monsterItems.map(m => `
+        <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${m.name}', type:'${m.type}'}); document.getElementById('selector-overlay').remove();"
+             class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-purple-400 cursor-pointer transition flex items-center justify-between">
+          <div>
+            <h4 class="text-xs font-bold text-white">${m.name}</h4>
+            <span class="text-[10px] text-purple-400">${m.type}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+  } else if (slotType === 'character') {
+    itemsHtml = DB.characters.map(c => {
+      const portrait = getPortraitPath(c.slug);
+      return `
+        <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${c.name}', slug:'${c.slug}', element:'${c.element}'}); document.getElementById('selector-overlay').remove();"
+             class="p-2 bg-slate-900 border border-brand-border rounded-xl hover:border-amber-400 cursor-pointer transition flex items-center space-x-2">
+          <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-8 h-8 rounded-lg object-cover bg-slate-950">
+          <div class="min-w-0 flex-1">
+            <h4 class="text-xs font-bold text-white truncate">${c.name}</h4>
+            <span class="text-[9px] text-cyan-400">${c.element}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  modal.innerHTML = `
+    <div class="bg-brand-card border border-brand-border rounded-2xl max-w-sm w-full p-4 space-y-3 relative shadow-2xl">
+      <div class="flex items-center justify-between border-b border-brand-border pb-2">
+        <h3 class="text-sm font-bold text-white">Seleccionar ${slotCategory || slotType}</h3>
+        <button onclick="document.getElementById('selector-overlay').remove()" class="p-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="grid ${slotType === 'character' ? 'grid-cols-2' : 'grid-cols-1'} gap-2 max-h-60 overflow-y-auto pr-1">
+        ${itemsHtml}
+      </div>
+    </div>`;
+
+  document.body.appendChild(modal);
+  lucide.createIcons();
+}
+
+// Modal de detalles con slots ajustados y compactos
 function openCharacterDetailModal(charId) {
   const character = DB.characters.find(c => c.id === charId);
   if (!character) return;
 
   const portrait = getPortraitPath(character.slug);
-  const config = getCharacterConfig(charId);
+  const buildData = getCharacterBuildData(charId);
 
-  // 1. EQUIPAMIENTOS RECOMENDADOS (Filas horizontales de 5 recuadros, el 5to con borde dorado)
+  // Categorías exclusivas por casilla de Equipamiento
+  const equipCategories = ['Casco', 'Pechera', 'Guantes', 'Calzado', 'Artefacto'];
+
+  // 1. EQUIPAMIENTO RECOMENDADO
   let equipmentsHtml = '';
-  for (let r = 0; r < config.equipmentsRows; r++) {
+  for (let r = 0; r < buildData.equipmentsRows; r++) {
     equipmentsHtml += `<div class="grid grid-cols-5 gap-2">`;
-    for (let c = 1; c <= 5; c++) {
-      const isGold = c === 5;
+    for (let c = 0; c < 5; c++) {
+      const slotKey = `eq_${r}_${c}`;
+      const category = equipCategories[c];
+      const isGold = c === 4; // 5to recuadro exclusivo Artefacto con borde dorado
+      const selected = buildData[slotKey];
+
       equipmentsHtml += `
-        <div class="aspect-square bg-slate-900/90 rounded-xl border ${isGold ? 'border-amber-400/80 shadow-md shadow-amber-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-cyan-400 transition group relative">
-          <i data-lucide="plus-circle" class="w-4 h-4 text-slate-500 group-hover:text-cyan-400 mb-1 transition"></i>
-          <span class="text-[9px] ${isGold ? 'text-amber-300 font-bold' : 'text-slate-400'} font-mono">#${c}</span>
+        <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'equipment', '${category}')"
+             class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${isGold ? 'border-amber-400/90 shadow-md shadow-amber-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-cyan-400 transition group relative mx-auto">
+          ${selected ? `
+            <span class="text-[9px] font-bold text-cyan-300 truncate w-full text-center px-0.5 leading-tight">${selected.name}</span>
+            <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition">
+              <i data-lucide="x" class="w-2.5 h-2.5"></i>
+            </button>
+          ` : `
+            <i data-lucide="plus" class="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transition"></i>
+            <span class="text-[8px] ${isGold ? 'text-amber-400 font-bold' : 'text-slate-500'} font-mono leading-none mt-0.5">${category}</span>
+          `}
         </div>`;
     }
     equipmentsHtml += `</div>`;
   }
 
-  // 2. MONSTERLINGS RECOMENDADOS (Filas horizontales de 4 recuadros, el 1ero con borde rojo)
+  // 2. MONSTERLINGS RECOMENDADOS
   let monsterlingsHtml = '';
-  for (let r = 0; r < config.monsterlingsRows; r++) {
+  for (let r = 0; r < buildData.monsterlingsRows; r++) {
     monsterlingsHtml += `<div class="grid grid-cols-4 gap-2">`;
-    for (let c = 1; c <= 4; c++) {
-      const isRed = (r === 0 && c === 1); // Solo el primer slot del set principal o de cada fila
+    for (let c = 0; c < 4; c++) {
+      const slotKey = `mon_${r}_${c}`;
+      const isBlue = c === 3; // 4to recuadro exclusivo Monsterling Legendario (Borde Azul)
+      const selected = buildData[slotKey];
+
       monsterlingsHtml += `
-        <div class="aspect-square bg-slate-900/90 rounded-xl border ${isRed ? 'border-red-500/80 shadow-md shadow-red-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-purple-400 transition group relative">
-          <i data-lucide="plus-circle" class="w-4 h-4 text-slate-500 group-hover:text-purple-400 mb-1 transition"></i>
-          <span class="text-[9px] ${isRed ? 'text-red-400 font-bold' : 'text-slate-400'} font-mono">#${c}</span>
+        <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'monsterling', '${isBlue ? 'Legendario' : 'Normal'}')"
+             class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${isBlue ? 'border-blue-500/90 shadow-md shadow-blue-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-purple-400 transition group relative mx-auto">
+          ${selected ? `
+            <span class="text-[9px] font-bold text-purple-300 truncate w-full text-center px-0.5 leading-tight">${selected.name}</span>
+            <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition">
+              <i data-lucide="x" class="w-2.5 h-2.5"></i>
+            </button>
+          ` : `
+            <i data-lucide="plus" class="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition"></i>
+            <span class="text-[8px] ${isBlue ? 'text-blue-400 font-bold' : 'text-slate-500'} font-mono leading-none mt-0.5">${isBlue ? 'Legendario' : '#' + (c + 1)}</span>
+          `}
         </div>`;
     }
     monsterlingsHtml += `</div>`;
   }
 
-  // 3. EQUIPOS RECOMENDADOS (Filas horizontales de 3 recuadros)
+  // 3. EQUIPOS RECOMENDADOS
   let teamsHtml = '';
-  for (let r = 0; r < config.teamsRows; r++) {
+  for (let r = 0; r < buildData.teamsRows; r++) {
     teamsHtml += `<div class="grid grid-cols-3 gap-2">`;
-    for (let c = 1; c <= 3; c++) {
+    for (let c = 0; c < 3; c++) {
+      const slotKey = `tm_${r}_${c}`;
+      const selected = buildData[slotKey];
+
       teamsHtml += `
-        <div class="aspect-square bg-slate-900/90 rounded-xl border border-brand-border flex flex-col items-center justify-center p-1 cursor-pointer hover:border-amber-400 transition group relative">
-          <i data-lucide="users" class="w-4 h-4 text-slate-500 group-hover:text-amber-400 mb-1 transition"></i>
-          <span class="text-[9px] text-slate-400 font-mono">Equipo #${c}</span>
+        <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'character', 'Personaje')"
+             class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border border-brand-border flex flex-col items-center justify-center p-1 cursor-pointer hover:border-amber-400 transition group relative mx-auto overflow-hidden">
+          ${selected ? `
+            <img src="${getPortraitPath(selected.slug)}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full object-cover rounded-lg">
+            <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute top-0.5 right-0.5 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition">
+              <i data-lucide="x" class="w-2.5 h-2.5"></i>
+            </button>
+          ` : `
+            <i data-lucide="user-plus" class="w-4 h-4 text-slate-500 group-hover:text-amber-400 transition"></i>
+            <span class="text-[8px] text-slate-500 font-mono leading-none mt-0.5">Slot ${c + 1}</span>
+          `}
         </div>`;
     }
     teamsHtml += `</div>`;
@@ -96,34 +229,34 @@ function openCharacterDetailModal(charId) {
   const content = document.getElementById('modal-content');
 
   content.innerHTML = `
-    <!-- CABECERA DE PERSONAJE -->
+    <!-- CABECERA DEL PERSONAJE -->
     <div class="flex items-center space-x-3 pb-3 border-b border-brand-border">
-      <div class="relative w-14 h-14 flex-shrink-0">
+      <div class="relative w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
         <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full rounded-xl object-cover border border-cyan-400 bg-slate-950">
-        <span class="absolute top-0.5 left-0.5 bg-black/85 text-amber-300 text-[8px] font-bold px-1.5 py-0.5 rounded border border-amber-500/30 leading-none">
+        <span class="absolute top-0.5 left-0.5 bg-black/85 text-amber-300 text-[8px] font-bold px-1 py-0.2 rounded border border-amber-500/30 leading-none">
           ${character.tier}
         </span>
       </div>
       <div>
-        <h3 class="text-xl font-extrabold text-white leading-tight">${character.name}</h3>
+        <h3 class="text-lg font-extrabold text-white leading-tight">${character.name}</h3>
         <p class="text-xs text-cyan-400 font-medium mt-0.5">${character.element} • ${character.role}</p>
       </div>
     </div>
 
     <div class="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
-      <!-- SECCIÓN: EQUIPAMIENTOS RECOMENDADOS -->
+      <!-- EQUIPAMIENTO RECOMENDADO -->
       <div class="space-y-2">
         <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-xl border border-brand-border">
           <span class="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
             <i data-lucide="shield" class="w-4 h-4 text-cyan-400"></i>
-            <span>Equipamientos recomendados</span>
+            <span>Equipamiento recomendado</span>
           </span>
           <div class="flex items-center space-x-1">
-            <button onclick="updateCharacterConfig('${charId}', 'equipmentsRows', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Quitar fila">
+            <button onclick="updateCharacterRows('${charId}', 'equipmentsRows', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
               <i data-lucide="minus" class="w-3.5 h-3.5"></i>
             </button>
-            <span class="text-xs font-mono font-bold text-cyan-400 px-1.5">${config.equipmentsRows}</span>
-            <button onclick="updateCharacterConfig('${charId}', 'equipmentsRows', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Añadir fila">
+            <span class="text-xs font-mono font-bold text-cyan-400 px-1.5">${buildData.equipmentsRows}</span>
+            <button onclick="updateCharacterRows('${charId}', 'equipmentsRows', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -133,7 +266,7 @@ function openCharacterDetailModal(charId) {
         </div>
       </div>
 
-      <!-- SECCIÓN: MONSTERLINGS RECOMENDADOS -->
+      <!-- MONSTERLINGS RECOMENDADOS -->
       <div class="space-y-2">
         <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-xl border border-brand-border">
           <span class="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
@@ -141,11 +274,11 @@ function openCharacterDetailModal(charId) {
             <span>Monsterlings recomendados</span>
           </span>
           <div class="flex items-center space-x-1">
-            <button onclick="updateCharacterConfig('${charId}', 'monsterlingsRows', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Quitar fila">
+            <button onclick="updateCharacterRows('${charId}', 'monsterlingsRows', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
               <i data-lucide="minus" class="w-3.5 h-3.5"></i>
             </button>
-            <span class="text-xs font-mono font-bold text-purple-400 px-1.5">${config.monsterlingsRows}</span>
-            <button onclick="updateCharacterConfig('${charId}', 'monsterlingsRows', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Añadir fila">
+            <span class="text-xs font-mono font-bold text-purple-400 px-1.5">${buildData.monsterlingsRows}</span>
+            <button onclick="updateCharacterRows('${charId}', 'monsterlingsRows', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -155,19 +288,19 @@ function openCharacterDetailModal(charId) {
         </div>
       </div>
 
-      <!-- SECCIÓN: EQUIPOS RECOMENDADOS -->
+      <!-- EQUIPOS RECOMENDADOS -->
       <div class="space-y-2">
         <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-xl border border-brand-border">
           <span class="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
             <i data-lucide="users" class="w-4 h-4 text-amber-400"></i>
-            <span>Equipos recomendados</span>
+            <span>Equipo recomendado</span>
           </span>
           <div class="flex items-center space-x-1">
-            <button onclick="updateCharacterConfig('${charId}', 'teamsRows', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Quitar fila">
+            <button onclick="updateCharacterRows('${charId}', 'teamsRows', -1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
               <i data-lucide="minus" class="w-3.5 h-3.5"></i>
             </button>
-            <span class="text-xs font-mono font-bold text-amber-400 px-1.5">${config.teamsRows}</span>
-            <button onclick="updateCharacterConfig('${charId}', 'teamsRows', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95" title="Añadir fila">
+            <span class="text-xs font-mono font-bold text-amber-400 px-1.5">${buildData.teamsRows}</span>
+            <button onclick="updateCharacterRows('${charId}', 'teamsRows', 1)" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -190,7 +323,7 @@ const CharactersSection = {
 
     return `
     <div class="space-y-4">
-      <!-- ENCABEZADO CON TÍTULO Y CONTADOR INTEGRADO -->
+      <!-- ENCABEZADO CON TÍTULO Y CONTADOR -->
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-brand-card border border-brand-border px-4 py-3 rounded-2xl">
         <div class="flex items-center space-x-3">
           <i data-lucide="users" class="text-cyan-400 w-5 h-5"></i>
@@ -201,7 +334,7 @@ const CharactersSection = {
         </div>
       </div>
 
-      <!-- PANEL DE FILTROS AVANZADOS COMBINABLES -->
+      <!-- PANEL DE FILTROS -->
       <div class="bg-brand-card border border-brand-border p-3.5 rounded-2xl space-y-3 shadow-lg">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
@@ -252,7 +385,7 @@ const CharactersSection = {
         </div>
       </div>
 
-      <!-- GRILLA DE TARJETAS CUADRADAS Y REDONDEADAS -->
+      <!-- GRILLA DE TARJETAS DE PERSONAJES -->
       <div id="characters-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
         ${renderCharacterCards(DB.characters)}
       </div>
@@ -276,12 +409,10 @@ function renderCharacterCards(charactersList) {
            class="bg-brand-card border ${isObtained ? 'border-cyan-500/60 bg-slate-900/90 shadow-md shadow-cyan-500/5' : 'border-brand-border opacity-75 hover:opacity-100'} 
                   p-3 rounded-2xl hover:border-cyan-500/40 cursor-pointer transition flex flex-col items-center text-center group relative aspect-square justify-between">
         
-        <!-- BOTÓN CHECK DE OBTENIDO (SUPERIOR DERECHA) -->
         <button onclick="toggleCharacterObtained('${c.id}', event)" title="${isObtained ? 'Marcar como no obtenido' : 'Marcar como obtenido'}" class="absolute top-2 right-2 p-1 z-10 rounded-lg bg-slate-900/80 hover:bg-slate-800 transition">
           <i data-lucide="${isObtained ? 'check-square' : 'square'}" class="w-4 h-4 ${isObtained ? 'text-cyan-400' : 'text-slate-500'}"></i>
         </button>
 
-        <!-- RETRATO CUADRADO CON GRADO SUPERIOR IZQUIERDA -->
         <div class="relative w-20 h-20 sm:w-24 sm:h-24 mt-1">
           <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full rounded-xl object-cover border ${isObtained ? 'border-cyan-400' : 'border-slate-800'} group-hover:scale-105 transition bg-slate-950 shadow">
           <span class="absolute top-1 left-1 bg-black/85 text-amber-300 text-[9px] font-bold px-1.5 py-0.5 rounded border border-amber-500/30 leading-none">
@@ -289,7 +420,6 @@ function renderCharacterCards(charactersList) {
           </span>
         </div>
         
-        <!-- INFORMACIÓN DEL PERSONAJE -->
         <div class="w-full min-w-0 mt-2">
           <h3 class="font-bold text-xs ${isObtained ? 'text-white' : 'text-slate-300'} truncate px-1 leading-tight">${c.name}</h3>
           <div class="text-[10px] text-slate-400 font-medium truncate mt-0.5 px-1 leading-none">
