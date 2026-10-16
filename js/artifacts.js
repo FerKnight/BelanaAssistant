@@ -4,7 +4,6 @@ const ArtifactsSection = {
 
     return `
     <div class="space-y-4">
-      <!-- ENCABEZADO -->
       <div class="flex items-center justify-between bg-brand-card border border-brand-border px-4 py-3 rounded-2xl">
         <div class="flex items-center space-x-3">
           <i data-lucide="gem" class="text-amber-400 w-5 h-5"></i>
@@ -15,7 +14,6 @@ const ArtifactsSection = {
         </div>
       </div>
 
-      <!-- PANEL DE FILTROS -->
       <div class="bg-brand-card border border-brand-border p-3.5 rounded-2xl space-y-3 shadow-lg">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
@@ -48,7 +46,6 @@ const ArtifactsSection = {
         </div>
       </div>
 
-      <!-- GRILLA DE ARTEFACTOS -->
       <div id="artifacts-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         ${renderArtifactCards(list)}
       </div>
@@ -58,27 +55,23 @@ const ArtifactsSection = {
 
 function renderArtifactCards(artifactsList) {
   if (!artifactsList || artifactsList.length === 0) {
-    return `<div class="col-span-full py-10 text-center text-slate-500 text-xs">No se encontraron artefactos registrados o seleccionados.</div>`;
+    return `<div class="col-span-full py-10 text-center text-slate-500 text-xs">No se encontraron artefactos.</div>`;
   }
 
   return artifactsList.map(a => {
     const is5Star = a.rarity === '5★';
-    // Obtener ruta de la imagen según el nombre del artefacto
-    const iconPath = typeof getArtifactIconPath === 'function' ? getArtifactIconPath(a.name) : '';
+    const iconPath = typeof getArtifactIconPath === 'function' ? getArtifactIconPath(a.name) : DEFAULT_AVATAR;
 
     return `
       <div class="bg-brand-card border ${is5Star ? 'border-amber-500/50 bg-slate-900/90' : 'border-brand-border'} p-2.5 rounded-xl flex items-center space-x-3 group relative overflow-hidden hover:border-amber-400/80 transition">
-        
-        <!-- ICONO / IMAGEN DEL ARTEFACTO -->
         <div class="relative w-12 h-12 flex-shrink-0">
-          <img src="${iconPath}" onerror="this.src='${typeof DEFAULT_AVATAR !== 'undefined' ? DEFAULT_AVATAR : 'https://cdn-icons-png.flaticon.com/512/3659/3659738.png'}'" 
+          <img src="${iconPath}" onerror="this.src='${DEFAULT_AVATAR}'" 
                class="w-full h-full object-cover rounded-lg border border-slate-800 bg-slate-950 p-0.5 group-hover:scale-105 transition">
           <span class="absolute top-0.5 left-0.5 bg-black/85 text-amber-300 text-[8px] font-bold px-1 py-0.2 rounded border border-amber-500/30 leading-none">
             ${a.rarity}
           </span>
         </div>
 
-        <!-- INFORMACIÓN DEL ARTEFACTO -->
         <div class="min-w-0 flex-1">
           <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-wider block mb-0.5">${a.role}</span>
           <h3 class="font-bold text-xs text-white truncate leading-tight group-hover:text-amber-300 transition">${a.name}</h3>
