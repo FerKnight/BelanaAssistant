@@ -21,10 +21,7 @@ function getCharacterBuildData(charId) {
     builds[charId] = {
       equipmentsRows: 1,
       monsterlingsRows: 1,
-      teamsRows: 1,
-      selectedEquipments: {},
-      selectedMonsterlings: {},
-      selectedTeams: {}
+      teamsRows: 1
     };
   }
   return builds[charId];
@@ -46,7 +43,6 @@ function updateCharacterRows(charId, key, delta) {
   }
 }
 
-// Asignar objeto a slot
 function selectSlotItem(charId, slotKey, itemData) {
   const buildData = getCharacterBuildData(charId);
   buildData[slotKey] = itemData;
@@ -54,7 +50,6 @@ function selectSlotItem(charId, slotKey, itemData) {
   openCharacterDetailModal(charId);
 }
 
-// Quitar objeto de slot
 function clearSlotItem(charId, slotKey, event) {
   event.stopPropagation();
   const buildData = getCharacterBuildData(charId);
@@ -63,21 +58,19 @@ function clearSlotItem(charId, slotKey, event) {
   openCharacterDetailModal(charId);
 }
 
-// Abrir Selector Flotante de Selección para Equipamientos / Monsterlings / Personajes
+// Selector flotante para Equipamientos, Monsterlings y Personajes (con filtros)
 function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
   const modal = document.createElement('div');
   modal.id = 'selector-overlay';
   modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4';
 
-  let itemsHtml = '';
+  let bodyContent = '';
 
   if (slotType === 'equipment') {
-    // Lista filtrada por categoría
     const equipItems = DB.equipments.filter(e => !slotCategory || e.slot === slotCategory);
-    if (equipItems.length === 0) {
-      itemsHtml = `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay ítems registrados para: ${slotCategory}</p>`;
-    } else {
-      itemsHtml = equipItems.map(e => `
+    const itemsHtml = equipItems.length === 0 
+      ? `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay ítems registrados para: ${slotCategory}</p>`
+      : equipItems.map(e => `
         <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${e.name}', rarity:'${e.rarity}'}); document.getElementById('selector-overlay').remove();"
              class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-cyan-400 cursor-pointer transition flex items-center justify-between">
           <div>
@@ -85,38 +78,47 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
             <span class="text-[10px] text-slate-400">${e.stat}</span>
           </div>
           <span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">${e.rarity}</span>
-        </div>
-      `).join('');
-    }
+        </div>`).join('');
+
+    bodyContent = `<div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">${itemsHtml}</div>`;
+
   } else if (slotType === 'monsterling') {
     const isLegendary = slotCategory === 'Legendario';
     const monsterItems = DB.monsterlings.filter(m => !isLegendary || m.rarity === 'Legendario');
-    if (monsterItems.length === 0) {
-      itemsHtml = `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay Monsterlings ${isLegendary ? 'Legendarios' : ''} disponibles.</p>`;
-    } else {
-      itemsHtml = monsterItems.map(m => `
+    const itemsHtml = monsterItems.length === 0
+      ? `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay Monsterlings ${isLegendary ? 'Legendarios' : ''} registrados.</p>`
+      : monsterItems.map(m => `
         <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${m.name}', type:'${m.type}'}); document.getElementById('selector-overlay').remove();"
              class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-purple-400 cursor-pointer transition flex items-center justify-between">
           <div>
             <h4 class="text-xs font-bold text-white">${m.name}</h4>
             <span class="text-[10px] text-purple-400">${m.type}</span>
           </div>
-        </div>
-      `).join('');
-    }
+        </div>`).join('');
+
+    bodyContent = `<div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">${itemsHtml}</div>`;
+
   } else if (slotType === 'character') {
-    itemsHtml = DB.characters.map(c => {
-      const portrait = getPortraitPath(c.slug);
-      return `
-        <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${c.name}', slug:'${c.slug}', element:'${c.element}'}); document.getElementById('selector-overlay').remove();"
-             class="p-2 bg-slate-900 border border-brand-border rounded-xl hover:border-amber-400 cursor-pointer transition flex items-center space-x-2">
-          <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-8 h-8 rounded-lg object-cover bg-slate-950">
-          <div class="min-w-0 flex-1">
-            <h4 class="text-xs font-bold text-white truncate">${c.name}</h4>
-            <span class="text-[9px] text-cyan-400">${c.element}</span>
-          </div>
-        </div>`;
-    }).join('');
+    // Interfaz con buscador y filtros para seleccionar personajes
+    bodyContent = `
+      <div class="space-y-2">
+        <div class="relative">
+          <i data-lucide="search" class="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-500"></i>
+          <input type="text" id="slot-char-search" placeholder="Buscar personaje..." oninput="filterSlotCharacters()" 
+                 class="w-full bg-slate-900 border border-brand-border rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+        
+        <div class="flex gap-1 overflow-x-auto pb-1" id="slot-char-elem-filters">
+          <button onclick="filterSlotCharacters('')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 font-semibold hover:bg-slate-700">Todos</button>
+          ${['Fuego', 'Rayo', 'Viento', 'Tierra', 'Hielo'].map(e => `
+            <button onclick="filterSlotCharacters('${e}')" class="px-2 py-0.5 rounded text-[10px] bg-slate-900 border border-brand-border text-cyan-400 font-medium hover:border-cyan-400">${e}</button>
+          `).join('')}
+        </div>
+
+        <div id="slot-char-grid" class="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
+          ${renderSlotCharacterList(DB.characters, charId, slotKey)}
+        </div>
+      </div>`;
   }
 
   modal.innerHTML = `
@@ -127,24 +129,54 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <div class="grid ${slotType === 'character' ? 'grid-cols-2' : 'grid-cols-1'} gap-2 max-h-60 overflow-y-auto pr-1">
-        ${itemsHtml}
-      </div>
+      ${bodyContent}
     </div>`;
 
   document.body.appendChild(modal);
   lucide.createIcons();
 }
 
-// Modal de detalles con slots ajustados y compactos
+let activeSlotElemFilter = '';
+
+function renderSlotCharacterList(list, charId, slotKey) {
+  return list.map(c => {
+    const portrait = getPortraitPath(c.slug);
+    return `
+      <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${c.name}', slug:'${c.slug}', element:'${c.element}'}); document.getElementById('selector-overlay').remove();"
+           class="p-1.5 bg-slate-900 border border-brand-border rounded-xl hover:border-amber-400 cursor-pointer transition flex items-center space-x-2">
+        <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-8 h-8 rounded-lg object-cover bg-slate-950 flex-shrink-0">
+        <div class="min-w-0 flex-1">
+          <h4 class="text-xs font-bold text-white truncate">${c.name}</h4>
+          <span class="text-[9px] text-cyan-400 leading-none block">${c.element}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterSlotCharacters(elemFilter = activeSlotElemFilter) {
+  if (elemFilter !== undefined) activeSlotElemFilter = elemFilter;
+  const searchInput = document.getElementById('slot-char-search');
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+  const filtered = DB.characters.filter(c => {
+    const matchesQuery = c.name.toLowerCase().includes(query);
+    const matchesElem = !activeSlotElemFilter || c.element === activeSlotElemFilter;
+    return matchesQuery && matchesElem;
+  });
+
+  const grid = document.getElementById('slot-char-grid');
+  if (grid) {
+    grid.innerHTML = renderSlotCharacterList(filtered, '', '');
+  }
+}
+
+// Modal principal de detalles del personaje
 function openCharacterDetailModal(charId) {
   const character = DB.characters.find(c => c.id === charId);
   if (!character) return;
 
   const portrait = getPortraitPath(character.slug);
   const buildData = getCharacterBuildData(charId);
-
-  // Categorías exclusivas por casilla de Equipamiento
   const equipCategories = ['Casco', 'Pechera', 'Guantes', 'Calzado', 'Artefacto'];
 
   // 1. EQUIPAMIENTO RECOMENDADO
@@ -154,7 +186,7 @@ function openCharacterDetailModal(charId) {
     for (let c = 0; c < 5; c++) {
       const slotKey = `eq_${r}_${c}`;
       const category = equipCategories[c];
-      const isGold = c === 4; // 5to recuadro exclusivo Artefacto con borde dorado
+      const isGold = c === 4; // 5to recuadro Artefacto en Dorado
       const selected = buildData[slotKey];
 
       equipmentsHtml += `
@@ -174,18 +206,23 @@ function openCharacterDetailModal(charId) {
     equipmentsHtml += `</div>`;
   }
 
-  // 2. MONSTERLINGS RECOMENDADOS
+  // 2. MONSTERLINGS RECOMENDADOS (1er recuadro Dorado, 4to recuadro Azul)
   let monsterlingsHtml = '';
   for (let r = 0; r < buildData.monsterlingsRows; r++) {
     monsterlingsHtml += `<div class="grid grid-cols-4 gap-2">`;
     for (let c = 0; c < 4; c++) {
       const slotKey = `mon_${r}_${c}`;
-      const isBlue = c === 3; // 4to recuadro exclusivo Monsterling Legendario (Borde Azul)
+      const isGold = c === 0; // 1er recuadro en Dorado
+      const isBlue = c === 3; // 4to recuadro en Azul (Legendario)
       const selected = buildData[slotKey];
+
+      let borderColor = 'border-brand-border';
+      if (isGold) borderColor = 'border-amber-400/90 shadow-md shadow-amber-500/10';
+      if (isBlue) borderColor = 'border-blue-500/90 shadow-md shadow-blue-500/10';
 
       monsterlingsHtml += `
         <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'monsterling', '${isBlue ? 'Legendario' : 'Normal'}')"
-             class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${isBlue ? 'border-blue-500/90 shadow-md shadow-blue-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-purple-400 transition group relative mx-auto">
+             class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${borderColor} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-purple-400 transition group relative mx-auto">
           ${selected ? `
             <span class="text-[9px] font-bold text-purple-300 truncate w-full text-center px-0.5 leading-tight">${selected.name}</span>
             <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition">
@@ -193,14 +230,16 @@ function openCharacterDetailModal(charId) {
             </button>
           ` : `
             <i data-lucide="plus" class="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition"></i>
-            <span class="text-[8px] ${isBlue ? 'text-blue-400 font-bold' : 'text-slate-500'} font-mono leading-none mt-0.5">${isBlue ? 'Legendario' : '#' + (c + 1)}</span>
+            <span class="text-[8px] ${isGold ? 'text-amber-400 font-bold' : isBlue ? 'text-blue-400 font-bold' : 'text-slate-500'} font-mono leading-none mt-0.5">
+              ${isGold ? 'Top 1' : isBlue ? 'Legendario' : '#' + (c + 1)}
+            </span>
           `}
         </div>`;
     }
     monsterlingsHtml += `</div>`;
   }
 
-  // 3. EQUIPOS RECOMENDADOS
+  // 3. EQUIPOS RECOMENDADOS (Nombre visible debajo del personaje)
   let teamsHtml = '';
   for (let r = 0; r < buildData.teamsRows; r++) {
     teamsHtml += `<div class="grid grid-cols-3 gap-2">`;
@@ -210,16 +249,21 @@ function openCharacterDetailModal(charId) {
 
       teamsHtml += `
         <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'character', 'Personaje')"
-             class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border border-brand-border flex flex-col items-center justify-center p-1 cursor-pointer hover:border-amber-400 transition group relative mx-auto overflow-hidden">
-          ${selected ? `
-            <img src="${getPortraitPath(selected.slug)}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full object-cover rounded-lg">
-            <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute top-0.5 right-0.5 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition">
-              <i data-lucide="x" class="w-2.5 h-2.5"></i>
-            </button>
-          ` : `
-            <i data-lucide="user-plus" class="w-4 h-4 text-slate-500 group-hover:text-amber-400 transition"></i>
-            <span class="text-[8px] text-slate-500 font-mono leading-none mt-0.5">Slot ${c + 1}</span>
-          `}
+             class="flex flex-col items-center justify-center cursor-pointer group relative mx-auto">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border border-brand-border flex items-center justify-center p-0.5 hover:border-amber-400 transition relative overflow-hidden">
+            ${selected ? `
+              <img src="${getPortraitPath(selected.slug)}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full object-cover rounded-lg">
+              <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute top-0.5 right-0.5 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition z-10">
+                <i data-lucide="x" class="w-2.5 h-2.5"></i>
+              </button>
+            ` : `
+              <i data-lucide="user-plus" class="w-4 h-4 text-slate-500 group-hover:text-amber-400 transition"></i>
+            `}
+          </div>
+          <!-- Nombre del personaje debajo del recuadro -->
+          <span class="text-[9px] font-semibold ${selected ? 'text-white' : 'text-slate-500'} truncate w-14 text-center mt-1 leading-none">
+            ${selected ? selected.name : 'Slot ' + (c + 1)}
+          </span>
         </div>`;
     }
     teamsHtml += `</div>`;
@@ -229,7 +273,7 @@ function openCharacterDetailModal(charId) {
   const content = document.getElementById('modal-content');
 
   content.innerHTML = `
-    <!-- CABECERA DEL PERSONAJE -->
+    <!-- CABECERA -->
     <div class="flex items-center space-x-3 pb-3 border-b border-brand-border">
       <div class="relative w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
         <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full rounded-xl object-cover border border-cyan-400 bg-slate-950">
@@ -261,9 +305,7 @@ function openCharacterDetailModal(charId) {
             </button>
           </div>
         </div>
-        <div class="space-y-2">
-          ${equipmentsHtml}
-        </div>
+        <div class="space-y-2">${equipmentsHtml}</div>
       </div>
 
       <!-- MONSTERLINGS RECOMENDADOS -->
@@ -283,12 +325,10 @@ function openCharacterDetailModal(charId) {
             </button>
           </div>
         </div>
-        <div class="space-y-2">
-          ${monsterlingsHtml}
-        </div>
+        <div class="space-y-2">${monsterlingsHtml}</div>
       </div>
 
-      <!-- EQUIPOS RECOMENDADOS -->
+      <!-- EQUIPO RECOMENDADO -->
       <div class="space-y-2">
         <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-xl border border-brand-border">
           <span class="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
@@ -305,9 +345,7 @@ function openCharacterDetailModal(charId) {
             </button>
           </div>
         </div>
-        <div class="space-y-2">
-          ${teamsHtml}
-        </div>
+        <div class="space-y-2">${teamsHtml}</div>
       </div>
     </div>`;
 
@@ -323,7 +361,6 @@ const CharactersSection = {
 
     return `
     <div class="space-y-4">
-      <!-- ENCABEZADO CON TÍTULO Y CONTADOR -->
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-brand-card border border-brand-border px-4 py-3 rounded-2xl">
         <div class="flex items-center space-x-3">
           <i data-lucide="users" class="text-cyan-400 w-5 h-5"></i>
@@ -334,7 +371,6 @@ const CharactersSection = {
         </div>
       </div>
 
-      <!-- PANEL DE FILTROS -->
       <div class="bg-brand-card border border-brand-border p-3.5 rounded-2xl space-y-3 shadow-lg">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
@@ -385,7 +421,6 @@ const CharactersSection = {
         </div>
       </div>
 
-      <!-- GRILLA DE TARJETAS DE PERSONAJES -->
       <div id="characters-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
         ${renderCharacterCards(DB.characters)}
       </div>
