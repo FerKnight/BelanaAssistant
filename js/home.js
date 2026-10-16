@@ -1,6 +1,12 @@
 const HomeSection = {
-  render: () => `
+  render: () => {
+    const obtained = JSON.parse(localStorage.getItem('belana_obtained_characters')) || [];
+    const total = DB.characters.length;
+    const percent = total > 0 ? Math.round((obtained.length / total) * 100) : 0;
+
+    return `
     <div class="space-y-6">
+      <!-- TARJETA DE PERFIL -->
       <section class="bg-brand-card border border-brand-border rounded-2xl p-6 relative overflow-hidden shadow-xl">
         <div class="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
         
@@ -33,23 +39,32 @@ const HomeSection = {
         </div>
       </section>
 
-      <section class="relative overflow-hidden rounded-3xl border border-brand-border bg-gradient-to-br from-slate-900 via-slate-900/90 to-indigo-950/50 p-8 shadow-2xl">
-        <div class="relative z-10 max-w-2xl space-y-4">
-          <div class="inline-flex items-center space-x-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs px-3 py-1 rounded-full font-mono">
-            <i data-lucide="bot" class="w-3.5 h-3.5"></i>
-            <span>BelanaAssistant v1.6</span>
+      <!-- RESUMEN DE PROGRESO DE COLECCIÓN -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div onclick="navigate('characters')" class="bg-brand-card border border-brand-border hover:border-cyan-500/50 p-5 rounded-2xl cursor-pointer transition flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-xs text-slate-400 font-medium">Personajes Obtenidos</span>
+            <div class="text-2xl font-black text-white font-mono">${obtained.length} <span class="text-sm font-normal text-slate-500">/ ${total}</span></div>
+            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden mt-2 border border-slate-800">
+              <div class="bg-cyan-400 h-full rounded-full" style="width: ${percent}%"></div>
+            </div>
           </div>
-          <h1 class="text-2xl md:text-4xl font-black text-white leading-tight">
-            Explora las Estrellas en <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Mongil Star Dive</span>
-          </h1>
-          <p class="text-slate-400 text-sm">
-            Usa el menú lateral para consultar la base de datos modular de personajes, equipamientos, monsterlings y artefactos.
-          </p>
-          <button onclick="toggleDrawer(true)" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center space-x-2 shadow-lg shadow-cyan-500/20">
-            <i data-lucide="menu" class="w-4 h-4"></i>
-            <span>Abrir Menú de Navegación</span>
-          </button>
+          <div class="p-3 bg-cyan-500/10 text-cyan-400 rounded-xl">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-xs text-slate-400 font-medium">Base de Datos</span>
+            <div class="text-2xl font-black text-white font-mono">Mongil Star Dive</div>
+            <span class="text-xs text-cyan-400 font-mono">BelanaAssistant v1.7</span>
+          </div>
+          <div class="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl">
+            <i data-lucide="database" class="w-6 h-6"></i>
+          </div>
         </div>
       </section>
-    </div>`
+    </div>`;
+  }
 };
