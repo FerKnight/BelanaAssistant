@@ -14,7 +14,6 @@ function toggleCharacterObtained(id, event) {
   filterCharacters();
 }
 
-// Configuración de builds/slots asignados por personaje
 function getCharacterBuildData(charId) {
   const builds = JSON.parse(localStorage.getItem('belana_char_builds')) || {};
   if (!builds[charId]) {
@@ -58,8 +57,9 @@ function clearSlotItem(charId, slotKey, event) {
   openCharacterDetailModal(charId);
 }
 
-// Selector flotante para Equipamientos, Monsterlings y Personajes (con filtros)
+// Selector flotante para Equipamientos, Artefactos, Monsterlings y Personajes
 function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
+  const character = DB.characters.find(c => c.id === charId);
   const modal = document.createElement('div');
   modal.id = 'selector-overlay';
   modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4';
@@ -67,20 +67,51 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
   let bodyContent = '';
 
   if (slotType === 'equipment') {
-    const equipItems = DB.equipments.filter(e => !slotCategory || e.slot === slotCategory);
-    const itemsHtml = equipItems.length === 0 
-      ? `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay ítems registrados para: ${slotCategory}</p>`
-      : equipItems.map(e => `
-        <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${e.name}', rarity:'${e.rarity}'}); document.getElementById('selector-overlay').remove();"
-             class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-cyan-400 cursor-pointer transition flex items-center justify-between">
-          <div>
-            <h4 class="text-xs font-bold text-white">${e.name}</h4>
-            <span class="text-[10px] text-slate-400">${e.stat}</span>
-          </div>
-          <span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">${e.rarity}</span>
-        </div>`).join('');
+    if (slotCategory === 'Artefacto') {
+      // Filtrar artefactos exclusivamente por el rol del personaje
+      const charRole = character ? character.role.toLowerCase() : '';
+      const artifactItems = DB.artifacts.filter(a => a.role.toLowerCase() === charRole);
 
-    bodyContent = `<div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">${itemsHtml}</div>`;
+      const itemsHtml = artifactItems.length === 0 
+        ? `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay artefactos registrados para el rol: <strong class="text-amber-400">${character ? character.role : ''}</strong></p>`
+        : artifactItems.map(a => {
+            const iconPath = getArtifactIconPath(a.name);
+            return `
+            <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${a.name}', rarity:'${a.rarity}', role:'${a.role}'}); document.getElementById('selector-overlay').remove();"
+                 class="p-2 bg-slate-900 border border-brand-border rounded-xl hover:border-amber-400 cursor-pointer transition flex items-center space-x-2.5">
+              <img src="${iconPath}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-9 h-9 rounded-lg object-cover bg-slate-950 p-0.5 border border-slate-800 flex-shrink-0">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center space-x-1.5 mb-0.5">
+                  <span class="text-[9px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded">${a.rarity}</span>
+                  <span class="text-[9px] text-cyan-400 font-medium uppercase">${a.role}</span>
+                </div>
+                <h4 class="text-xs font-bold text-white truncate">${a.name}</h4>
+              </div>
+            </div>`;
+          }).join('');
+
+      bodyContent = `
+        <div class="space-y-2">
+          <p class="text-[11px] text-slate-400">Artefactos compatibles con rol <span class="text-amber-400 font-bold">${character ? character.role : ''}</span>:</p>
+          <div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">${itemsHtml}</div>
+        </div>`;
+    } else {
+      // Equipamiento regular (Casco, Pechera, Guantes, Calzado)
+      const equipItems = DB.equipments.filter(e => e.slot === slotCategory);
+      const itemsHtml = equipItems.length === 0 
+        ? `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay equipamientos registrados para: ${slotCategory}</p>`
+        : equipItems.map(e => `
+          <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${e.name}', rarity:'${e.rarity}', stat:'${e.stat}'}); document.getElementById('selector-overlay').remove();"
+               class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-cyan-400 cursor-pointer transition flex items-center justify-between">
+            <div>
+              <h4 class="text-xs font-bold text-white">${e.name}</h4>
+              <span class="text-[10px] text-slate-400">${e.stat}</span>
+            </div>
+            <span class="text-[10px] font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">${e.rarity}</span>
+          </div>`).join('');
+
+      bodyContent = `<div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">${itemsHtml}</div>`;
+    }
 
   } else if (slotType === 'monsterling') {
     const isLegendary = slotCategory === 'Legendario';
@@ -88,30 +119,29 @@ function openSlotSelectorModal(charId, slotKey, slotType, slotCategory) {
     const itemsHtml = monsterItems.length === 0
       ? `<p class="col-span-full text-center text-slate-500 text-xs py-6">No hay Monsterlings ${isLegendary ? 'Legendarios' : ''} registrados.</p>`
       : monsterItems.map(m => `
-        <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${m.name}', type:'${m.type}'}); document.getElementById('selector-overlay').remove();"
+        <div onclick="selectSlotItem('${charId}', '${slotKey}', {name:'${m.name}', type:'${m.type}', rarity:'${m.rarity}'}); document.getElementById('selector-overlay').remove();"
              class="p-2.5 bg-slate-900 border border-brand-border rounded-xl hover:border-purple-400 cursor-pointer transition flex items-center justify-between">
           <div>
             <h4 class="text-xs font-bold text-white">${m.name}</h4>
-            <span class="text-[10px] text-purple-400">${m.type}</span>
+            <span class="text-[10px] text-purple-400">${m.type} • ${m.rarity}</span>
           </div>
         </div>`).join('');
 
     bodyContent = `<div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">${itemsHtml}</div>`;
 
   } else if (slotType === 'character') {
-    // Interfaz con buscador y filtros para seleccionar personajes
     bodyContent = `
       <div class="space-y-2">
         <div class="relative">
           <i data-lucide="search" class="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-500"></i>
-          <input type="text" id="slot-char-search" placeholder="Buscar personaje..." oninput="filterSlotCharacters()" 
+          <input type="text" id="slot-char-search" placeholder="Buscar personaje..." oninput="filterSlotCharacters('${charId}', '${slotKey}')" 
                  class="w-full bg-slate-900 border border-brand-border rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
         </div>
         
-        <div class="flex gap-1 overflow-x-auto pb-1" id="slot-char-elem-filters">
-          <button onclick="filterSlotCharacters('')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 font-semibold hover:bg-slate-700">Todos</button>
+        <div class="flex gap-1 overflow-x-auto pb-1">
+          <button onclick="filterSlotCharacters('${charId}', '${slotKey}', '')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 font-semibold hover:bg-slate-700">Todos</button>
           ${['Fuego', 'Rayo', 'Viento', 'Tierra', 'Hielo'].map(e => `
-            <button onclick="filterSlotCharacters('${e}')" class="px-2 py-0.5 rounded text-[10px] bg-slate-900 border border-brand-border text-cyan-400 font-medium hover:border-cyan-400">${e}</button>
+            <button onclick="filterSlotCharacters('${charId}', '${slotKey}', '${e}')" class="px-2 py-0.5 rounded text-[10px] bg-slate-900 border border-brand-border text-cyan-400 font-medium hover:border-cyan-400">${e}</button>
           `).join('')}
         </div>
 
@@ -153,7 +183,7 @@ function renderSlotCharacterList(list, charId, slotKey) {
   }).join('');
 }
 
-function filterSlotCharacters(elemFilter = activeSlotElemFilter) {
+function filterSlotCharacters(charId, slotKey, elemFilter = activeSlotElemFilter) {
   if (elemFilter !== undefined) activeSlotElemFilter = elemFilter;
   const searchInput = document.getElementById('slot-char-search');
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -166,11 +196,11 @@ function filterSlotCharacters(elemFilter = activeSlotElemFilter) {
 
   const grid = document.getElementById('slot-char-grid');
   if (grid) {
-    grid.innerHTML = renderSlotCharacterList(filtered, '', '');
+    grid.innerHTML = renderSlotCharacterList(filtered, charId, slotKey);
   }
 }
 
-// Modal principal de detalles del personaje
+// Modal principal de detalles y builds del personaje
 function openCharacterDetailModal(charId) {
   const character = DB.characters.find(c => c.id === charId);
   if (!character) return;
@@ -179,22 +209,24 @@ function openCharacterDetailModal(charId) {
   const buildData = getCharacterBuildData(charId);
   const equipCategories = ['Casco', 'Pechera', 'Guantes', 'Calzado', 'Artefacto'];
 
-  // 1. EQUIPAMIENTO RECOMENDADO
+  // 1. EQUIPAMIENTO RECOMENDADO (5to recuadro exclusivo Artefacto con borde dorado)
   let equipmentsHtml = '';
   for (let r = 0; r < buildData.equipmentsRows; r++) {
     equipmentsHtml += `<div class="grid grid-cols-5 gap-2">`;
     for (let c = 0; c < 5; c++) {
       const slotKey = `eq_${r}_${c}`;
       const category = equipCategories[c];
-      const isGold = c === 4; // 5to recuadro Artefacto en Dorado
+      const isGold = c === 4; // 5to recuadro Artefacto
       const selected = buildData[slotKey];
 
       equipmentsHtml += `
         <div onclick="openSlotSelectorModal('${charId}', '${slotKey}', 'equipment', '${category}')"
-             class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${isGold ? 'border-amber-400/90 shadow-md shadow-amber-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-cyan-400 transition group relative mx-auto">
+             class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${isGold ? 'border-amber-400/90 shadow-md shadow-amber-500/10' : 'border-brand-border'} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-cyan-400 transition group relative mx-auto overflow-hidden">
           ${selected ? `
-            <span class="text-[9px] font-bold text-cyan-300 truncate w-full text-center px-0.5 leading-tight">${selected.name}</span>
-            <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition">
+            ${isGold ? `<img src="${getArtifactIconPath(selected.name)}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full object-cover rounded-lg">` : `
+              <span class="text-[9px] font-bold text-cyan-300 truncate w-full text-center px-0.5 leading-tight">${selected.name}</span>
+            `}
+            <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition z-10">
               <i data-lucide="x" class="w-2.5 h-2.5"></i>
             </button>
           ` : `
@@ -206,14 +238,14 @@ function openCharacterDetailModal(charId) {
     equipmentsHtml += `</div>`;
   }
 
-  // 2. MONSTERLINGS RECOMENDADOS (1er recuadro Dorado, 4to recuadro Azul)
+  // 2. MONSTERLINGS RECOMENDADOS (1ro dorado, 4to azul)
   let monsterlingsHtml = '';
   for (let r = 0; r < buildData.monsterlingsRows; r++) {
     monsterlingsHtml += `<div class="grid grid-cols-4 gap-2">`;
     for (let c = 0; c < 4; c++) {
       const slotKey = `mon_${r}_${c}`;
-      const isGold = c === 0; // 1er recuadro en Dorado
-      const isBlue = c === 3; // 4to recuadro en Azul (Legendario)
+      const isGold = c === 0;
+      const isBlue = c === 3;
       const selected = buildData[slotKey];
 
       let borderColor = 'border-brand-border';
@@ -225,7 +257,7 @@ function openCharacterDetailModal(charId) {
              class="w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-xl border ${borderColor} flex flex-col items-center justify-center p-1 cursor-pointer hover:border-purple-400 transition group relative mx-auto">
           ${selected ? `
             <span class="text-[9px] font-bold text-purple-300 truncate w-full text-center px-0.5 leading-tight">${selected.name}</span>
-            <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition">
+            <button onclick="clearSlotItem('${charId}', '${slotKey}', event)" class="absolute -top-1 -right-1 bg-red-500/90 text-white rounded-full p-0.5 hover:bg-red-600 transition z-10">
               <i data-lucide="x" class="w-2.5 h-2.5"></i>
             </button>
           ` : `
@@ -239,7 +271,7 @@ function openCharacterDetailModal(charId) {
     monsterlingsHtml += `</div>`;
   }
 
-  // 3. EQUIPOS RECOMENDADOS (Nombre visible debajo del personaje)
+  // 3. EQUIPO RECOMENDADO
   let teamsHtml = '';
   for (let r = 0; r < buildData.teamsRows; r++) {
     teamsHtml += `<div class="grid grid-cols-3 gap-2">`;
@@ -260,7 +292,6 @@ function openCharacterDetailModal(charId) {
               <i data-lucide="user-plus" class="w-4 h-4 text-slate-500 group-hover:text-amber-400 transition"></i>
             `}
           </div>
-          <!-- Nombre del personaje debajo del recuadro -->
           <span class="text-[9px] font-semibold ${selected ? 'text-white' : 'text-slate-500'} truncate w-14 text-center mt-1 leading-none">
             ${selected ? selected.name : 'Slot ' + (c + 1)}
           </span>
