@@ -11,11 +11,11 @@ const HomeSection = {
         
         <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 relative z-10">
           <div class="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 text-center sm:text-left">
-            <div class="relative">
-              <img src="${userProfile.avatar}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-20 h-20 rounded-2xl border-2 border-cyan-400 object-cover shadow-lg shadow-cyan-500/20">
-              <button onclick="openProfileModal()" class="absolute -bottom-1 -right-1 bg-cyan-500 text-slate-950 p-1.5 rounded-lg hover:bg-cyan-400 transition">
-                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-              </button>
+            <div class="relative group cursor-pointer" onclick="openAvatarSelectorModal()" title="Cambiar Avatar">
+              <img src="${userProfile.avatar}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-20 h-20 rounded-2xl border-2 border-cyan-400 object-cover shadow-lg shadow-cyan-500/20 group-hover:border-cyan-300 transition">
+              <div class="absolute inset-0 bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                <i data-lucide="camera" class="w-5 h-5 text-white"></i>
+              </div>
             </div>
             <div>
               <span class="text-xs text-cyan-400 font-mono tracking-wider uppercase font-semibold">Perfil de Jugador</span>
@@ -33,7 +33,7 @@ const HomeSection = {
 
           <button onclick="openProfileModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-brand-border px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center space-x-2">
             <i data-lucide="user-cog" class="w-4 h-4 text-cyan-400"></i>
-            <span>Cambiar Avatar</span>
+            <span>Editar Perfil</span>
           </button>
         </div>
       </section>
