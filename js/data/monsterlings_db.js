@@ -192,4 +192,4 @@ const MONSTERLINGS_DB = [
   { id: 'mon_191', name: 'raptor altus', slug: 'raptor_altus', region: 'Sector 3', nro: 191, image: 'Monsterling_Icon/raptor_altus.png', hasChain: false, chainText: '', rangeEffect: '' },
   { id: 'mon_192', name: 'el mas alla', slug: 'el_mas_alla', region: 'Sector 3', nro: 192, image: 'Monsterling_Icon/el_mas_alla.png', hasChain: false, chainText: '', rangeEffect: '' },
   { id: 'mon_193', name: 'olvido', slug: 'olvido', region: 'Sector 3', nro: 193, image: 'Monsterling_Icon/olvido.png', hasChain: false, chainText: '', rangeEffect: '' }
-);
+];
