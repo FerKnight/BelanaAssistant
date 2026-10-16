@@ -1,39 +1,74 @@
 const DEFAULT_AVATAR = 'https://cdn-icons-png.flaticon.com/512/3659/3659738.png';
 
+function getPortraitPath(slug) {
+  return `assets/images/Character_Icon/character_${slug}_00.png`;
+}
+
+function getArtifactIconPath(name) {
+  if (!name) return DEFAULT_AVATAR;
+  const slug = name.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/ñ/g, 'n')
+    .replace(/[^a-z0-9]/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '');
+    
+  return `assets/images/Artifact_Icon/artifact_${slug}_00.png`;
+}
+
 const DB = {
   characters: [
-    { id: 'c1', name: 'Angel', slug: 'angel', element: 'Fuego', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Especialista en emboscadas y daño masivo de fuego.', desc: 'Personaje de elemento Fuego, rol Asesino y grado 4 estrellas.' },
-    { id: 'c2', name: 'Benjamin', slug: 'benjamin', element: 'Rayo', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Ataques relámpago dirigidos a objetivos vulnerables.', desc: 'Personaje de elemento Rayo, rol Asesino y grado 4 estrellas.' },
-    { id: 'c3', name: 'Bonnie', slug: 'bonnie', element: 'Viento', tier: '4★', role: 'Apoyo', weapon: 'Por definir', skills: 'Potenciación de velocidad y ráfagas de viento de soporte.', desc: 'Personaje de elemento Viento, rol Apoyo y grado 4 estrellas.' },
-    { id: 'c4', name: 'Brisshell', slug: 'brisshell', element: 'Tierra', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Ataques subterráneos fulminantes con elemento tierra.', desc: 'Personaje de elemento Tierra, rol Asesino y grado 5 estrellas.' },
-    { id: 'c5', name: 'Cloud', slug: 'cloud', element: 'Hielo', tier: '4★', role: 'Destructor', weapon: 'Por definir', skills: 'Impactos helados que quiebran escudos enemigos.', desc: 'Personaje de elemento Hielo, rol Destructor y grado 4 estrellas.' },
-    { id: 'c6', name: 'Daisy', slug: 'daisy', element: 'Tierra', tier: '4★', role: 'Apoyo', weapon: 'Por definir', skills: 'Barreras protectoras y curación de área.', desc: 'Personaje de elemento Tierra, rol Apoyo y grado 4 estrellas.' },
-    { id: 'c7', name: 'Ellie', slug: 'ellie', element: 'Tierra', tier: '4★', role: 'Destructor', weapon: 'Por definir', skills: 'Ruptura de defensas blindadas con fuerza sísmica.', desc: 'Personaje de elemento Tierra, rol Destructor y grado 4 estrellas.' },
-    { id: 'c8', name: 'Esther', slug: 'esther', element: 'Viento', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Cortes ágiles de viento con alto índice crítico.', desc: 'Personaje de elemento Viento, rol Asesino y grado 5 estrellas.' },
-    { id: 'c9', name: 'Flare', slug: 'flare', element: 'Fuego', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Explosiones termales destructivas en área.', desc: 'Personaje de elemento Fuego, rol Destructor y grado 5 estrellas.' },
-    { id: 'c10', name: 'Francis', slug: 'francis', element: 'Tierra', tier: '4★', role: 'Apoyo', weapon: 'Por definir', skills: 'Regeneración constante de energía para el equipo.', desc: 'Personaje de elemento Tierra, rol Apoyo y grado 4 estrellas.' },
-    { id: 'c11', name: 'Francis Verano', slug: 'francis_verano', element: 'Tierra', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Versión veraniega con soporte y barreras potenciadas.', desc: 'Personaje de elemento Tierra, rol Apoyo y grado 5 estrellas.' },
-    { id: 'c12', name: 'Gabi', slug: 'gabi', element: 'Tierra', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Combate cuerpo a cuerpo incansable de alta resistencia.', desc: 'Personaje de elemento Tierra, rol Luchador y grado 5 estrellas.' },
-    { id: 'c13', name: 'Isabella', slug: 'isabella', element: 'Hielo', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Congelación profunda y demolición masiva.', desc: 'Personaje de elemento Hielo, rol Destructor y grado 5 estrellas.' },
-    { id: 'c14', name: 'Jiwon', slug: 'jiwon', element: 'Viento', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Amplificación de ataque y curación brisa.', desc: 'Personaje de elemento Viento, rol Apoyo y grado 5 estrellas.' },
-    { id: 'c15', name: 'Leeho', slug: 'leeho', element: 'Fuego', tier: '4★', role: 'Asesino', weapon: 'Por definir', skills: 'Ráfagas de fuego a gran velocidad.', desc: 'Personaje de elemento Fuego, rol Asesino y grado 4 estrellas.' },
-    { id: 'c16', name: 'Mabel', slug: 'mabel', element: 'Rayo', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Descargas eléctricas de choque continuo.', desc: 'Personaje de elemento Rayo, rol Destructor y grado 5 estrellas.' },
-    { id: 'c17', name: 'Mina', slug: 'mina', element: 'Fuego', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Artes marciales ignígeras de alto impacto.', desc: 'Personaje de elemento Fuego, rol Luchador y grado 5 estrellas.' },
-    { id: 'c18', name: 'Nagi', slug: 'nagi', element: 'Viento', tier: '5★', role: 'Destructor', weapon: 'Por definir', skills: 'Tornados de alta presión ofensiva contra jefes.', desc: 'Personaje de elemento Viento, rol Destructor y grado 5 estrellas.' },
-    { id: 'c19', name: 'Narae', slug: 'narae', element: 'Hielo', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Escudos gélidos y mitigación de daño recibido.', desc: 'Personaje de elemento Hielo, rol Apoyo y grado 5 estrellas.' },
-    { id: 'c20', name: 'Ophelia', slug: 'ophelia', element: 'Hielo', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Combate directo enriquecido con congelación.', desc: 'Personaje de elemento Hielo, rol Luchador y grado 5 estrellas.' },
-    { id: 'c21', name: 'Penny', slug: 'penny', element: 'Rayo', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Ataques eléctricos continuos e implacables.', desc: 'Personaje de elemento Rayo, rol Luchador y grado 5 estrellas.' },
-    { id: 'c22', name: 'Reina', slug: 'reina', element: 'Rayo', tier: '4★', role: 'Destructor', weapon: 'Por definir', skills: 'Demolición de escudos con descargas de alto voltaje.', desc: 'Personaje de elemento Rayo, rol Destructor y grado 4 estrellas.' },
-    { id: 'c23', name: 'Sangun', slug: 'sangun', element: 'Viento', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Ofensiva frontal potente impulsada por viento.', desc: 'Personaje de elemento Viento, rol Luchador y grado 5 estrellas.' },
-    { id: 'c24', name: 'Sera', slug: 'sera', element: 'Hielo', tier: '4★', role: 'Luchador', weapon: 'Por definir', skills: 'Defensa sólida y contraataques congelantes.', desc: 'Personaje de elemento Hielo, rol Luchador y grado 4 estrellas.' },
-    { id: 'c25', name: 'Verna', slug: 'verna', element: 'Fuego', tier: '4★', role: 'Luchador', weapon: 'Por definir', skills: 'Puños candentes con daño acumulativo.', desc: 'Personaje de elemento Fuego, rol Luchador y grado 4 estrellas.' },
-    { id: 'c26', name: 'Verna Verano', slug: 'verna_verano', element: 'Fuego', tier: '5★', role: 'Luchador', weapon: 'Por definir', skills: 'Versión veraniega con combate de fuego potenciado.', desc: 'Personaje de elemento Fuego, rol Luchador y grado 5 estrellas.' },
-    { id: 'c27', name: 'Vivian', slug: 'vivian', element: 'Fuego', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Soporte cálido con aumentos de daño de fuego al equipo.', desc: 'Personaje de elemento Fuego, rol Apoyo y grado 5 estrellas.' },
-    { id: 'c28', name: 'Yeonhwa', slug: 'yeonhwa', element: 'Rayo', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Ataques sigilosos relámpago de daño crítico masivo.', desc: 'Personaje de elemento Rayo, rol Asesino y grado 5 estrellas.' }
+    { id: '1', name: 'Angel', slug: 'angel', tier: '5★', element: 'Fuego', role: 'Asesino', skills: 'Ataque veloz en área con quemadura.', desc: 'Una hábil guerrera especializada en eliminación rápida.' },
+    { id: '2', name: 'Verna', slug: 'verna', tier: '5★', element: 'Hielo', role: 'Destructor', skills: 'Congela y destruye las defensas enemigas.', desc: 'Maestra del combate glacial con gran poder ofensivo.' },
+    { id: '3', name: 'Karin', slug: 'karin', tier: '4★', element: 'Viento', role: 'Apoyo', skills: 'Cura y otorga velocidad al equipo.', desc: 'Soporte táctico ágil y versátil.' },
+    { id: '4', name: 'Selene', slug: 'selene', tier: '5★', element: 'Rayo', role: 'Luchador', skills: 'Golpes eléctricos encadenados.', desc: 'Poderosa combatiente cuerpo a cuerpo.' },
+    { id: '5', name: 'Rina', slug: 'rina', tier: '4★', element: 'Tierra', role: 'Luchador', skills: 'Escudo protector y daño de impacto.', desc: 'Defensora firme con gran resistencia.' },
+    { id: '6', name: 'Lyra', slug: 'lyra', tier: '5★', element: 'Viento', role: 'Asesino', skills: 'Emboscada letal invisible.', desc: 'Asesina silenciosa de la guardia de los vientos.' },
+    { id: '7', name: 'Zoe', slug: 'zoe', tier: '4★', element: 'Fuego', role: 'Apoyo', skills: 'Mejora de ataque masiva.', desc: 'Estrategia ardiente en el campo de batalla.' },
+    { id: '8', name: 'Mira', slug: 'mira', tier: '5★', element: 'Hielo', role: 'Destructor', skills: 'Ventisca colosal de daño crítico.', desc: 'Fuerza destructiva implacable.' },
+    { id: '9', name: 'Tania', slug: 'tania', tier: '4★', element: 'Rayo', role: 'Asesino', skills: 'Descarga eléctrica rápida.', desc: 'Velocidad pura en cada movimiento.' },
+    { id: '10', name: 'Elena', slug: 'elena', tier: '5★', element: 'Tierra', role: 'Apoyo', skills: 'Sanación y barrera de rocas.', desc: 'Protectora inquebrantable de la naturaleza.' },
+    { id: '11', name: 'Aria', slug: 'aria', tier: '4★', element: 'Viento', role: 'Luchador', skills: 'Combo de ráfagas cortantes.', desc: 'Ágil y precisa en combate.' },
+    { id: '12', name: 'Kira', slug: 'kira', tier: '5★', element: 'Fuego', role: 'Destructor', skills: 'Explosión volcánica devastadora.', desc: 'Poder puro desatado.' },
+    { id: '13', name: 'Nia', slug: 'nia', tier: '4★', element: 'Hielo', role: 'Apoyo', skills: 'Reducción de velocidad enemiga.', desc: 'Control táctico del terreno.' },
+    { id: '14', name: 'Sora', slug: 'sora', tier: '5★', element: 'Rayo', role: 'Asesino', skills: 'Corte relámpago instantáneo.', desc: 'Inalcanzable para sus enemigos.' },
+    { id: '15', name: 'Hana', slug: 'hana', tier: '4★', element: 'Tierra', role: 'Destructor', skills: 'Terremoto controlado.', desc: 'Rompe defensas con facilidad.' },
+    { id: '16', name: 'Lia', slug: 'lia', tier: '5★', element: 'Viento', role: 'Apoyo', skills: 'Curación en área continua.', desc: 'Bendición de los vientos curativos.' },
+    { id: '17', name: 'Maya', slug: 'maya', tier: '4★', element: 'Fuego', role: 'Luchador', skills: 'Golpes de fuego acumulativos.', desc: 'Pasión y fuerza en la batalla.' },
+    { id: '18', name: 'Erika', slug: 'erika', tier: '5★', element: 'Hielo', role: 'Asesino', skills: 'Daga glacial penetrante.', desc: 'Fría, calculadora y letal.' },
+    { id: '19', name: 'Iris', slug: 'iris', tier: '4★', element: 'Rayo', role: 'Apoyo', skills: 'Recarga de energía rápida.', desc: 'Dinámica y llena de energía.' },
+    { id: '20', name: 'Dana', slug: 'dana', tier: '5★', element: 'Tierra', role: 'Luchador', skills: 'Golpe telúrico masivo.', desc: 'Fuerza de la tierra madre.' },
+    { id: '21', name: 'Fiona', slug: 'fiona', tier: '4★', element: 'Viento', role: 'Destructor', skills: 'Tornado frontal destructivo.', desc: 'Vientos de destrucción total.' },
+    { id: '22', name: 'Gia', slug: 'gia', tier: '5★', element: 'Fuego', role: 'Apoyo', skills: 'Aura de furia ignea.', desc: 'Inspira a sus aliados con fuego.' },
+    { id: '23', name: 'Karin_Alt', slug: 'karin_alt', tier: '4★', element: 'Hielo', role: 'Luchador', skills: 'Espada de hielo ágil.', desc: 'Versión alternativa de combate.' },
+    { id: '24', name: 'Luna', slug: 'luna', tier: '5★', element: 'Rayo', role: 'Destructor', skills: 'Juicio del rayo celestial.', desc: 'Poder divino en la tormenta.' },
+    { id: '25', name: 'Noa', slug: 'noa', tier: '4★', element: 'Tierra', role: 'Asesino', skills: 'Emboscada de rocas ocultas.', desc: 'Maestra del sigilo terrestre.' },
+    { id: '26', name: 'Orla', slug: 'orla', tier: '5★', element: 'Viento', role: 'Luchador', skills: 'Patada giratoria de alta velocidad.', desc: 'Artes marciales del viento.' },
+    { id: '27', name: 'Pia', slug: 'pia', tier: '4★', element: 'Fuego', role: 'Apoyo', skills: 'Escudo térmico protector.', desc: 'Calidez que defiende al equipo.' },
+    { id: '28', name: 'Roxie', slug: 'roxie', tier: '5★', element: 'Hielo', role: 'Destructor', skills: 'Cañón glacial supremo.', desc: 'Poder destructivo desde el hielo.' }
   ],
-  equipments: [],
-  monsterlings: [],
-  artifact: [
+
+  equipments: [
+    { id: 'e1', name: 'Casco de Soldado', slot: 'Casco', rarity: '4★', stat: 'ATK +120' },
+    { id: 'e2', name: 'Casco Épico de Asalto', slot: 'Casco', rarity: '5★', stat: 'ATK +250' },
+    { id: 'e3', name: 'Pechera de Malla', slot: 'Pechera', rarity: '4★', stat: 'DEF +150' },
+    { id: 'e4', name: 'Armadura Pesada de Vanguardia', slot: 'Pechera', rarity: '5★', stat: 'DEF +320' },
+    { id: 'e5', name: 'Guantes de Cuero', slot: 'Guantes', rarity: '4★', stat: 'CRIT +5%' },
+    { id: 'e6', name: 'Guanteletes de Berserker', slot: 'Guantes', rarity: '5★', stat: 'CRIT +12%' },
+    { id: 'e7', name: 'Botas Ligeras', slot: 'Calzado', rarity: '4★', stat: 'SPD +10' },
+    { id: 'e8', name: 'Botas de Velocidad Divina', slot: 'Calzado', rarity: '5★', stat: 'SPD +25' }
+  ],
+
+  monsterlings: [
+    { id: 'm1', name: 'Ignis Pequeño', type: 'Fuego', rarity: 'Normal' },
+    { id: 'm2', name: 'Dragon Ignis Legendario', type: 'Fuego', rarity: 'Legendario' },
+    { id: 'm3', name: 'Aqua Sprite', type: 'Hielo', rarity: 'Normal' },
+    { id: 'm4', name: 'Leviatán Legendario', type: 'Hielo', rarity: 'Legendario' },
+    { id: 'm5', name: 'Sparky', type: 'Rayo', rarity: 'Normal' },
+    { id: 'm6', name: 'Rayo Celestial Legendario', type: 'Rayo', rarity: 'Legendario' }
+  ],
+
+  artifacts: [
     { id: 'a1', name: 'Amigo de la naturaleza', rarity: '5★', role: 'Luchador' },
     { id: 'a2', name: 'Aquel ante quien se arrodillan los dokkaebi', rarity: '5★', role: 'Luchador' },
     { id: 'a3', name: 'Escama blanca del dragon serpenteante', rarity: '5★', role: 'Destructor' },
@@ -70,18 +105,3 @@ const DB = {
     { id: 'a34', name: 'Vuelo del halcón', rarity: '4★', role: 'Asesino' }
   ]
 };
-
-function getPortraitPath(slug) {
-  const cleanSlug = slug.toLowerCase().trim().replace(/\s+/g, '_');
-  return `assets/images/Character_Portrait/portrait_${cleanSlug}_00.png`;
-function getArtifactIconPath(name) {
-  if (!name) return DEFAULT_AVATAR;
-  const slug = name.toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/ñ/g, 'n')
-    .replace(/[^a-z0-9]/g, '_')
-    .replace(/_+/g, '_')
-    .replace(/^_+|_+$/g, '');
-    
-  return `assets/images/Artifact_Icon/artifact_${slug}_00.png`;
-}
