@@ -36,7 +36,6 @@ const DB = {
   artifacts: []
 };
 
-// Función para obtener la ruta normalizada de la imagen
 function getPortraitPath(slug) {
   const cleanSlug = slug.toLowerCase().trim().replace(/\s+/g, '_');
   return `assets/images/Character_Portrait/portrait_${cleanSlug}_00.png`;
