@@ -31,7 +31,9 @@ const DB = {
     { id: 'c27', name: 'Vivian', slug: 'vivian', element: 'Fuego', tier: '5★', role: 'Apoyo', weapon: 'Por definir', skills: 'Soporte cálido con aumentos de daño de fuego al equipo.', desc: 'Personaje de elemento Fuego, rol Apoyo y grado 5 estrellas.' },
     { id: 'c28', name: 'Yeonhwa', slug: 'yeonhwa', element: 'Rayo', tier: '5★', role: 'Asesino', weapon: 'Por definir', skills: 'Ataques sigilosos relámpago de daño crítico masivo.', desc: 'Personaje de elemento Rayo, rol Asesino y grado 5 estrellas.' }
   ],
-  equipments: [
+  equipments: [],
+  monsterlings: [],
+  artifact: [
     { id: 'a1', name: 'Amigo de la naturaleza', rarity: '5★', role: 'Luchador' },
     { id: 'a2', name: 'Aquel ante quien se arrodillan los dokkaebi', rarity: '5★', role: 'Luchador' },
     { id: 'a3', name: 'Escama blanca del dragon serpenteante', rarity: '5★', role: 'Destructor' },
@@ -66,9 +68,7 @@ const DB = {
     { id: 'a32', name: 'Presagio de despertar', rarity: '4★', role: 'Destructor' },
     { id: 'a33', name: 'Subidón de azúcar', rarity: '4★', role: 'Destructor' },
     { id: 'a34', name: 'Vuelo del halcón', rarity: '4★', role: 'Asesino' }
-  ],
-  monsterlings: [],
-  artifacts: []
+  ]
 };
 
 function getPortraitPath(slug) {
