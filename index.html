@@ -1,4 +1,96 @@
-<!-- MODAL CAMBIAR AVATAR -->
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BelanaAssistant</title>
+
+  <!-- Configuración PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#090d16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Estilos e Iconos -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#090d16',
+              card: '#111827',
+              border: '#1f293d',
+              cyan: '#06b6d4',
+              purple: '#8b5cf6',
+              gold: '#f59e0b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-brand-bg text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
+
+  <!-- BARRA SUPERIOR (HEADER) -->
+  <header class="bg-slate-900/90 backdrop-blur-md border-b border-brand-border sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <button onclick="toggleDrawer(true)" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 transition active:scale-95">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        
+        <div class="flex items-center space-x-2 cursor-pointer" onclick="navigate('home')">
+          <div class="p-2 bg-gradient-to-tr from-cyan-500 to-purple-600 rounded-lg shadow-lg shadow-cyan-500/20">
+            <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+          </div>
+          <div>
+            <span class="font-extrabold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
+              BelanaAssistant
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <button id="pwa-install-btn" class="hidden bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-2 shadow-lg shadow-cyan-500/20 transition transform active:scale-95">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">Instalar App</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MENÚ DESPLEGABLE LATERAL (DRAWER) -->
+  <div id="drawer-overlay" onclick="toggleDrawer(false)" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  
+  <aside id="drawer-menu" class="fixed top-0 left-0 h-full w-72 bg-slate-900 border-r border-brand-border z-50 -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-2xl">
+    <div>
+      <div class="p-5 border-b border-brand-border flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="sparkles" class="w-5 h-5 text-cyan-400"></i>
+          <span class="font-bold text-white tracking-wide">Navegación</span>
+        </div>
+        <button onclick="toggleDrawer(false)" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <nav id="drawer-nav-container" class="p-4 space-y-2"></nav>
+    </div>
+
+    <div class="p-4 border-t border-brand-border text-xs text-slate-500 text-center">
+      BelanaAssistant
+    </div>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL DINÁMICO -->
+  <main id="app-content" class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full"></main>
+
+  <!-- MODAL SELECCIONAR AVATAR -->
   <div id="profile-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-brand-card border border-brand-border rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
       <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50">
@@ -16,3 +108,172 @@
       </div>
     </div>
   </div>
+
+  <!-- MODAL DE DETALLES -->
+  <div id="modal-container" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-brand-card border border-brand-border rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl relative">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50 z-20">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 border-t border-brand-border py-6 text-center text-xs text-slate-500 space-y-1">
+    <p>© 2026 BelanaAssistant.</p>
+  </footer>
+
+  <!-- 1. CARGA DE DATOS MODULARES INDEPENDIENTES -->
+  <script src="js/data/characters_db.js"></script>
+  <script src="js/data/artifacts_db.js"></script>
+  <script src="js/data/equipments_db.js"></script>
+  <script src="js/data/monsterlings_db.js"></script>
+  
+  <!-- 2. BASE DE DATOS GENERAL Y CONTROLADORES DE SECCIÓN -->
+  <script src="js/db.js"></script>
+  <script src="js/home.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/equipments.js"></script>
+  <script src="js/monsterlings.js"></script>
+  <script src="js/artifacts.js"></script>
+
+  <!-- LÓGICA PRINCIPAL Y CONTROLADOR -->
+  <script>
+    let userProfile = JSON.parse(localStorage.getItem('belana_user_profile')) || {
+      name: 'Comandante',
+      friendCode: 'MSD-7741-9023',
+      avatar: getPortraitPath(DB.characters[0].slug)
+    };
+
+    let tempSelectedAvatar = userProfile.avatar;
+
+    function openProfileModal() {
+      tempSelectedAvatar = userProfile.avatar;
+      renderAvatarSelector();
+      document.getElementById('profile-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profile-modal').classList.add('hidden');
+    }
+
+    function renderAvatarSelector() {
+      const container = document.getElementById('avatar-selector-container');
+      container.innerHTML = DB.characters.map(char => {
+        const portrait = getPortraitPath(char.slug);
+        const isSelected = tempSelectedAvatar === portrait;
+        return `
+          <div onclick="selectAvatar('${portrait}')" class="cursor-pointer border-2 ${isSelected ? 'border-cyan-400 bg-cyan-500/10 shadow-md shadow-cyan-500/10' : 'border-brand-border bg-slate-900'} rounded-xl p-2 transition text-center group hover:border-cyan-400/60">
+            <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-14 h-14 rounded-lg mx-auto object-cover mb-1.5 group-hover:scale-105 transition bg-slate-950">
+            <span class="text-[10px] text-slate-300 font-semibold block truncate">${char.name}</span>
+          </div>`;
+      }).join('');
+    }
+
+    function selectAvatar(path) {
+      userProfile.avatar = path;
+      localStorage.setItem('belana_user_profile', JSON.stringify(userProfile));
+      closeProfileModal();
+      navigate(activeModule);
+    }
+
+    function copyFriendCode() {
+      navigator.clipboard.writeText(userProfile.friendCode);
+      alert('¡Código de amistad copiado al portapapeles!');
+    }
+
+    const Modules = {
+      home: { title: 'Inicio', icon: 'home', render: HomeSection.render },
+      characters: { title: 'Personajes', icon: 'users', render: CharactersSection.render },
+      equipments: { title: 'Equipamientos', icon: 'shield', render: EquipmentsSection.render },
+      monsterlings: { title: 'Monsterlings', icon: 'bug', render: MonsterlingsSection.render },
+      artifacts: { title: 'Artefactos', icon: 'gem', render: ArtifactsSection.render }
+    };
+
+    let activeModule = sessionStorage.getItem('belana_active_module') || 'home';
+
+    function toggleDrawer(open) {
+      const drawer = document.getElementById('drawer-menu');
+      const overlay = document.getElementById('drawer-overlay');
+      if (open) {
+        drawer.classList.remove('-translate-x-full');
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+      } else {
+        drawer.classList.add('-translate-x-full');
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+      }
+    }
+
+    function navigate(key) {
+      if (!Modules[key]) return;
+      activeModule = key;
+      sessionStorage.setItem('belana_active_module', key);
+      document.getElementById('app-content').innerHTML = Modules[key].render();
+      renderDrawerNav();
+      toggleDrawer(false);
+      lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderDrawerNav() {
+      const container = document.getElementById('drawer-nav-container');
+      container.innerHTML = Object.keys(Modules).map(key => {
+        const mod = Modules[key];
+        const isActive = key === activeModule;
+        return `
+          <button onclick="navigate('${key}')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition ${isActive ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}">
+            <i data-lucide="${mod.icon}" class="w-5 h-5"></i>
+            <span>${mod.title}</span>
+          </button>`;
+      }).join('');
+    }
+
+    function openModal(title, element, role, skills, desc, portrait) {
+      const modal = document.getElementById('modal-container');
+      const content = document.getElementById('modal-content');
+      content.innerHTML = `
+        <div class="flex items-center space-x-4 mb-3">
+          <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-16 h-16 rounded-xl object-cover border border-cyan-400 flex-shrink-0">
+          <div>
+            <h3 class="text-2xl font-bold text-white">${title}</h3>
+            <p class="text-xs text-cyan-400">Elemento: ${element} | Tipo: ${role}</p>
+          </div>
+        </div>
+        <div class="space-y-3 text-sm text-slate-300">
+          <p><strong>Descripción:</strong> ${desc}</p>
+          <div class="p-3 bg-slate-900 rounded-lg border border-slate-800">
+            <strong class="text-indigo-400 block mb-1">Habilidad Especial:</strong>
+            ${skills}
+          </div>
+        </div>`;
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-container').classList.add('hidden');
+    }
+
+    navigate(activeModule);
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW Error:', err));
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn) {
+        btn.classList.remove('hidden');
+        btn.addEventListener('click', () => {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(() => btn.classList.add('hidden'));
+        });
+      }
+    });
+  </script>
+</body>
+</html>
