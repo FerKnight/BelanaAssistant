@@ -212,7 +212,8 @@
       artifacts: { title: 'Artefactos', icon: 'gem', render: ArtifactsSection.render }
     };
 
-    let activeModule = 'home';
+    // Obtener la página actual desde sessionStorage (sobrevive a F5, se borra al cerrar el navegador)
+    let activeModule = sessionStorage.getItem('belana_active_module') || 'home';
 
     function toggleDrawer(open) {
       const drawer = document.getElementById('drawer-menu');
@@ -229,6 +230,7 @@
     function navigate(key) {
       if (!Modules[key]) return;
       activeModule = key;
+      sessionStorage.setItem('belana_active_module', key); // Guardar en sesión temporal
       document.getElementById('app-content').innerHTML = Modules[key].render();
       renderDrawerNav();
       toggleDrawer(false);
@@ -274,7 +276,8 @@
       document.getElementById('modal-container').classList.add('hidden');
     }
 
-    navigate('home');
+    // Inicializar cargando la sección activa guardada en sessionStorage
+    navigate(activeModule);
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW Error:', err));
