@@ -90,8 +90,8 @@ const CharactersSection = {
         </div>
       </div>
 
-      <!-- GRILLA OPTIMIZADA Y AJUSTADA AL TEXTO -->
-      <div id="characters-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
+      <!-- GRILLA DE TARJETAS CUADRADAS Y REDONDEADAS -->
+      <div id="characters-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
         ${renderCharacterCards(DB.characters)}
       </div>
     </div>`;
@@ -111,29 +111,29 @@ function renderCharacterCards(charactersList) {
 
     return `
       <div onclick="openModal('${c.name}', '${c.element}', '${c.role}', '${c.skills}', '${c.desc}', '${portrait}')" 
-           class="bg-brand-card border ${isObtained ? 'border-cyan-500/60 bg-slate-900/90 shadow-sm shadow-cyan-500/5' : 'border-brand-border opacity-70 hover:opacity-100'} 
-                  p-2.5 rounded-xl hover:border-cyan-500/40 cursor-pointer transition flex items-center space-x-2.5 group relative">
+           class="bg-brand-card border ${isObtained ? 'border-cyan-500/60 bg-slate-900/90 shadow-md shadow-cyan-500/5' : 'border-brand-border opacity-75 hover:opacity-100'} 
+                  p-3 rounded-2xl hover:border-cyan-500/40 cursor-pointer transition flex flex-col items-center text-center group relative aspect-square justify-between">
         
-        <!-- ÍCONO COMPACTO CON GRADO SUPERIOR IZQUIERDA -->
-        <div class="relative flex-shrink-0">
-          <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-11 h-11 rounded-lg object-cover border ${isObtained ? 'border-cyan-400' : 'border-slate-800'} group-hover:scale-105 transition bg-slate-950">
-          <span class="absolute top-0.5 left-0.5 bg-black/85 text-amber-300 text-[8px] font-bold px-1 py-0.2 rounded border border-amber-500/30 leading-none">
+        <!-- BOTÓN CHECK DE OBTENIDO (SUPERIOR DERECHA) -->
+        <button onclick="toggleCharacterObtained('${c.id}', event)" title="${isObtained ? 'Marcar como no obtenido' : 'Marcar como obtenido'}" class="absolute top-2 right-2 p-1 z-10 rounded-lg bg-slate-900/80 hover:bg-slate-800 transition">
+          <i data-lucide="${isObtained ? 'check-square' : 'square'}" class="w-4 h-4 ${isObtained ? 'text-cyan-400' : 'text-slate-500'}"></i>
+        </button>
+
+        <!-- RETRATO CUADRADO CON GRADO SUPERIOR IZQUIERDA -->
+        <div class="relative w-20 h-20 sm:w-24 sm:h-24 mt-1">
+          <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-full h-full rounded-xl object-cover border ${isObtained ? 'border-cyan-400' : 'border-slate-800'} group-hover:scale-105 transition bg-slate-950 shadow">
+          <span class="absolute top-1 left-1 bg-black/85 text-amber-300 text-[9px] font-bold px-1.5 py-0.5 rounded border border-amber-500/30 leading-none">
             ${c.tier}
           </span>
         </div>
         
-        <!-- INFORMACIÓN AJUSTADA AL TEXTO -->
-        <div class="flex-grow min-w-0 pr-5">
-          <h3 class="font-bold text-xs ${isObtained ? 'text-white' : 'text-slate-300'} truncate leading-tight">${c.name}</h3>
-          <div class="text-[11px] text-slate-400 font-medium truncate mt-0.5 leading-none">
+        <!-- INFORMACIÓN DEL PERSONAJE -->
+        <div class="w-full min-w-0 mt-2">
+          <h3 class="font-bold text-xs ${isObtained ? 'text-white' : 'text-slate-300'} truncate px-1 leading-tight">${c.name}</h3>
+          <div class="text-[10px] text-slate-400 font-medium truncate mt-0.5 px-1 leading-none">
             <span class="text-cyan-400">${c.element}</span> <span class="text-slate-600">•</span> <span>${c.role}</span>
           </div>
         </div>
-
-        <!-- CHECKBOX DE OBTENIDO -->
-        <button onclick="toggleCharacterObtained('${c.id}', event)" title="${isObtained ? 'Marcar como no obtenido' : 'Marcar como obtenido'}" class="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-slate-800/80 transition">
-          <i data-lucide="${isObtained ? 'check-square' : 'square'}" class="w-4 h-4 ${isObtained ? 'text-cyan-400' : 'text-slate-600'}"></i>
-        </button>
       </div>`;
   }).join('');
 }
