@@ -5,17 +5,17 @@ const EQUIPMENTS_DB = [
     set4: 'Daño de viento +10 % durante 5 s al asestar un golpe crítico' 
   },
   { 
-    id: 'eq_2', name: 'Árbol milenario', slug: 'arbol_milenario', pieces: 2, 
+    id: 'eq_2', name: 'Árbol milenario', slug: 'arbol_milenario', pieces: 2, slotParts: ['casco', 'pechera'],
     set2: 'Daño de fuego de todos los compañeros +7,5% durante 5s al usar una habilidad de apoyo', 
     set4: '' 
   },
   { 
-    id: 'eq_3', name: 'Banquete grandioso de glotón', slug: 'banquete_grandioso_de_gloton', pieces: 2, 
+    id: 'eq_3', name: 'Banquete grandioso de glotón', slug: 'banquete_grandioso_de_gloton', pieces: 2, slotParts: ['casco', 'pechera'],
     set2: 'Res al fuego del objetivo -6% durante 5s al impactar con una habilidad de relevo', 
     set4: '' 
   },
   { 
-    id: 'eq_4', name: 'Corazón de escarcha eterna', slug: 'corazon_de_escarcha_eterna', pieces: 2, 
+    id: 'eq_4', name: 'Corazón de escarcha eterna', slug: 'corazon_de_escarcha_eterna', pieces: 2, slotParts: ['casco', 'guantes'],
     set2: 'Daño de aturdimiento de ataque de rayo +7,5%', 
     set4: '' 
   },
@@ -25,7 +25,7 @@ const EQUIPMENTS_DB = [
     set4: 'Al usar la habilidad suprema, la res a viento del objetivo se reduce en 10% durante 5s' 
   },
   { 
-    id: 'eq_6', name: 'Devorador del abismo', slug: 'devorador_del_abismo', pieces: 2, 
+    id: 'eq_6', name: 'Devorador del abismo', slug: 'devorador_del_abismo', pieces: 2, slotParts: ['guantes', 'calzado'],
     set2: 'Daño de neutralización de ataque de hielo +7,5%', 
     set4: '' 
   },
@@ -35,12 +35,12 @@ const EQUIPMENTS_DB = [
     set4: 'Al usar una habilidad suprema, la res a viento del objetivo se reduce un 10% durante 5s' 
   },
   { 
-    id: 'eq_8', name: 'Espíritu de lucha zorro youkai', slug: 'espiritu_de_lucha_zorro_youkai', pieces: 2, 
+    id: 'eq_8', name: 'Espíritu de lucha zorro youkai', slug: 'espiritu_de_lucha_zorro_youkai', pieces: 2, slotParts: ['guantes', 'calzado'],
     set2: 'Res al rayo -6% durante 5s al usar una habilidad de relevo', 
     set4: '' 
   },
   { 
-    id: 'eq_9', name: 'Flores en todo su esplendor', slug: 'flores_en_todo_su_esplendor', pieces: 2, 
+    id: 'eq_9', name: 'Flores en todo su esplendor', slug: 'flores_en_todo_su_esplendor', pieces: 2, slotParts: ['casco', 'calzado'],
     set2: 'Daño de hielo +7,5% durante 5s al usar una habilidad especial', 
     set4: '' 
   },
@@ -60,7 +60,7 @@ const EQUIPMENTS_DB = [
     set4: 'Daño de fuego +7,5% al atacar a un enemigo con aflicción de fuego' 
   },
   { 
-    id: 'eq_13', name: 'Piedra ancestral', slug: 'piedra_ancestral', pieces: 2, 
+    id: 'eq_13', name: 'Piedra ancestral', slug: 'piedra_ancestral', pieces: 2, slotParts: ['casco', 'calzado'],
     set2: 'Daño de neutralización de ataque de viento +7,5%', 
     set4: '' 
   },
@@ -75,7 +75,7 @@ const EQUIPMENTS_DB = [
     set4: 'Daño de rayo +10 % al atacar a un enemigo con aflicción de rayo' 
   },
   { 
-    id: 'eq_16', name: 'Ritos del general victorioso', slug: 'ritos_del_general_victorioso', pieces: 2, 
+    id: 'eq_16', name: 'Ritos del general victorioso', slug: 'ritos_del_general_victorioso', pieces: 2, slotParts: ['guantes', 'calzado'],
     set2: 'Daño de neutralización de ataque de tierra +7,5%', 
     set4: '' 
   },
@@ -100,7 +100,7 @@ const EQUIPMENTS_DB = [
     set4: 'Índice de crítico +5% durante 5s al atacar a un enemigo con aflicción de hielo' 
   },
   { 
-    id: 'eq_21', name: 'Vanguardia de victoria', slug: 'vanguardia_de_victoria', pieces: 2, 
+    id: 'eq_21', name: 'Vanguardia de victoria', slug: 'vanguardia_de_victoria', pieces: 2, slotParts: ['pechera', 'calzado'],
     set2: 'Daño de debilidad elemental del objetivo recibido +10% durante 5s al atacar a un enemigo con aficción de tierra', 
     set4: '' 
   },
