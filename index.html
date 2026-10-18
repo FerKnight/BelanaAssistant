@@ -46,6 +46,12 @@
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .chip { background: #2d3570; color: #fff; border: 2px solid transparent; padding: 6px 12px; border-radius: 16px; cursor: pointer; font-size: 14px; }
   .chip.activo { background: #6c7ee8; border-color: #ffd54f; }
+  .fila-codigo { display: flex; gap: 8px; align-items: center; }
+  .fila-codigo input { flex: 1; width: auto; }
+  .ficha-cabecera { display: flex; align-items: center; gap: 16px; }
+  .ficha-cabecera .icono-grande { margin: 0; flex-shrink: 0; }
+  .ficha-cabecera h2 { margin-bottom: 6px; }
+  .ficha-cabecera p { margin: 2px 0; }
 </style>
 </head>
 <body>
@@ -69,7 +75,10 @@
       <label>Nombre en el juego</label>
       <input id="nombre" maxlength="20" placeholder="Tu nombre">
       <label>Código de amistad</label>
-      <input id="codigo" maxlength="20" placeholder="Tu código">
+      <div class="fila-codigo">
+        <input id="codigo" maxlength="20" placeholder="Tu código">
+        <button class="btn" id="copiarCodigo">Copiar</button>
+      </div>
       <button class="btn" id="guardar">Guardar perfil</button>
       <p id="estado" class="aviso"></p>
     </div>
@@ -202,6 +211,25 @@
     pintarSelector();
   }
 
+  document.getElementById("copiarCodigo").onclick = async () => {
+    const campo = document.getElementById("codigo");
+    const boton = document.getElementById("copiarCodigo");
+    const codigo = campo.value.trim();
+    if (!codigo) {
+      document.getElementById("estado").textContent = "Escribe tu código primero.";
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(codigo);
+    } catch (e) {
+      // Respaldo para navegadores sin acceso al portapapeles
+      campo.select();
+      document.execCommand("copy");
+    }
+    boton.textContent = "¡Copiado!";
+    setTimeout(() => { boton.textContent = "Copiar"; }, 1500);
+  };
+
   document.getElementById("guardar").onclick = () => {
     perfil.nombre = document.getElementById("nombre").value.trim();
     perfil.codigo = document.getElementById("codigo").value.trim();
@@ -313,10 +341,14 @@
     if (!p) return;
     const b = p.build;
     document.getElementById("ficha").innerHTML = `
-      <div class="caja">
+      <div class="caja ficha-cabecera">
         <img class="icono-grande" src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
-        <h2>${esc(p.name)}</h2>
-        <p><strong>Rango:</strong> ${esc(p.tier)} · <strong>Elemento:</strong> ${esc(p.element)} · <strong>Rol:</strong> ${esc(p.role)}</p>
+        <div>
+          <h2>${esc(p.name)}</h2>
+          <p>${esc(p.tier)}</p>
+          <p>${esc(p.element)}</p>
+          <p>${esc(p.role)}</p>
+        </div>
       </div>
       <div class="caja"><h3>Equipamiento</h3>${lista(b.equipamiento)}</div>
       <div class="caja"><h3>Artefacto</h3>${texto(b.artefacto)}</div>
