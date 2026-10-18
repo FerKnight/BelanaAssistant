@@ -387,7 +387,7 @@
 
   function tarjetaEquipo(numero, grupos) {
     if (!grupos || grupos.length === 0) {
-      return `<div class="caja"><h3>Equipo ${numero}</h3><p class='aviso'>Sin datos aún</p></div>`;
+      return `<div class="caja"><p class='aviso'>Sin datos aún</p></div>`;
     }
     const nombres = grupos.map(g => CONJUNTOS[g.conjunto].nombre).join(" - ");
     const huecos = [1, 2, 3, 4].map(pieza => {
@@ -406,7 +406,6 @@
     }).join("");
     return `
       <div class="caja">
-        <h3>Equipo ${numero}</h3>
         <p class="equipo-nombre">${esc(nombres)}</p>
         <div class="huecos">${huecos}</div>
         <div class="efectos">${efectos || "<p class='aviso'>Sin efectos activos</p>"}</div>
@@ -433,10 +432,10 @@
       </div>
       ${tarjetaEquipo(1, p.equipos[0])}
       ${tarjetaEquipo(2, p.equipos[1])}
-      <div class="caja"><h3>Ataques</h3>${lista(b.ataques)}</div>
-      <div class="caja"><h3>Despertares</h3>${lista(b.despertares)}</div>
-      <div class="caja"><h3>Artefactos</h3>${lista(b.artefactos)}</div>
-      <div class="caja"><h3>Monsterlings a equipar</h3>${lista(b.monsterlings)}</div>
+      <div class="caja">${lista(b.ataques)}</div>
+      <div class="caja">${lista(b.despertares)}</div>
+      <div class="caja">${lista(b.artefactos)}</div>
+      <div class="caja">${lista(b.monsterlings)}</div>
     `;
     mostrarSeccion("detalle", id);
   }
