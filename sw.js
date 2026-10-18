@@ -15,7 +15,8 @@ const ARCHIVOS = [
   './index.html',
   './data.js',
   './manifest.json',
-  './icon.svg',
+  './icon-192.png',
+  './icon-512.png',
   ...PERSONAJES.map(p => iconoDe(p))
 ];
 
