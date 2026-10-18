@@ -412,7 +412,7 @@
       </div>`;
   }
 
-  function abrirFicha(id) {
+  function abrirFicha(id, desdeHistorial = false) {
     const p = PERSONAJES.find(x => x.id === id);
     if (!p) return;
     const b = p.build;
@@ -437,6 +437,7 @@
       <div class="caja">${lista(b.artefactos)}</div>
       <div class="caja">${lista(b.monsterlings)}</div>
     `;
+    if (!desdeHistorial) history.pushState({ vista: "detalle", personaje: id }, "");
     mostrarSeccion("detalle", id);
   }
 
@@ -454,8 +455,15 @@
 
   // Navegación
   document.querySelectorAll(".menu button").forEach(b =>
-    b.onclick = () => { mostrarSeccion(b.dataset.sec); cerrarMenu(); });
-  document.getElementById("volver").onclick = () => mostrarSeccion("personajes");
+    b.onclick = () => {
+      if (history.state && history.state.vista === "detalle") history.replaceState(null, "");
+      mostrarSeccion(b.dataset.sec);
+      cerrarMenu();
+    });
+  document.getElementById("volver").onclick = () => {
+    if (history.state && history.state.vista === "detalle") history.back();
+    else mostrarSeccion("personajes");
+  };
 
   function pintarRoles() {
     document.getElementById("roles").innerHTML = ROLES.map(r => `
@@ -477,6 +485,12 @@
   } else if (vista.sec === "inicio" || vista.sec === "personajes") {
     mostrarSeccion(vista.sec);
   }
+
+  // Botón atrás del navegador o del móvil: desde una ficha vuelve al listado
+  window.addEventListener("popstate", e => {
+    if (e.state && e.state.vista === "detalle") abrirFicha(e.state.personaje, true);
+    else mostrarSeccion("personajes");
+  });
 
   // Registro del service worker (permite usar la web sin conexión)
   if ("serviceWorker" in navigator) {
