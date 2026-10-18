@@ -60,6 +60,16 @@
   .ficha-artefacto { width: 96px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
   .ficha-artefacto img { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; background: #2d3570; }
   .ficha-artefacto span { font-size: 13px; color: #aab; line-height: 1.2; }
+  .equipo-nombre { font-weight: bold; color: #ffd54f; margin: 0 0 10px; }
+  .huecos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .hueco { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .hueco-marco { width: 60px; height: 60px; border-radius: 8px; background: #2d3570; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .hueco-marco img { width: 100%; height: 100%; object-fit: contain; }
+  .hueco span { font-size: 11px; color: #aab; }
+  .efectos { margin-top: 12px; }
+  .efecto-titulo { margin: 8px 0 4px; font-weight: bold; color: #b9c4ff; }
+  .efectos ul { margin: 0 0 6px; }
+  .efectos li { font-size: 14px; line-height: 1.4; }
   .ficha-cabecera p { margin: 2px 0; }
   .boton-menu { background: #2d3570; color: #fff; border: 0; border-radius: 8px; font-size: 22px; padding: 4px 12px; cursor: pointer; }
   .menu { position: fixed; top: 0; left: 0; height: 100%; width: 240px; box-sizing: border-box; background: #1b2040; padding: 16px; transform: translateX(-100%); transition: transform 0.25s ease; z-index: 20; }
@@ -372,6 +382,37 @@
     actualizarContador();
   }
 
+  // Tarjeta de equipo: nombre de los conjuntos, 4 huecos y los efectos activos
+  const NOMBRE_PIEZA = { 1: "Casco", 2: "Pechera", 3: "Guantes", 4: "Calzado" };
+
+  function tarjetaEquipo(numero, grupos) {
+    if (!grupos || grupos.length === 0) {
+      return `<div class="caja"><h3>Equipo ${numero}</h3><p class='aviso'>Sin datos aún</p></div>`;
+    }
+    const nombres = grupos.map(g => CONJUNTOS[g.conjunto].nombre).join(" - ");
+    const huecos = [1, 2, 3, 4].map(pieza => {
+      const g = grupos.find(x => x.piezas.includes(pieza));
+      const img = g
+        ? `<img src="${iconoConjunto(g.conjunto, pieza)}" alt="${esc(NOMBRE_PIEZA[pieza])}" onerror="this.style.display='none'">`
+        : "";
+      return `<div class="hueco"><div class="hueco-marco">${img}</div><span>${NOMBRE_PIEZA[pieza]}</span></div>`;
+    }).join("");
+    const efectos = grupos.map(g => {
+      const c = CONJUNTOS[g.conjunto];
+      const lineas = [];
+      if (g.piezas.length >= 2 && c.dos) lineas.push(`<li><strong>2 piezas:</strong> ${esc(c.dos)}</li>`);
+      if (g.piezas.length >= 4 && c.cuatro) lineas.push(`<li><strong>4 piezas:</strong> ${esc(c.cuatro)}</li>`);
+      return lineas.length ? `<p class="efecto-titulo">${esc(c.nombre)}</p><ul>${lineas.join("")}</ul>` : "";
+    }).join("");
+    return `
+      <div class="caja">
+        <h3>Equipo ${numero}</h3>
+        <p class="equipo-nombre">${esc(nombres)}</p>
+        <div class="huecos">${huecos}</div>
+        <div class="efectos">${efectos || "<p class='aviso'>Sin efectos activos</p>"}</div>
+      </div>`;
+  }
+
   function abrirFicha(id) {
     const p = PERSONAJES.find(x => x.id === id);
     if (!p) return;
@@ -390,10 +431,11 @@
           <span>${esc(p.artefacto)}</span>
         </div>
       </div>
+      ${tarjetaEquipo(1, p.equipos[0])}
+      ${tarjetaEquipo(2, p.equipos[1])}
       <div class="caja"><h3>Ataques</h3>${lista(b.ataques)}</div>
       <div class="caja"><h3>Despertares</h3>${lista(b.despertares)}</div>
       <div class="caja"><h3>Artefactos</h3>${lista(b.artefactos)}</div>
-      <div class="caja"><h3>Equipamientos</h3>${lista(b.equipamientos)}</div>
       <div class="caja"><h3>Monsterlings a equipar</h3>${lista(b.monsterlings)}</div>
     `;
     mostrarSeccion("detalle", id);
