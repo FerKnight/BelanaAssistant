@@ -58,3 +58,23 @@ const PERSONAJES = [
   { id: 'vivian', name: 'Vivian', tier: '5★', element: 'Fuego', role: 'Apoyo', build: vacio() },
   { id: 'yeonhwa', name: 'Yeonhwa', tier: '4★', element: 'Rayo', role: 'Asesino', build: vacio() }
 ];
+
+// Descripciones de los roles (se muestran en Inicio)
+const ROLES = [
+  {
+    nombre: 'Apoyo',
+    descripcion: 'Destaca apoyando al equipo. El daño de apoyo aumenta en función del dominio de Apoyo del personaje de apoyo.'
+  },
+  {
+    nombre: 'Asesino',
+    descripcion: 'Destaca en infligir daño masivo al aprovechar los descuidos del enemigo. El daño de contención aumenta en función del dominio de Asesino del asesino.'
+  },
+  {
+    nombre: 'Destructor',
+    descripcion: 'Destaca en los combates contra jefes. El daño de neutralización aumenta en función del dominio de Destructor del destructor.'
+  },
+  {
+    nombre: 'Luchador',
+    descripcion: 'Destaca en batallas de combate cuerpo a cuerpo en las que luchan aliados y enemigos y reina el caos. El daño de refriega aumenta en función del dominio de Lucha del luchador.'
+  }
+];

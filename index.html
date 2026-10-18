@@ -8,10 +8,10 @@
 <meta name="theme-color" content="#1b2040">
 <style>
   body { font-family: system-ui, sans-serif; margin: 0; background: #101320; color: #eee; }
-  header { background: #1b2040; padding: 12px; position: sticky; top: 0; text-align: center; z-index: 5; }
+  header { background: #1b2040; padding: 12px; position: sticky; top: 0; display: flex; align-items: center; gap: 12px; z-index: 5; }
   nav button, .btn { background: #2d3570; color: #fff; border: 0; padding: 10px 14px; border-radius: 8px; cursor: pointer; margin: 2px; font-size: 15px; }
   nav button.activo { background: #6c7ee8; }
-  .marca-app { font-weight: bold; font-size: 18px; margin-bottom: 8px; color: #ffd54f; }
+  .marca-app { flex: 1; text-align: center; font-weight: bold; font-size: 18px; color: #ffd54f; }
   main { padding: 16px; max-width: 800px; margin: auto; }
   .seccion { display: none; }
   .seccion.activa { display: block; }
@@ -52,17 +52,32 @@
   .ficha-cabecera .icono-grande { margin: 0; flex-shrink: 0; }
   .ficha-cabecera h2 { margin-bottom: 6px; }
   .ficha-cabecera p { margin: 2px 0; }
+  .boton-menu { background: #2d3570; color: #fff; border: 0; border-radius: 8px; font-size: 22px; padding: 4px 12px; cursor: pointer; }
+  .menu { position: fixed; top: 0; left: 0; height: 100%; width: 240px; box-sizing: border-box; background: #1b2040; padding: 16px; transform: translateX(-100%); transition: transform 0.25s ease; z-index: 20; }
+  .menu.abierto { transform: translateX(0); }
+  .menu h3 { margin: 0 0 12px; color: #ffd54f; }
+  .menu button { display: block; width: 100%; text-align: left; background: #2d3570; color: #fff; border: 0; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 15px; margin-bottom: 6px; }
+  .menu button.activo { background: #6c7ee8; }
+  .fondo-menu { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 15; }
+  .fondo-menu.abierto { display: block; }
+  .roles { margin-top: 12px; }
+  .rol-tarjeta { background: #1b2040; border-radius: 10px; padding: 12px; margin-bottom: 8px; }
+  .rol-tarjeta h3 { margin-bottom: 6px; }
+  .rol-tarjeta p { margin: 0; font-size: 14px; line-height: 1.4; }
 </style>
 </head>
 <body>
 
 <header>
+  <button class="boton-menu" id="abrirMenu" aria-label="Abrir menú">☰</button>
   <div class="marca-app">Belana Assistant</div>
-  <nav>
-    <button data-sec="inicio" class="activo">Inicio</button>
-    <button data-sec="personajes">Personajes</button>
-  </nav>
 </header>
+<div class="fondo-menu" id="fondoMenu"></div>
+<aside class="menu" id="menu">
+  <h3>Menú</h3>
+  <button data-sec="inicio" class="activo">Inicio</button>
+  <button data-sec="personajes">Personajes</button>
+</aside>
 
 <main>
 
@@ -82,6 +97,7 @@
       <button class="btn" id="guardar">Guardar perfil</button>
       <p id="estado" class="aviso"></p>
     </div>
+    <div id="roles" class="roles"></div>
   </section>
 
   <section id="personajes" class="seccion">
@@ -159,9 +175,9 @@
   function mostrarSeccion(id, personajeId = null) {
     document.querySelectorAll(".seccion").forEach(s => s.classList.remove("activa"));
     document.getElementById(id).classList.add("activa");
-    document.querySelectorAll("nav button").forEach(b =>
+    document.querySelectorAll(".menu button").forEach(b =>
       b.classList.toggle("activo", b.dataset.sec === id));
-    localStorage.setItem("vistaBelana", JSON.stringify({ sec: id, personaje: personajeId }));
+    sessionStorage.setItem("vistaBelana", JSON.stringify({ sec: id, personaje: personajeId }));
     window.scrollTo(0, 0);
   }
 
@@ -359,17 +375,38 @@
     mostrarSeccion("detalle", id);
   }
 
+  // Menú desplegable desde la izquierda
+  function abrirMenu() {
+    document.getElementById("menu").classList.add("abierto");
+    document.getElementById("fondoMenu").classList.add("abierto");
+  }
+  function cerrarMenu() {
+    document.getElementById("menu").classList.remove("abierto");
+    document.getElementById("fondoMenu").classList.remove("abierto");
+  }
+  document.getElementById("abrirMenu").onclick = abrirMenu;
+  document.getElementById("fondoMenu").onclick = cerrarMenu;
+
   // Navegación
-  document.querySelectorAll("nav button").forEach(b =>
-    b.onclick = () => mostrarSeccion(b.dataset.sec));
+  document.querySelectorAll(".menu button").forEach(b =>
+    b.onclick = () => { mostrarSeccion(b.dataset.sec); cerrarMenu(); });
   document.getElementById("volver").onclick = () => mostrarSeccion("personajes");
 
+  function pintarRoles() {
+    document.getElementById("roles").innerHTML = ROLES.map(r => `
+      <div class="rol-tarjeta">
+        <h3>${esc(r.nombre)}</h3>
+        <p>${esc(r.descripcion)}</p>
+      </div>`).join("");
+  }
+
   cargarPerfil();
+  pintarRoles();
   iniciarFiltros();
   pintarPersonajes();
 
   // Vuelve a la pantalla donde estaba el usuario antes de recargar
-  const vista = JSON.parse(localStorage.getItem("vistaBelana") || "{}");
+  const vista = JSON.parse(sessionStorage.getItem("vistaBelana") || "{}");
   if (vista.sec === "detalle" && PERSONAJES.some(p => p.id === vista.personaje)) {
     abrirFicha(vista.personaje);
   } else if (vista.sec === "inicio" || vista.sec === "personajes") {
