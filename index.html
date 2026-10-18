@@ -55,7 +55,11 @@
   .fila-codigo input { flex: 1; width: auto; }
   .ficha-cabecera { display: flex; align-items: center; gap: 16px; }
   .ficha-cabecera .icono-grande { margin: 0; flex-shrink: 0; }
-  .ficha-cabecera h2 { margin-bottom: 6px; }
+  .ficha-cabecera h2 { margin-bottom: 6px; font-size: 20px; }
+  .ficha-datos { flex: 1; min-width: 0; }
+  .ficha-artefacto { width: 96px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+  .ficha-artefacto img { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; background: #2d3570; }
+  .ficha-artefacto span { font-size: 13px; color: #aab; line-height: 1.2; }
   .ficha-cabecera p { margin: 2px 0; }
   .boton-menu { background: #2d3570; color: #fff; border: 0; border-radius: 8px; font-size: 22px; padding: 4px 12px; cursor: pointer; }
   .menu { position: fixed; top: 0; left: 0; height: 100%; width: 240px; box-sizing: border-box; background: #1b2040; padding: 16px; transform: translateX(-100%); transition: transform 0.25s ease; z-index: 20; }
@@ -375,11 +379,15 @@
     document.getElementById("ficha").innerHTML = `
       <div class="caja ficha-cabecera">
         <img class="icono-grande" src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
-        <div>
-          <h2>${esc(p.name)}</h2>
-          <p>${esc(p.tier)}</p>
+        <div class="ficha-datos">
+          <h2>${esc(p.name)} - ${esc(p.tier)}</h2>
           <p>${esc(p.element)}</p>
           <p>${esc(p.role)}</p>
+          <p>${esc(p.rango)}</p>
+        </div>
+        <div class="ficha-artefacto">
+          <img src="${artefactoIconoDe(p)}" alt="${esc(p.artefacto)}" onerror="this.style.display='none'">
+          <span>${esc(p.artefacto)}</span>
         </div>
       </div>
       <div class="caja"><h3>Ataques</h3>${lista(b.ataques)}</div>
