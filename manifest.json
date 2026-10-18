@@ -1,16 +1,18 @@
 {
-  "short_name": "BelanaApp",
-  "name": "BelanaAssistant - Mongil Star Dive Guide",
+  "name": "Belana Assistant",
+  "short_name": "Belana",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#101320",
+  "theme_color": "#1b2040",
+  "lang": "es",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3659/3659738.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
-  ],
-  "start_url": "./index.html",
-  "background_color": "#090d16",
-  "theme_color": "#090d16",
-  "display": "standalone",
-  "orientation": "portrait"
+  ]
 }

@@ -1,337 +1,345 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BelanaAssistant</title>
-
-  <!-- Configuración PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#090d16">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-  <!-- Estilos e Iconos -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              bg: '#090d16',
-              card: '#111827',
-              border: '#1f293d',
-              cyan: '#06b6d4',
-              purple: '#8b5cf6',
-              gold: '#f59e0b'
-            }
-          }
-        }
-      }
-    }
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Belana Assistant</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b2040">
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; background: #101320; color: #eee; }
+  header { background: #1b2040; padding: 12px; position: sticky; top: 0; text-align: center; z-index: 5; }
+  nav button, .btn { background: #2d3570; color: #fff; border: 0; padding: 10px 14px; border-radius: 8px; cursor: pointer; margin: 2px; font-size: 15px; }
+  nav button.activo { background: #6c7ee8; }
+  .marca-app { font-weight: bold; font-size: 18px; margin-bottom: 8px; color: #ffd54f; }
+  main { padding: 16px; max-width: 800px; margin: auto; }
+  .seccion { display: none; }
+  .seccion.activa { display: block; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .tarjeta { background: #1b2040; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; position: relative; }
+  .tarjeta:hover { outline: 2px solid #6c7ee8; }
+  .marcador { position: absolute; top: 8px; left: 8px; }
+  .marcador input { width: 20px; height: 20px; margin: 0; cursor: pointer; accent-color: #7dd87d; }
+  .icono { width: 72px; height: 72px; object-fit: contain; display: block; margin: 4px auto 8px; }
+  .icono-grande { width: 110px; height: 110px; object-fit: contain; display: block; margin: 0 auto 12px; }
+  .avatar-boton { width: 96px; height: 96px; border-radius: 50%; background: #2d3570; border: 3px solid #ffd54f; cursor: pointer; padding: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; color: #fff; font-size: 36px; }
+  .avatar-boton img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .avatar-ayuda { text-align: center; font-size: 13px; color: #aab; margin-bottom: 12px; }
+  .selector { display: none; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0 16px; background: #14182b; border-radius: 10px; padding: 12px; }
+  .selector.abierto { display: flex; }
+  .avatar { width: 64px; height: 64px; border-radius: 50%; background: #2d3570; border: 3px solid transparent; cursor: pointer; padding: 4px; box-sizing: border-box; }
+  .avatar img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .avatar.sel { border-color: #ffd54f; }
+  input, select { padding: 10px; border-radius: 8px; border: 0; width: 100%; box-sizing: border-box; margin: 6px 0 12px; font-size: 15px; background: #1b2040; color: #eee; }
+  .caja { background: #1b2040; border-radius: 10px; padding: 14px; margin: 12px 0; }
+  h2 { margin-top: 0; }
+  h3 { margin: 0 0 8px; color: #b9c4ff; }
+  ul { padding-left: 20px; margin: 0; }
+  .aviso { font-size: 13px; color: #aab; }
+  .titulo { display: flex; align-items: baseline; gap: 10px; margin: 0 0 8px; }
+  .titulo h2 { margin: 0; }
+  .contador { font-size: 16px; color: #7dd87d; font-weight: bold; }
+  .filtros { background: #1b2040; border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+  .etiqueta { font-size: 13px; color: #aab; margin: 8px 0 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { background: #2d3570; color: #fff; border: 2px solid transparent; padding: 6px 12px; border-radius: 16px; cursor: pointer; font-size: 14px; }
+  .chip.activo { background: #6c7ee8; border-color: #ffd54f; }
+</style>
 </head>
-<body class="bg-brand-bg text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
+<body>
 
-  <!-- BARRA SUPERIOR (HEADER) -->
-  <header class="bg-slate-900/90 backdrop-blur-md border-b border-brand-border sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <button onclick="toggleDrawer(true)" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 transition active:scale-95">
-          <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
-        
-        <div class="flex items-center space-x-2 cursor-pointer" onclick="navigate('home')">
-          <div class="p-2 bg-gradient-to-tr from-cyan-500 to-purple-600 rounded-lg shadow-lg shadow-cyan-500/20">
-            <i data-lucide="bot" class="w-5 h-5 text-white"></i>
-          </div>
-          <div>
-            <span class="font-extrabold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
-              BelanaAssistant
-            </span>
-          </div>
-        </div>
-      </div>
+<header>
+  <div class="marca-app">Belana Assistant</div>
+  <nav>
+    <button data-sec="inicio" class="activo">Inicio</button>
+    <button data-sec="personajes">Personajes</button>
+  </nav>
+</header>
 
-      <button id="pwa-install-btn" class="hidden bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-2 shadow-lg shadow-cyan-500/20 transition transform active:scale-95">
-        <i data-lucide="download" class="w-4 h-4"></i>
-        <span class="hidden sm:inline">Instalar App</span>
-      </button>
+<main>
+
+  <section id="inicio" class="seccion activa">
+    <div class="caja">
+      <h2>Mi perfil</h2>
+      <button class="avatar-boton" id="avatarBoton" title="Cambiar avatar"></button>
+      <p class="avatar-ayuda" id="avatarNombre"></p>
+      <div class="selector" id="selector"></div>
+      <label>Nombre en el juego</label>
+      <input id="nombre" maxlength="20" placeholder="Tu nombre">
+      <label>Código de amistad</label>
+      <input id="codigo" maxlength="20" placeholder="Tu código">
+      <button class="btn" id="guardar">Guardar perfil</button>
+      <p id="estado" class="aviso"></p>
     </div>
-  </header>
+  </section>
 
-  <!-- MENÚ DESPLEGABLE LATERAL (DRAWER) -->
-  <div id="drawer-overlay" onclick="toggleDrawer(false)" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
-  
-  <aside id="drawer-menu" class="fixed top-0 left-0 h-full w-72 bg-slate-900 border-r border-brand-border z-50 -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-2xl">
-    <div>
-      <div class="p-5 border-b border-brand-border flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <i data-lucide="sparkles" class="w-5 h-5 text-cyan-400"></i>
-          <span class="font-bold text-white tracking-wide">Navegación</span>
-        </div>
-        <button onclick="toggleDrawer(false)" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <nav id="drawer-nav-container" class="p-4 space-y-2"></nav>
+  <section id="personajes" class="seccion">
+    <div class="titulo">
+      <h2>Personajes</h2>
+      <span class="contador" id="contadorTengo"></span>
     </div>
+    <p class="aviso">Marca el recuadro de cada personaje que ya tienes.</p>
 
-    <div class="p-4 border-t border-brand-border text-xs text-slate-500 text-center">
-      BelanaAssistant
-    </div>
-  </aside>
+    <div class="filtros">
+      <input id="buscar" type="search" placeholder="Buscar personaje por nombre...">
 
-  <!-- CONTENIDO PRINCIPAL DINÁMICO -->
-  <main id="app-content" class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full"></main>
+      <div class="etiqueta">Rango</div>
+      <select id="filtroTier">
+        <option value="">Todos</option>
+        <option value="4★">4★</option>
+        <option value="5★">5★</option>
+      </select>
 
-  <!-- MODAL EXCLUSIVO SELECTOR DE AVATAR -->
-  <div id="avatar-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-brand-card border border-brand-border rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
-      <button onclick="closeAvatarModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
+      <div class="etiqueta">Elemento (puedes marcar varios)</div>
+      <div class="chips" id="chipsElemento"></div>
 
-      <h3 class="text-xl font-bold text-white flex items-center space-x-2">
-        <i data-lucide="image" class="text-cyan-400 w-5 h-5"></i>
-        <span>Seleccionar Avatar</span>
-      </h3>
+      <div class="etiqueta">Rol (puedes marcar varios)</div>
+      <div class="chips" id="chipsRol"></div>
 
-      <div class="space-y-3">
-        <label class="block text-xs font-semibold text-slate-400">Elige un personaje para tu foto de perfil:</label>
-        <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-64 overflow-y-auto p-1 pr-2" id="avatar-selector-container"></div>
+      <div style="margin-top: 12px;">
+        <button class="btn" id="limpiar">Limpiar filtros</button>
+        <span class="aviso" id="contador"></span>
       </div>
     </div>
-  </div>
 
-  <!-- MODAL EDITAR NOMBRE -->
-  <div id="edit-name-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-brand-card border border-brand-border rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative">
-      <button onclick="closeEditNameModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-      <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-        <i data-lucide="user" class="text-cyan-400 w-5 h-5"></i>
-        <span>Editar Nombre</span>
-      </h3>
-      <div>
-        <label class="block text-xs font-semibold text-slate-400 mb-1">Nuevo Nombre:</label>
-        <input type="text" id="input-new-name" class="w-full bg-slate-900 border border-brand-border rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-400">
-      </div>
-      <button onclick="saveNameOnly()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2 rounded-xl text-xs transition">
-        Guardar Nombre
-      </button>
-    </div>
-  </div>
+    <div class="grid" id="lista"></div>
+  </section>
 
-  <!-- MODAL EDITAR CÓDIGO DE AMISTAD -->
-  <div id="edit-code-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-brand-card border border-brand-border rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative">
-      <button onclick="closeEditCodeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-      <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-        <i data-lucide="key" class="text-cyan-400 w-5 h-5"></i>
-        <span>Editar Código de Amistad</span>
-      </h3>
-      <div>
-        <label class="block text-xs font-semibold text-slate-400 mb-1">Nuevo Código:</label>
-        <input type="text" id="input-new-code" placeholder="EJ: MSD-9982-1042" class="w-full bg-slate-900 border border-brand-border rounded-xl px-3 py-2 text-sm font-mono text-cyan-400 focus:outline-none focus:border-cyan-400">
-      </div>
-      <button onclick="saveCodeOnly()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2 rounded-xl text-xs transition">
-        Guardar Código
-      </button>
-    </div>
-  </div>
+  <section id="detalle" class="seccion">
+    <button class="btn" id="volver">← Volver a personajes</button>
+    <div id="ficha"></div>
+  </section>
 
-  <!-- MODAL DE DETALLES Y SELECTORES DE EQUIPAMIENTO/ARTEFACTOS/MONSTERLINGS -->
-  <div id="modal-container" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-brand-card border border-brand-border rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50 z-20">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-      <div id="modal-content"></div>
-    </div>
-  </div>
+</main>
 
-  <!-- FOOTER -->
-  <footer class="bg-slate-900 border-t border-brand-border py-6 text-center text-xs text-slate-500 space-y-1">
-    <p>© 2026 BelanaAssistant.</p>
-  </footer>
+<script src="data.js"></script>
+<script>
 
-  <!-- 1. CARGA DE DATOS MODULARES INDEPENDIENTES -->
-  <script src="js/data/characters_db.js"></script>
-  <script src="js/data/artifacts_db.js"></script>
-  <script src="js/data/equipments_db.js"></script>
-  <script src="js/data/monsterlings_db.js"></script>
-  
-  <!-- 2. BASE DE DATOS GENERAL Y CONTROLADORES DE SECCIÓN -->
-  <script src="js/db.js"></script>
-  <script src="js/home.js"></script>
-  <script src="js/characters.js"></script>
-  <script src="js/equipments.js"></script>
-  <script src="js/monsterlings.js"></script>
-  <script src="js/artifacts.js"></script>
+  // ============================================================
+  // LÓGICA: no hace falta tocar nada de aquí hacia abajo
+  // ============================================================
+  let perfil = JSON.parse(localStorage.getItem("perfilMongil") || "{}");
+  let obtenidos = JSON.parse(localStorage.getItem("obtenidosMongil") || "{}");
 
-  <!-- LÓGICA PRINCIPAL Y CONTROLADORES -->
-  <script>
-    let userProfile = JSON.parse(localStorage.getItem('belana_user_profile')) || {
-      name: 'Comandante',
-      friendCode: 'MSD-7741-9023',
-      avatar: typeof DB !== 'undefined' && DB.characters.length > 0 ? getPortraitPath(DB.characters[0].slug) : ''
-    };
+  // Estado de los filtros
+  const filtros = { texto: "", tier: "", elementos: new Set(), roles: new Set() };
 
-    // --- FUNCIONES EXCLUSIVAS DEL AVATAR ---
-    function openAvatarSelectorModal() {
-      renderAvatarSelector();
-      document.getElementById('avatar-modal').classList.remove('hidden');
-      lucide.createIcons();
+  function esc(t) {
+    return String(t).replace(/[&<>"']/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+
+  // Quita tildes y pasa a minúsculas para que la búsqueda no distinga mayúsculas ni acentos
+  function normalizar(t) {
+    return String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  function lista(arr) {
+    if (!arr || arr.length === 0) return "<p class='aviso'>Sin datos aún</p>";
+    return "<ul>" + arr.map(x => `<li>${esc(x)}</li>`).join("") + "</ul>";
+  }
+
+  function texto(t) {
+    return t ? `<p>${esc(t)}</p>` : "<p class='aviso'>Sin datos aún</p>";
+  }
+
+  function mostrarSeccion(id) {
+    document.querySelectorAll(".seccion").forEach(s => s.classList.remove("activa"));
+    document.getElementById(id).classList.add("activa");
+    document.querySelectorAll("nav button").forEach(b =>
+      b.classList.toggle("activo", b.dataset.sec === id));
+    window.scrollTo(0, 0);
+  }
+
+  // Perfil: el avatar es el icono de un personaje (se guarda su id).
+  // Tocar la imagen abre u oculta el selector.
+  function pintarAvatarActual() {
+    const boton = document.getElementById("avatarBoton");
+    const nombre = document.getElementById("avatarNombre");
+    const p = PERSONAJES.find(x => x.id === perfil.avatar);
+    if (!p) {
+      boton.innerHTML = "+";
+      nombre.textContent = "Toca para elegir avatar";
+      return;
     }
+    boton.innerHTML = `<img src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">`;
+    nombre.textContent = p.name;
+  }
 
-    function closeAvatarModal() {
-      document.getElementById('avatar-modal').classList.add('hidden');
-    }
-
-    function renderAvatarSelector() {
-      const container = document.getElementById('avatar-selector-container');
-      if (!container) return;
-      container.innerHTML = DB.characters.map(char => {
-        const portrait = getPortraitPath(char.slug);
-        const isSelected = userProfile.avatar === portrait;
-        return `
-          <div onclick="selectAvatar('${portrait}')" class="cursor-pointer border-2 ${isSelected ? 'border-cyan-400 bg-cyan-500/10 shadow-md shadow-cyan-500/10' : 'border-brand-border bg-slate-900'} rounded-xl p-2 transition text-center group hover:border-cyan-400/60">
-            <img src="${portrait}" onerror="this.src='${DEFAULT_AVATAR}'" class="w-14 h-14 rounded-lg mx-auto object-cover mb-1.5 group-hover:scale-105 transition bg-slate-950">
-            <span class="text-[10px] text-slate-300 font-semibold block truncate">${char.name}</span>
-          </div>`;
-      }).join('');
-    }
-
-    function selectAvatar(path) {
-      userProfile.avatar = path;
-      localStorage.setItem('belana_user_profile', JSON.stringify(userProfile));
-      closeAvatarModal();
-      navigate(activeModule);
-    }
-
-    // --- FUNCIONES EDICIÓN DE NOMBRE ---
-    function openEditNameModal() {
-      document.getElementById('input-new-name').value = userProfile.name;
-      document.getElementById('edit-name-modal').classList.remove('hidden');
-    }
-
-    function closeEditNameModal() {
-      document.getElementById('edit-name-modal').classList.add('hidden');
-    }
-
-    function saveNameOnly() {
-      const val = document.getElementById('input-new-name').value.trim();
-      if (val) {
-        userProfile.name = val;
-        localStorage.setItem('belana_user_profile', JSON.stringify(userProfile));
-      }
-      closeEditNameModal();
-      navigate(activeModule);
-    }
-
-    // --- FUNCIONES EDICIÓN CÓDIGO DE AMISTAD ---
-    function openEditCodeModal() {
-      document.getElementById('input-new-code').value = userProfile.friendCode;
-      document.getElementById('edit-code-modal').classList.remove('hidden');
-    }
-
-    function closeEditCodeModal() {
-      document.getElementById('edit-code-modal').classList.add('hidden');
-    }
-
-    function saveCodeOnly() {
-      const val = document.getElementById('input-new-code').value.trim();
-      if (val) {
-        userProfile.friendCode = val;
-        localStorage.setItem('belana_user_profile', JSON.stringify(userProfile));
-      }
-      closeEditCodeModal();
-      navigate(activeModule);
-    }
-
-    function copyFriendCode() {
-      navigator.clipboard.writeText(userProfile.friendCode);
-      alert('¡Código de amistad copiado al portapapeles!');
-    }
-
-    const Modules = {
-      home: { title: 'Inicio', icon: 'home', render: HomeSection.render },
-      characters: { title: 'Personajes', icon: 'users', render: CharactersSection.render },
-      equipments: { title: 'Equipamientos', icon: 'shield', render: EquipmentsSection.render },
-      monsterlings: { title: 'Monsterlings', icon: 'bug', render: MonsterlingsSection.render },
-      artifacts: { title: 'Artefactos', icon: 'gem', render: ArtifactsSection.render }
-    };
-
-    let activeModule = sessionStorage.getItem('belana_active_module') || 'home';
-
-    function toggleDrawer(open) {
-      const drawer = document.getElementById('drawer-menu');
-      const overlay = document.getElementById('drawer-overlay');
-      if (open) {
-        drawer.classList.remove('-translate-x-full');
-        overlay.classList.remove('opacity-0', 'pointer-events-none');
-      } else {
-        drawer.classList.add('-translate-x-full');
-        overlay.classList.add('opacity-0', 'pointer-events-none');
-      }
-    }
-
-    function navigate(key) {
-      if (!Modules[key]) return;
-      activeModule = key;
-      sessionStorage.setItem('belana_active_module', key);
-      document.getElementById('app-content').innerHTML = Modules[key].render();
-      renderDrawerNav();
-      toggleDrawer(false);
-      lucide.createIcons();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function renderDrawerNav() {
-      const container = document.getElementById('drawer-nav-container');
-      container.innerHTML = Object.keys(Modules).map(key => {
-        const mod = Modules[key];
-        const isActive = key === activeModule;
-        return `
-          <button onclick="navigate('${key}')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition ${isActive ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}">
-            <i data-lucide="${mod.icon}" class="w-5 h-5"></i>
-            <span>${mod.title}</span>
-          </button>`;
-      }).join('');
-    }
-
-    function closeModal() {
-      document.getElementById('modal-container').classList.add('hidden');
-    }
-
-    navigate(activeModule);
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW Error:', err));
-    }
-
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const btn = document.getElementById('pwa-install-btn');
-      if (btn) {
-        btn.classList.remove('hidden');
-        btn.addEventListener('click', () => {
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then(() => btn.classList.add('hidden'));
-        });
-      }
+  function pintarSelector() {
+    const cont = document.getElementById("selector");
+    cont.innerHTML = "";
+    PERSONAJES.forEach(p => {
+      const b = document.createElement("button");
+      b.className = "avatar" + (perfil.avatar === p.id ? " sel" : "");
+      b.title = p.name;
+      b.innerHTML = `<img src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">`;
+      b.onclick = () => {
+        perfil.avatar = p.id;
+        localStorage.setItem("perfilMongil", JSON.stringify(perfil));
+        pintarAvatarActual();
+        pintarSelector();
+        // Cierra el selector al elegir
+        document.getElementById("selector").classList.remove("abierto");
+      };
+      cont.appendChild(b);
     });
-  </script>
+  }
+
+  document.getElementById("avatarBoton").onclick = () => {
+    document.getElementById("selector").classList.toggle("abierto");
+  };
+
+  function cargarPerfil() {
+    document.getElementById("nombre").value = perfil.nombre || "";
+    document.getElementById("codigo").value = perfil.codigo || "";
+    pintarAvatarActual();
+    pintarSelector();
+  }
+
+  document.getElementById("guardar").onclick = () => {
+    perfil.nombre = document.getElementById("nombre").value.trim();
+    perfil.codigo = document.getElementById("codigo").value.trim();
+    localStorage.setItem("perfilMongil", JSON.stringify(perfil));
+    document.getElementById("estado").textContent = "Perfil guardado.";
+  };
+
+  // Contador de personajes obtenidos (ej. 1/28)
+  function actualizarContador() {
+    const total = PERSONAJES.length;
+    const tenidos = PERSONAJES.filter(p => obtenidos[p.id]).length;
+    document.getElementById("contadorTengo").textContent = `${tenidos}/${total}`;
+  }
+
+  // Chips de elemento y rol (generados a partir de los datos)
+  function crearChips(contenedorId, valores, conjunto) {
+    const cont = document.getElementById(contenedorId);
+    cont.innerHTML = "";
+    valores.forEach(v => {
+      const b = document.createElement("button");
+      b.className = "chip" + (conjunto.has(v) ? " activo" : "");
+      b.textContent = v;
+      b.onclick = () => {
+        if (conjunto.has(v)) conjunto.delete(v); else conjunto.add(v);
+        b.classList.toggle("activo");
+        pintarPersonajes();
+      };
+      cont.appendChild(b);
+    });
+  }
+
+  function iniciarFiltros() {
+    const elementos = [...new Set(PERSONAJES.map(p => p.element))].sort();
+    const roles = [...new Set(PERSONAJES.map(p => p.role))].sort();
+    crearChips("chipsElemento", elementos, filtros.elementos);
+    crearChips("chipsRol", roles, filtros.roles);
+
+    document.getElementById("buscar").oninput = e => {
+      filtros.texto = e.target.value;
+      pintarPersonajes();
+    };
+    document.getElementById("filtroTier").onchange = e => {
+      filtros.tier = e.target.value;
+      pintarPersonajes();
+    };
+    document.getElementById("limpiar").onclick = () => {
+      filtros.texto = "";
+      filtros.tier = "";
+      filtros.elementos.clear();
+      filtros.roles.clear();
+      document.getElementById("buscar").value = "";
+      document.getElementById("filtroTier").value = "";
+      iniciarFiltros();
+      pintarPersonajes();
+    };
+  }
+
+  function cumpleFiltros(p) {
+    if (filtros.texto && !normalizar(p.name).includes(normalizar(filtros.texto))) return false;
+    if (filtros.tier && p.tier !== filtros.tier) return false;
+    if (filtros.elementos.size > 0 && !filtros.elementos.has(p.element)) return false;
+    if (filtros.roles.size > 0 && !filtros.roles.has(p.role)) return false;
+    return true;
+  }
+
+  // Personajes
+  function pintarPersonajes() {
+    const cont = document.getElementById("lista");
+    cont.innerHTML = "";
+    const visibles = PERSONAJES.filter(cumpleFiltros);
+    document.getElementById("contador").textContent =
+      `Mostrando ${visibles.length} de ${PERSONAJES.length}`;
+
+    visibles.forEach(p => {
+      const d = document.createElement("div");
+      d.className = "tarjeta";
+      d.innerHTML = `
+        <div class="marcador"></div>
+        <img class="icono" src="${iconoDe(p)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none'">
+        <strong>${esc(p.name)}</strong><br>
+        <span class="aviso">${esc(p.role)} · ${esc(p.element)} · ${esc(p.tier)}</span>`;
+
+      // Casilla "lo tengo" dentro de la tarjeta
+      const casilla = document.createElement("input");
+      casilla.type = "checkbox";
+      casilla.checked = !!obtenidos[p.id];
+      casilla.title = "Lo tengo";
+      // Evita que el clic en la casilla abra la ficha del personaje
+      casilla.onclick = e => e.stopPropagation();
+      casilla.onchange = e => {
+        obtenidos[p.id] = e.target.checked;
+        localStorage.setItem("obtenidosMongil", JSON.stringify(obtenidos));
+        actualizarContador();
+      };
+      d.querySelector(".marcador").appendChild(casilla);
+
+      d.onclick = () => abrirFicha(p.id);
+      cont.appendChild(d);
+    });
+
+    if (visibles.length === 0) {
+      cont.innerHTML = "<p class='aviso'>Ningún personaje coincide con los filtros.</p>";
+    }
+    actualizarContador();
+  }
+
+  function abrirFicha(id) {
+    const p = PERSONAJES.find(x => x.id === id);
+    if (!p) return;
+    const b = p.build;
+    document.getElementById("ficha").innerHTML = `
+      <div class="caja">
+        <img class="icono-grande" src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
+        <h2>${esc(p.name)}</h2>
+        <p><strong>Rango:</strong> ${esc(p.tier)} · <strong>Elemento:</strong> ${esc(p.element)} · <strong>Rol:</strong> ${esc(p.role)}</p>
+      </div>
+      <div class="caja"><h3>Equipamiento</h3>${lista(b.equipamiento)}</div>
+      <div class="caja"><h3>Artefacto</h3>${texto(b.artefacto)}</div>
+      <div class="caja"><h3>Monsterlings</h3>${lista(b.monsterlings)}</div>
+      <div class="caja"><h3>Monstruo legendario</h3>${texto(b.monstruoLegendario)}</div>
+      <div class="caja"><h3>Equipo recomendado</h3>${lista(b.equipoRecomendado)}</div>
+    `;
+    mostrarSeccion("detalle");
+  }
+
+  // Navegación
+  document.querySelectorAll("nav button").forEach(b =>
+    b.onclick = () => mostrarSeccion(b.dataset.sec));
+  document.getElementById("volver").onclick = () => mostrarSeccion("personajes");
+
+  cargarPerfil();
+  iniciarFiltros();
+  pintarPersonajes();
+
+  // Registro del service worker (permite usar la web sin conexión)
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(err =>
+        console.warn("No se pudo activar el modo sin conexión:", err));
+    });
+  }
+</script>
+
 </body>
 </html>
