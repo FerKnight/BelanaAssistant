@@ -146,11 +146,13 @@
     return t ? `<p>${esc(t)}</p>` : "<p class='aviso'>Sin datos aún</p>";
   }
 
-  function mostrarSeccion(id) {
+  // Cambia de pantalla y recuerda dónde está el usuario (para no volver al inicio al recargar)
+  function mostrarSeccion(id, personajeId = null) {
     document.querySelectorAll(".seccion").forEach(s => s.classList.remove("activa"));
     document.getElementById(id).classList.add("activa");
     document.querySelectorAll("nav button").forEach(b =>
       b.classList.toggle("activo", b.dataset.sec === id));
+    localStorage.setItem("vistaBelana", JSON.stringify({ sec: id, personaje: personajeId }));
     window.scrollTo(0, 0);
   }
 
@@ -322,7 +324,7 @@
       <div class="caja"><h3>Monstruo legendario</h3>${texto(b.monstruoLegendario)}</div>
       <div class="caja"><h3>Equipo recomendado</h3>${lista(b.equipoRecomendado)}</div>
     `;
-    mostrarSeccion("detalle");
+    mostrarSeccion("detalle", id);
   }
 
   // Navegación
@@ -333,6 +335,14 @@
   cargarPerfil();
   iniciarFiltros();
   pintarPersonajes();
+
+  // Vuelve a la pantalla donde estaba el usuario antes de recargar
+  const vista = JSON.parse(localStorage.getItem("vistaBelana") || "{}");
+  if (vista.sec === "detalle" && PERSONAJES.some(p => p.id === vista.personaje)) {
+    abrirFicha(vista.personaje);
+  } else if (vista.sec === "inicio" || vista.sec === "personajes") {
+    mostrarSeccion(vista.sec);
+  }
 
   // Registro del service worker (permite usar la web sin conexión)
   if ("serviceWorker" in navigator) {
