@@ -95,6 +95,16 @@
   .mon-caja.mon-link { border-color: #e53935; }
   .mon-caja.mon-legendario { border-color: #ffd54f; }
   .mon-nombre { font-size: 9px; color: #aab; text-align: center; line-height: 1.15; }
+  .leg-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+  .leg-cabecera .mon-caja { width: 64px; height: 64px; }
+  .leg-rasgos { flex: 1; text-align: center; font-size: 13px; color: #eee; }
+  .rasgos-titulo { display: block; font-weight: bold; color: #ffd54f; text-decoration: underline; margin-bottom: 6px; }
+  .leg-rasgos p { margin: 3px 0; color: #aab; }
+  .rasgo-caja { display: inline-block; margin-top: 6px; border: 1px solid #6c7ee8; border-radius: 8px; padding: 6px 8px; color: #eee; }
+  .team-item { justify-content: flex-start; gap: 6px; }
+  .team-cabeza { width: auto; max-width: 78px; }
+  .team-item > .mon-item { margin-left: auto; }
+  .team + .team { border-top: 1px solid #3a4378; padding-top: 14px; }
   details.elemento summary { cursor: pointer; font-weight: bold; font-size: 17px; color: #b9c4ff; list-style: none; }
   details.elemento summary::-webkit-details-marker { display: none; }
   details.elemento summary::after { content: "▾"; float: right; color: #aab; }
@@ -529,6 +539,25 @@
     else mostrarSeccion(fichaOrigen || "personajes");
   };
 
+  // Cabecera de Equipos: legendarios Reginula y Sorin con los rasgos en el centro
+  function cabeceraLegendarios() {
+    const caja = nombre => `
+      <div class="mon-caja mon-legendario">
+        <img src="${iconoMonster(nombre)}" alt="${esc(nombre)}" onerror="this.style.display='none'">
+      </div>`;
+    return `
+      <div class="leg-cabecera">
+        ${caja("Reginula")}
+        <div class="leg-rasgos">
+          <span class="rasgos-titulo">Rasgos</span>
+          <p>Daño a Jefes - Daño por Debilidad Elemental</p>
+          <p>Ataque</p>
+          <div class="rasgo-caja">Daño Crítico - Probabilidad de Crítico</div>
+        </div>
+        ${caja("Sorin")}
+      </div>`;
+  }
+
   // Equipos recomendados por elemento (desplegables)
   function monstruoCaja(nombre, clase) {
     const etiqueta = clase === "mon-link" ? `<span class="mon-etq">LINK</span>` : "";
@@ -544,7 +573,7 @@
 
   function pintarEquipos() {
     const cont = document.getElementById("listaEquipos");
-    cont.innerHTML = EQUIPOS_RECOMENDADOS.map(grupo => `
+    cont.innerHTML = cabeceraLegendarios() + EQUIPOS_RECOMENDADOS.map(grupo => `
       <details class="caja elemento">
         <summary>${esc(grupo.elemento)}</summary>
         ${grupo.equipos.map(equipo => `
