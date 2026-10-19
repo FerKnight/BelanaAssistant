@@ -586,7 +586,7 @@
                 <div class="team-item" onclick="abrirFicha('${p.id}')">
                   <div class="team-cabeza">
                     <img src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
-                    <span>${esc(p.name)}</span>
+                    <span>${esc(p.name.replace(/ Verano$/, " V."))}</span>
                   </div>
                   <div class="monsters-medio">
                     ${monstruoCaja(m.link, "mon-link")}
