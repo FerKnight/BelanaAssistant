@@ -76,6 +76,10 @@
   .monster-marco { width: 64px; height: 64px; box-sizing: border-box; border-radius: 10px; border: 3px solid transparent; background: #2d3570; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   .monster-marco img { width: 100%; height: 100%; object-fit: contain; }
   .monster span { font-size: 11px; color: #aab; line-height: 1.2; }
+  .team { display: flex; gap: 12px; margin-bottom: 14px; }
+  .team-item { width: 84px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; cursor: pointer; }
+  .team-item img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background: #2d3570; }
+  .team-item span { font-size: 12px; color: #aab; line-height: 1.2; }
   .monster .monster-etiqueta { font-size: 11px; font-weight: bold; color: #ffd54f; min-height: 13px; letter-spacing: 1px; }
   .monster-link .monster-marco { border-color: #e53935; }
   .monster-legendario .monster-marco { border-color: #ffd54f; }
@@ -105,6 +109,7 @@
   <h3>Menú</h3>
   <button data-sec="inicio" class="activo">Inicio</button>
   <button data-sec="personajes">Personajes</button>
+  <button data-sec="equipos">Equipos</button>
 </aside>
 
 <main>
@@ -158,6 +163,11 @@
     </div>
 
     <div class="grid" id="lista"></div>
+  </section>
+
+  <section id="equipos" class="seccion">
+    <h2>Equipos recomendados</h2>
+    <div id="listaEquipos"></div>
   </section>
 
   <section id="detalle" class="seccion">
@@ -494,6 +504,26 @@
     else mostrarSeccion("personajes");
   };
 
+  // Equipos recomendados por elemento
+  function pintarEquipos() {
+    const cont = document.getElementById("listaEquipos");
+    cont.innerHTML = EQUIPOS_RECOMENDADOS.map(grupo => `
+      <div class="caja">
+        <h3>${esc(grupo.elemento)}</h3>
+        ${grupo.equipos.map(equipo => `
+          <div class="team">
+            ${equipo.map(id => {
+              const p = PERSONAJES.find(x => x.id === id);
+              return `
+                <div class="team-item" onclick="abrirFicha('${p.id}')">
+                  <img src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
+                  <span>${esc(p.name)}</span>
+                </div>`;
+            }).join("")}
+          </div>`).join("")}
+      </div>`).join("");
+  }
+
   function pintarRoles() {
     document.getElementById("roles").innerHTML = ROLES.map(r => `
       <div class="rol-tarjeta">
@@ -504,6 +534,7 @@
 
   cargarPerfil();
   pintarRoles();
+  pintarEquipos();
   iniciarFiltros();
   pintarPersonajes();
 
@@ -511,7 +542,7 @@
   const vista = JSON.parse(sessionStorage.getItem("vistaBelana") || "{}");
   if (vista.sec === "detalle" && PERSONAJES.some(p => p.id === vista.personaje)) {
     abrirFicha(vista.personaje);
-  } else if (vista.sec === "inicio" || vista.sec === "personajes") {
+  } else if (["inicio", "personajes", "equipos"].includes(vista.sec)) {
     mostrarSeccion(vista.sec);
   }
 

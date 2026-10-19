@@ -126,3 +126,27 @@ const ROLES = [
     descripcion: 'Destaca en batallas de combate cuerpo a cuerpo en las que luchan aliados y enemigos y reina el caos. El daño de refriega aumenta en función del dominio de Lucha del luchador.'
   }
 ];
+
+// Equipos recomendados por elemento. Cada equipo son 3 personajes (id de PERSONAJES)
+const EQUIPOS_RECOMENDADOS = [
+  { elemento: 'Hielo', equipos: [
+    ['narae', 'isabella', 'ophelia']
+  ] },
+  { elemento: 'Fuego', equipos: [
+    ['mina', 'vivian', 'verna_verano'],
+    ['angel', 'vivian', 'mina'],
+    ['angel', 'vivian', 'verna_verano']
+  ] },
+  { elemento: 'Tierra', equipos: [
+    ['brisshell', 'francis_verano', 'ellie'],
+    ['brisshell', 'francis', 'ellie']
+  ] },
+  { elemento: 'Rayo', equipos: [
+    ['yeonhwa', 'francis', 'benjamin'],
+    ['yeonhwa', 'francis', 'mabel']
+  ] },
+  { elemento: 'Viento', equipos: [
+    ['jiwon', 'nagi', 'esther'],
+    ['jiwon', 'nagi', 'chloe']
+  ] }
+];
