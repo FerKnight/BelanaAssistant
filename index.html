@@ -70,6 +70,14 @@
   .efecto-titulo { margin: 8px 0 4px; font-weight: bold; color: #b9c4ff; }
   .efectos ul { margin: 0 0 6px; }
   .efectos li { font-size: 14px; line-height: 1.4; }
+  .monsters { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .monsters-izq { display: flex; gap: 8px; }
+  .monster { width: 80px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+  .monster-marco { width: 64px; height: 64px; box-sizing: border-box; border-radius: 10px; border: 3px solid transparent; background: #2d3570; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .monster-marco img { width: 100%; height: 100%; object-fit: contain; }
+  .monster span { font-size: 11px; color: #aab; line-height: 1.2; }
+  .monster-link .monster-marco { border-color: #e53935; }
+  .monster-legendario .monster-marco { border-color: #ffd54f; }
   .ficha-cabecera p { margin: 2px 0; }
   .boton-menu { background: #2d3570; color: #fff; border: 0; border-radius: 8px; font-size: 22px; padding: 4px 12px; cursor: pointer; }
   .menu { position: fixed; top: 0; left: 0; height: 100%; width: 240px; box-sizing: border-box; background: #1b2040; padding: 16px; transform: translateX(-100%); transition: transform 0.25s ease; z-index: 20; }
@@ -412,6 +420,30 @@
       </div>`;
   }
 
+  // Monsterlings: link (borde rojo), 2 y 3 (sin borde) a la izquierda; legendario (borde dorado) a la derecha
+  function monsterBox(nombre, clase) {
+    return `
+      <div class="monster ${clase}">
+        <div class="monster-marco"><img src="${iconoMonster(nombre)}" alt="${esc(nombre)}" onerror="this.style.display='none'"></div>
+        <span>${esc(nombre)}</span>
+      </div>`;
+  }
+
+  function tarjetaMonsterlings(m) {
+    if (!m) return "";
+    return `
+      <div class="caja">
+        <div class="monsters">
+          <div class="monsters-izq">
+            ${monsterBox(m.link, "monster-link")}
+            ${monsterBox(m.dos, "")}
+            ${monsterBox(m.tres, "")}
+          </div>
+          ${monsterBox(m.legendario, "monster-legendario")}
+        </div>
+      </div>`;
+  }
+
   function abrirFicha(id, desdeHistorial = false) {
     const p = PERSONAJES.find(x => x.id === id);
     if (!p) return;
@@ -435,7 +467,7 @@
       <div class="caja">${lista(b.ataques)}</div>
       <div class="caja">${lista(b.despertares)}</div>
       <div class="caja">${lista(b.artefactos)}</div>
-      <div class="caja">${lista(b.monsterlings)}</div>
+      ${tarjetaMonsterlings(p.monsters)}
     `;
     if (!desdeHistorial) history.pushState({ vista: "detalle", personaje: id }, "");
     mostrarSeccion("detalle", id);
