@@ -446,7 +446,6 @@
   function abrirFicha(id, desdeHistorial = false) {
     const p = PERSONAJES.find(x => x.id === id);
     if (!p) return;
-    const b = p.build;
     document.getElementById("ficha").innerHTML = `
       <div class="caja ficha-cabecera">
         <img class="icono-grande" src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
@@ -464,9 +463,6 @@
       ${tarjetaEquipo(1, p.equipos[0])}
       ${tarjetaEquipo(2, p.equipos[1])}
       ${tarjetaMonsterlings(p.monsters)}
-      <div class="caja">${lista(b.ataques)}</div>
-      <div class="caja">${lista(b.despertares)}</div>
-      <div class="caja">${lista(b.artefactos)}</div>
     `;
     if (!desdeHistorial) history.pushState({ vista: "detalle", personaje: id }, "");
     mostrarSeccion("detalle", id);
