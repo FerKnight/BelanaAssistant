@@ -76,6 +76,7 @@
   .monster-marco { width: 64px; height: 64px; box-sizing: border-box; border-radius: 10px; border: 3px solid transparent; background: #2d3570; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   .monster-marco img { width: 100%; height: 100%; object-fit: contain; }
   .monster span { font-size: 11px; color: #aab; line-height: 1.2; }
+  .monster .monster-etiqueta { font-size: 11px; font-weight: bold; color: #ffd54f; min-height: 13px; letter-spacing: 1px; }
   .monster-link .monster-marco { border-color: #e53935; }
   .monster-legendario .monster-marco { border-color: #ffd54f; }
   .ficha-cabecera p { margin: 2px 0; }
@@ -423,6 +424,7 @@
   function monsterBox(nombre, clase) {
     return `
       <div class="monster ${clase}">
+        <span class="monster-etiqueta">${clase.includes("monster-link") ? "LINK" : "&nbsp;"}</span>
         <div class="monster-marco"><img src="${iconoMonster(nombre)}" alt="${esc(nombre)}" onerror="this.style.display='none'"></div>
         <span>${esc(nombre)}</span>
       </div>`;
