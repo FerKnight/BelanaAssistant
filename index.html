@@ -76,15 +76,17 @@
   .monster-marco { width: 64px; height: 64px; box-sizing: border-box; border-radius: 10px; border: 3px solid transparent; background: #2d3570; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   .monster-marco img { width: 100%; height: 100%; object-fit: contain; }
   .monster span { font-size: 11px; color: #aab; line-height: 1.2; }
-  .team { display: flex; gap: 12px; margin-bottom: 14px; }
+  .team { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
   details.elemento summary { cursor: pointer; font-weight: bold; font-size: 17px; color: #b9c4ff; list-style: none; }
   details.elemento summary::-webkit-details-marker { display: none; }
   details.elemento summary::after { content: "▾"; float: right; color: #aab; }
   details.elemento[open] summary::after { content: "▴"; }
   details.elemento[open] summary { margin-bottom: 12px; }
-  .team-item { width: 84px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; cursor: pointer; }
-  .team-item img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background: #2d3570; }
-  .team-item span { font-size: 12px; color: #aab; line-height: 1.2; }
+  .team-item { display: flex; flex-direction: row; align-items: center; gap: 10px; cursor: pointer; }
+  .team-item img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: #2d3570; flex-shrink: 0; }
+  .team-texto { display: flex; flex-direction: column; gap: 2px; }
+  .team-item strong { font-size: 15px; color: #eee; }
+  .team-item span { font-size: 13px; color: #aab; line-height: 1.3; }
   .monster .monster-etiqueta { font-size: 11px; font-weight: bold; color: #ffd54f; min-height: 13px; letter-spacing: 1px; }
   .monster-link .monster-marco { border-color: #e53935; }
   .monster-legendario .monster-marco { border-color: #ffd54f; }
@@ -527,7 +529,10 @@
               return `
                 <div class="team-item" onclick="abrirFicha('${p.id}')">
                   <img src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
-                  <span>${esc(p.name)}</span>
+                  <div class="team-texto">
+                    <strong>${esc(p.name)}</strong>
+                    <span>${[p.monsters.link, p.monsters.dos, p.monsters.tres, p.monsters.legendario].map(esc).join(" - ")}</span>
+                  </div>
                 </div>`;
             }).join("")}
           </div>`).join("")}
