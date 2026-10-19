@@ -77,6 +77,11 @@
   .monster-marco img { width: 100%; height: 100%; object-fit: contain; }
   .monster span { font-size: 11px; color: #aab; line-height: 1.2; }
   .team { display: flex; gap: 12px; margin-bottom: 14px; }
+  details.elemento summary { cursor: pointer; font-weight: bold; font-size: 17px; color: #b9c4ff; list-style: none; }
+  details.elemento summary::-webkit-details-marker { display: none; }
+  details.elemento summary::after { content: "▾"; float: right; color: #aab; }
+  details.elemento[open] summary::after { content: "▴"; }
+  details.elemento[open] summary { margin-bottom: 12px; }
   .team-item { width: 84px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; cursor: pointer; }
   .team-item img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background: #2d3570; }
   .team-item span { font-size: 12px; color: #aab; line-height: 1.2; }
@@ -213,12 +218,12 @@
   }
 
   // Cambia de pantalla y recuerda dónde está el usuario (para no volver al inicio al recargar)
-  function mostrarSeccion(id, personajeId = null) {
+  function mostrarSeccion(id, personajeId = null, origen = null) {
     document.querySelectorAll(".seccion").forEach(s => s.classList.remove("activa"));
     document.getElementById(id).classList.add("activa");
     document.querySelectorAll(".menu button").forEach(b =>
       b.classList.toggle("activo", b.dataset.sec === id));
-    sessionStorage.setItem("vistaBelana", JSON.stringify({ sec: id, personaje: personajeId }));
+    sessionStorage.setItem("vistaBelana", JSON.stringify({ sec: id, personaje: personajeId, origen: origen }));
     window.scrollTo(0, 0);
   }
 
@@ -455,7 +460,10 @@
       </div>`;
   }
 
-  function abrirFicha(id, desdeHistorial = false) {
+  // Pantalla desde la que se abrió la ficha actual (listado o equipos)
+  let fichaOrigen = null;
+
+  function abrirFicha(id, desdeHistorial = false, origenForzado = null) {
     const p = PERSONAJES.find(x => x.id === id);
     if (!p) return;
     document.getElementById("ficha").innerHTML = `
@@ -476,8 +484,10 @@
       ${tarjetaEquipo(2, p.equipos[1])}
       ${tarjetaMonsterlings(p.monsters)}
     `;
-    if (!desdeHistorial) history.pushState({ vista: "detalle", personaje: id }, "");
-    mostrarSeccion("detalle", id);
+    const origen = origenForzado || document.querySelector(".seccion.activa").id;
+    fichaOrigen = origen;
+    if (!desdeHistorial) history.pushState({ vista: "detalle", personaje: id, origen: origen }, "");
+    mostrarSeccion("detalle", id, origen);
   }
 
   // Menú desplegable desde la izquierda
@@ -501,15 +511,15 @@
     });
   document.getElementById("volver").onclick = () => {
     if (history.state && history.state.vista === "detalle") history.back();
-    else mostrarSeccion("personajes");
+    else mostrarSeccion(fichaOrigen || "personajes");
   };
 
   // Equipos recomendados por elemento
   function pintarEquipos() {
     const cont = document.getElementById("listaEquipos");
     cont.innerHTML = EQUIPOS_RECOMENDADOS.map(grupo => `
-      <div class="caja">
-        <h3>${esc(grupo.elemento)}</h3>
+      <details class="caja elemento">
+        <summary>${esc(grupo.elemento)}</summary>
         ${grupo.equipos.map(equipo => `
           <div class="team">
             ${equipo.map(id => {
@@ -521,7 +531,7 @@
                 </div>`;
             }).join("")}
           </div>`).join("")}
-      </div>`).join("");
+      </details>`).join("");
   }
 
   function pintarRoles() {
@@ -541,15 +551,15 @@
   // Vuelve a la pantalla donde estaba el usuario antes de recargar
   const vista = JSON.parse(sessionStorage.getItem("vistaBelana") || "{}");
   if (vista.sec === "detalle" && PERSONAJES.some(p => p.id === vista.personaje)) {
-    abrirFicha(vista.personaje);
+    abrirFicha(vista.personaje, false, vista.origen);
   } else if (["inicio", "personajes", "equipos"].includes(vista.sec)) {
     mostrarSeccion(vista.sec);
   }
 
   // Botón atrás del navegador o del móvil: desde una ficha vuelve al listado
   window.addEventListener("popstate", e => {
-    if (e.state && e.state.vista === "detalle") abrirFicha(e.state.personaje, true);
-    else mostrarSeccion("personajes");
+    if (e.state && e.state.vista === "detalle") abrirFicha(e.state.personaje, true, e.state.origen);
+    else mostrarSeccion(fichaOrigen || "personajes");
   });
 
   // Registro del service worker (permite usar la web sin conexión)
