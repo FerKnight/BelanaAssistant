@@ -101,7 +101,8 @@
   .rasgos-titulo { display: block; font-weight: bold; color: #ffd54f; text-decoration: underline; margin-bottom: 6px; }
   .leg-rasgos p { margin: 3px 0; color: #aab; }
   .rasgo-caja { display: inline-block; margin-top: 6px; border: 1px solid #6c7ee8; border-radius: 8px; padding: 6px 8px; color: #eee; }
-  .team-item { justify-content: flex-start; gap: 6px; }
+  .team-item { justify-content: flex-start; gap: 6px; overflow-x: auto; }
+  .team-rasgos { display: flex; flex-direction: column; gap: 3px; width: 120px; flex-shrink: 0; font-size: 11px; color: #eee; line-height: 1.25; }
   .team-cabeza { width: auto; max-width: 78px; }
   .team-item > .mon-item { margin-left: auto; }
   .team + .team { border-top: 1px solid #3a4378; padding-top: 14px; }
@@ -591,6 +592,9 @@
                     ${monstruoCaja(m.link, "mon-link")}
                     ${monstruoCaja(m.dos, "")}
                     ${monstruoCaja(m.tres, "")}
+                  </div>
+                  <div class="team-rasgos">
+                    ${(p.rasgos || []).map(r => `<span>${esc(r)}</span>`).join("")}
                   </div>
                   ${monstruoCaja(m.legendario, "mon-legendario")}
                 </div>`;
