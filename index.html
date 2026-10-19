@@ -464,10 +464,10 @@
       </div>
       ${tarjetaEquipo(1, p.equipos[0])}
       ${tarjetaEquipo(2, p.equipos[1])}
+      ${tarjetaMonsterlings(p.monsters)}
       <div class="caja">${lista(b.ataques)}</div>
       <div class="caja">${lista(b.despertares)}</div>
       <div class="caja">${lista(b.artefactos)}</div>
-      ${tarjetaMonsterlings(p.monsters)}
     `;
     if (!desdeHistorial) history.pushState({ vista: "detalle", personaje: id }, "");
     mostrarSeccion("detalle", id);
