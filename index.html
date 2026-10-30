@@ -11,22 +11,17 @@
   header { background: #1b2040; padding: 12px; position: sticky; top: 0; display: flex; align-items: center; gap: 12px; z-index: 5; }
   nav button, .btn { background: #2d3570; color: #fff; border: 0; padding: 10px 14px; border-radius: 8px; cursor: pointer; margin: 2px; font-size: 15px; }
   nav button.activo { background: #6c7ee8; }
-  .marca-app { flex: 1; text-align: center; font-weight: bold; font-size: 18px; color: #ffd54f; }
+  .marca-app { cursor: pointer; flex: 1; text-align: center; font-weight: bold; font-size: 18px; color: #ffd54f; }
   main { padding: 16px; max-width: 800px; margin: auto; }
   .seccion { display: none; }
   .seccion.activa { display: block; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
-  .tarjeta { background: #1b2040; border-radius: 10px; padding: 8px; display: flex; align-items: center; gap: 8px; cursor: pointer; position: relative; }
-  .tarjeta .icono { width: 60px; height: 60px; margin: 0; flex-shrink: 0; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .tarjeta { background: #1b2040; border-radius: 10px; padding: 5px; display: flex; align-items: center; gap: 5px; cursor: pointer; position: relative; max-width: 100%; box-sizing: border-box; height: 62px; overflow: hidden; }
+  .tarjeta .icono { width: 44px; height: 44px; margin: 0; flex-shrink: 0; }
   .tarjeta-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-  .tarjeta-info strong { font-size: 14px; line-height: 1.2; }
-  .tarjeta-info span { font-size: 12px; color: #aab; }
-  .tarjeta-artefacto { width: 84px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .tarjeta-artefacto img { width: 44px; height: 44px; object-fit: contain; border-radius: 8px; background: #2d3570; }
-  .tarjeta-artefacto span { font-size: 11px; color: #aab; line-height: 1.2; text-align: center; }
+  .tarjeta-info strong { font-size: 12px; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tarjeta-info span { font-size: 11px; line-height: 1.2; color: #aab; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tarjeta:hover { outline: 2px solid #6c7ee8; }
-  .marcador { flex-shrink: 0; }
-  .marcador input { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: #7dd87d; }
   .icono { width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto 6px; background: #2d3570; }
   .icono-grande { width: 110px; height: 110px; object-fit: cover; border-radius: 50%; display: block; margin: 0 auto 12px; background: #2d3570; }
   .avatar-boton { width: 96px; height: 96px; border-radius: 50%; background: #2d3570; border: 3px solid #ffd54f; cursor: pointer; padding: 0; overflow: hidden; box-sizing: border-box; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; color: #fff; font-size: 36px; }
@@ -57,9 +52,6 @@
   .ficha-cabecera .icono-grande { margin: 0; flex-shrink: 0; }
   .ficha-cabecera h2 { margin-bottom: 6px; font-size: 20px; }
   .ficha-datos { flex: 1; min-width: 0; }
-  .ficha-artefacto { width: 96px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
-  .ficha-artefacto img { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; background: #2d3570; }
-  .ficha-artefacto span { font-size: 13px; color: #aab; line-height: 1.2; }
   .equipo-nombre { font-weight: bold; color: #ffd54f; margin: 0 0 10px; }
   .huecos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .hueco { display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -103,9 +95,100 @@
   .rasgo-caja { display: inline-block; margin-top: 6px; border: 1px solid #6c7ee8; border-radius: 8px; padding: 6px 8px; color: #eee; }
   .team-item { justify-content: flex-start; gap: 6px; overflow-x: auto; }
   .team-rasgos { display: flex; flex-direction: column; gap: 3px; width: 120px; flex-shrink: 0; font-size: 11px; color: #eee; line-height: 1.25; }
-  .team-cabeza { width: auto; max-width: 78px; }
-  .team-item > .mon-item { margin-left: auto; }
+  .team-cabeza, .team-alternativas { width: 86px; flex-shrink: 0; box-sizing: border-box; }
+  .team-item-alt { cursor: default; }
   .team + .team { border-top: 1px solid #3a4378; padding-top: 14px; }
+  #mapas .visor { position: fixed; top: 64px; left: 0; right: 0; bottom: 0; overflow: hidden; background: #0b0e1c; touch-action: none; }
+  .lienzo { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; transform-origin: center center; }
+  .mapa-caja { position: relative; line-height: 0; }
+  .mapa-caja > img { display: block; max-width: 100vw; max-height: calc(100vh - 64px); user-select: none; -webkit-user-drag: none; }
+  .marcador-mapa { position: absolute; transform: translate(-50%, -50%); width: calc(28px / var(--zoom, 1)); height: calc(28px / var(--zoom, 1)); padding: 0; border-radius: 50%; border: calc(2px / var(--zoom, 1)) solid #ffd54f; background: #2d3570; overflow: hidden; cursor: pointer; z-index: 2; }
+  .marcador-mapa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .boton-filtro { position: absolute; top: 12px; left: 12px; z-index: 10; width: 44px; height: 44px; border-radius: 50%; border: 0; background: #1b2040; color: #fff; font-size: 20px; cursor: pointer; }
+  .panel-filtros { position: absolute; top: 64px; left: 12px; z-index: 10; width: min(280px, calc(100% - 24px)); max-height: calc(100% - 90px); overflow-y: auto; background: #1b2040; border-radius: 10px; padding: 12px; box-sizing: border-box; }
+  .panel-filtros[hidden] { display: none; }
+  .zoom-controles { position: absolute; right: 12px; bottom: 12px; z-index: 10; display: flex; flex-direction: column; gap: 8px; }
+  .zoom-controles button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: #1b2040; color: #fff; font-size: 22px; cursor: pointer; }
+  .detalle-flotante { position: absolute; left: 12px; bottom: 12px; z-index: 10; max-width: 60%; background: #1b2040; border-radius: 10px; padding: 12px 34px 12px 12px; box-sizing: border-box; }
+  .detalle-flotante[hidden] { display: none; }
+  .fila-check { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 14px; }
+  .fila-check input { width: 18px; height: 18px; margin: 0; accent-color: #7dd87d; }
+  .marcador-mapa.hecho img { opacity: 0.35; }
+  .marcador-mapa.hecho::after { content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #7dd87d; font-weight: bold; font-size: calc(18px / var(--zoom, 1)); }
+  .detalle-flotante h3 { margin: 0 0 4px; }
+  .detalle-flotante p { margin: 2px 0; }
+  .cerrar-detalle { position: absolute; top: 6px; right: 8px; background: none; border: 0; color: #aab; font-size: 20px; cursor: pointer; }
+  .lista-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 8px; }
+  .item-lista { background: #1b2040; border-radius: 10px; padding: 10px; display: flex; gap: 10px; align-items: flex-start; }
+  .item-icono { width: 56px; height: 56px; box-sizing: border-box; border-radius: 10px; background: #2d3570; overflow: hidden; flex-shrink: 0; border: 2px solid transparent; }
+  .item-icono img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .item-icono.dorado { border-color: #ffd54f; }
+  .tier-5 { border: 3px solid #ffd54f; border-radius: 50%; }
+  .tier-4 { border: 3px solid #9575cd; border-radius: 50%; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-info strong { font-size: 15px; }
+  .item-info p { margin: 4px 0 0; font-size: 13px; line-height: 1.35; }
+  .etiquetas { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .etq { font-size: 11px; padding: 1px 8px; border-radius: 10px; background: #2d3570; color: #eee; }
+  .etq-link { background: #e53935; }
+  .etq-dorada { background: #ffd54f; color: #101320; }
+  .enlace { background: none; border: 0; padding: 0; color: #b9c4ff; font-size: 13px; cursor: pointer; text-decoration: underline; margin-right: 8px; }
+  .piezas-fila { display: flex; gap: 8px; margin: 6px 0; }
+  .pieza-mini { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px; color: #aab; }
+  .pieza-mini .item-icono { width: 44px; height: 44px; }
+  .lista-uniforme { grid-template-columns: repeat(auto-fill, 236px); gap: 6px; justify-content: start; align-items: start; }
+  #m-lista.lista-uniforme, #a-lista.lista-uniforme { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lista-uniforme .item-lista { position: relative; box-sizing: border-box; height: auto; min-height: 56px; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 18px 6px 6px; }
+  #m-lista.lista-uniforme .item-lista, #a-lista.lista-uniforme .item-lista { height: 58px; overflow: hidden; }
+  #a-lista.lista-uniforme .item-lista { height: 88px; }
+  #a-lista .etiquetas, #m-lista .etiquetas { margin: 0 0 2px; }
+  .item-sub { display: block; font-size: 10.5px; line-height: 1.2; color: #b9c4ff; margin-top: 1px; }
+  #a-lista .item-sub { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  #m-lista.lista-uniforme .item-lista.abierta, #a-lista.lista-uniforme .item-lista.abierta { height: auto; overflow: visible; }
+  .lista-uniforme .item-icono { width: 44px; height: 44px; position: relative; }
+  .item-numero { position: absolute; right: 1px; bottom: 1px; background: #101320; color: #eee; font-size: 9px; font-weight: bold; line-height: 1; border-radius: 4px; padding: 1px 3px; }
+  .lista-uniforme .etiquetas { margin-top: 3px; }
+  .lista-uniforme .etq { font-size: 10px; padding: 0 7px; }
+  .lista-uniforme .item-lista.abierta { height: auto; overflow: visible; }
+  .lista-uniforme .item-nombre { font-size: 12px; line-height: 1.25; }
+  #m-lista .item-nombre, #a-lista .item-nombre { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .lista-uniforme .etiquetas { flex-wrap: nowrap; overflow: hidden; }
+  .item-detalle { display: none; flex-basis: 100%; }
+  .item-lista.abierta .item-detalle { display: block; }
+  .item-detalle p { margin: 4px 0 0; font-size: 13px; line-height: 1.35; white-space: pre-line; }
+  .con-detalle { cursor: pointer; }
+  .con-detalle::after { content: "▾"; position: absolute; right: 6px; top: 4px; color: #aab; font-size: 12px; }
+  .con-detalle.abierta::after { content: "▴"; }
+  @media (max-width: 560px) {
+    .tarjeta { flex-direction: column; justify-content: center; text-align: center; height: 128px; padding: 6px 4px; gap: 4px; }
+    .tarjeta-info { width: 100%; align-items: center; flex: 0 1 auto; }
+    .tarjeta-info strong { font-size: 11.5px; }
+    #m-lista.lista-uniforme .item-lista, #a-lista.lista-uniforme .item-lista { flex-direction: column; flex-wrap: nowrap; justify-content: center; text-align: center; height: 112px; padding: 6px; gap: 4px; }
+    #m-lista.lista-uniforme .item-lista.abierta, #a-lista.lista-uniforme .item-lista.abierta { height: auto; min-height: 112px; }
+    #m-lista .item-info, #a-lista .item-info { width: 100%; flex: 0 1 auto; }
+    #m-lista .etiquetas, #a-lista .etiquetas { justify-content: center; }
+    #m-lista .item-detalle, #a-lista .item-detalle { flex-basis: auto; width: 100%; text-align: left; }
+    #m-lista .item-efecto { text-align: left; }
+    #a-lista.lista-uniforme .item-lista { height: 148px; }
+    #a-lista.lista-uniforme .item-lista.abierta { min-height: 148px; }
+  }
+  #m-lista.lista-uniforme .item-lista { height: var(--alto, 130px); }
+  #m-lista.midiendo .item-lista { height: auto !important; overflow: visible !important; }
+  .item-efecto { display: block; margin-top: 3px; font-size: 11px; line-height: 1.3; color: #cfd6ff; white-space: pre-line; }
+  .team-alternativas { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 2px 0; }
+  .team-alt-nombre { background: none; border: 0; padding: 2px 0; color: #eee; font-size: 14px; line-height: 1.25; text-align: left; cursor: pointer; }
+  .art-card { display: flex; flex-direction: column; gap: 4px; }
+  .art-etiqueta { margin: 0; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; color: #ffd54f; }
+  .art-etiqueta.variantes { margin-top: 8px; padding-top: 10px; border-top: 1px solid #3a4378; color: #b9c4ff; }
+  .art-fila { display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: 0; padding: 4px 0; color: #eee; text-align: left; cursor: pointer; }
+  .art-fila .item-icono { display: block; width: 48px; height: 48px; flex-shrink: 0; }
+  .art-textos { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .art-textos strong { font-size: 14px; line-height: 1.25; }
+  .art-textos .item-sub { font-size: 12px; margin-top: 2px; }
+  .art-flecha { color: #aab; font-size: 12px; transition: transform 0.15s; }
+  .art-fila[aria-expanded="true"] .art-flecha { transform: rotate(180deg); }
+  .art-efecto { margin: 2px 0 8px 58px; font-size: 13px; line-height: 1.4; color: #dfe4ff; white-space: pre-line; }
+  .art-efecto[hidden] { display: none; }
   details.elemento summary { cursor: pointer; font-weight: bold; font-size: 17px; color: #b9c4ff; list-style: none; }
   details.elemento summary::-webkit-details-marker { display: none; }
   details.elemento summary::after { content: "▾"; float: right; color: #aab; }
@@ -115,6 +198,11 @@
   .monster-link .monster-marco { border-color: #e53935; }
   .monster-legendario .monster-marco { border-color: #ffd54f; }
   .ficha-cabecera p { margin: 2px 0; }
+  .ficha-nombre { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .ficha-nombre h2 { margin: 0; }
+  .btn-tengo { background: #2d3570; color: #eee; border: 2px solid #3a4378; border-radius: 16px; padding: 4px 12px; font-size: 13px; cursor: pointer; }
+  .btn-tengo.activo { background: #2e7d4f; border-color: #7dd87d; color: #fff; }
+  .grupo-titulo { grid-column: 1 / -1; margin: 6px 0 0; font-size: 14px; color: #ffd54f; }
   .boton-menu { background: #2d3570; color: #fff; border: 0; border-radius: 8px; font-size: 22px; padding: 4px 12px; cursor: pointer; }
   .menu { position: fixed; top: 0; left: 0; height: 100%; width: 240px; box-sizing: border-box; background: #1b2040; padding: 16px; transform: translateX(-100%); transition: transform 0.25s ease; z-index: 20; }
   .menu.abierto { transform: translateX(0); }
@@ -133,7 +221,7 @@
 
 <header>
   <button class="boton-menu" id="abrirMenu" aria-label="Abrir menú">☰</button>
-  <div class="marca-app">Belana Assistant</div>
+  <div class="marca-app" id="tituloApp" role="button" tabindex="0">Belana Assistant</div>
 </header>
 <div class="fondo-menu" id="fondoMenu"></div>
 <aside class="menu" id="menu">
@@ -141,6 +229,10 @@
   <button data-sec="inicio" class="activo">Inicio</button>
   <button data-sec="personajes">Personajes</button>
   <button data-sec="equipos">Equipos</button>
+  <button data-sec="monsters">Monsterlings</button>
+  <button data-sec="artefactos">Artefactos</button>
+  <button data-sec="equipamientos">Equipamientos</button>
+  <button data-sec="mapas">Mapa</button>
 </aside>
 
 <main>
@@ -169,22 +261,17 @@
       <h2>Personajes</h2>
       <span class="contador" id="contadorTengo"></span>
     </div>
-    <p class="aviso">Marca el recuadro de cada personaje que ya tienes.</p>
 
     <div class="filtros">
       <input id="buscar" type="search" placeholder="Buscar personaje por nombre...">
 
       <div class="etiqueta">Grado</div>
-      <select id="filtroTier">
-        <option value="">Todos</option>
-        <option value="4★">4★</option>
-        <option value="5★">5★</option>
-      </select>
+      <div class="chips" id="chipsTier"></div>
 
-      <div class="etiqueta">Elemento (puedes marcar varios)</div>
+      <div class="etiqueta">Elemento</div>
       <div class="chips" id="chipsElemento"></div>
 
-      <div class="etiqueta">Rol (puedes marcar varios)</div>
+      <div class="etiqueta">Rol</div>
       <div class="chips" id="chipsRol"></div>
 
       <div style="margin-top: 12px;">
@@ -199,6 +286,67 @@
   <section id="equipos" class="seccion">
     <h2>Equipos recomendados</h2>
     <div id="listaEquipos"></div>
+  </section>
+
+  <section id="monsters" class="seccion">
+    <h2>Monsterlings</h2>
+    <div class="filtros">
+      <input id="m-buscar" type="search" placeholder="Buscar por nombre o efecto...">
+      <div class="grupo"><div class="etiqueta">Región</div><div class="chips" id="m-regiones"></div></div>
+      <div class="grupo"><div class="etiqueta">Tipo</div><div class="chips" id="m-tipos"></div></div>
+      <div class="grupo"><div class="etiqueta">Enlace</div><div class="chips" id="m-links"></div></div>
+      <div class="grupo"><div class="etiqueta">Elementos</div><div class="chips" id="m-elementos"></div></div>
+      <div class="grupo"><div class="etiqueta">Efectos</div><div class="chips" id="m-efectos"></div></div>
+      <div class="grupo"><div class="etiqueta">Efectos de rol</div><div class="chips" id="m-roles"></div></div>
+      <div style="margin-top: 12px;"><button class="btn" id="m-limpiar">Limpiar filtros</button> <span class="aviso" id="m-contador"></span></div>
+    </div>
+    <div class="lista-items lista-uniforme" id="m-lista"></div>
+  </section>
+
+  <section id="artefactos" class="seccion">
+    <h2>Artefactos</h2>
+    <div class="filtros">
+      <input id="a-buscar" type="search" placeholder="Buscar por nombre o efecto...">
+      <div class="grupo"><div class="etiqueta">Grado</div><div class="chips" id="a-grados"></div></div>
+      <div class="grupo"><div class="etiqueta">Rol</div><div class="chips" id="a-roles"></div></div>
+      <div class="grupo"><div class="etiqueta">Elementos</div><div class="chips" id="a-elementos"></div></div>
+      <div class="grupo"><div class="etiqueta">Efectos</div><div class="chips" id="a-efectos"></div></div>
+      <div style="margin-top: 12px;"><button class="btn" id="a-limpiar">Limpiar filtros</button> <span class="aviso" id="a-contador"></span></div>
+    </div>
+    <div class="lista-items lista-uniforme" id="a-lista"></div>
+  </section>
+
+  <section id="equipamientos" class="seccion">
+    <h2>Equipamientos</h2>
+    <div class="filtros">
+      <input id="e-buscar" type="search" placeholder="Buscar por nombre, efecto o dónde conseguirlo...">
+      <div class="grupo"><div class="etiqueta">Efectos del conjunto</div><div class="chips" id="e-tipos"></div></div>
+      <div class="grupo"><div class="etiqueta">Efecto</div><div class="chips" id="e-efectos"></div></div>
+      <div style="margin-top: 12px;"><button class="btn" id="e-limpiar">Limpiar filtros</button> <span class="aviso" id="e-contador"></span></div>
+    </div>
+    <div class="lista-items" id="e-lista"></div>
+  </section>
+
+  <section id="mapas" class="seccion">
+    <div class="visor" id="visor">
+      <div class="lienzo" id="lienzo">
+        <div class="mapa-caja" id="mapaCaja"></div>
+      </div>
+      <button class="boton-filtro" id="botonFiltro" aria-label="Filtros">⚙</button>
+      <div class="panel-filtros" id="panelFiltros" hidden>
+        <div class="etiqueta">Mapa</div>
+        <select id="selectMapa"></select>
+        <div class="etiqueta">Mostrar</div>
+        <div class="chips" id="chipsTipos"></div>
+        <label class="fila-check"><input type="checkbox" id="ocultarHechos"> Ocultar completados</label>
+        <p class="aviso" id="contadorHechos"></p>
+      </div>
+      <div class="zoom-controles" id="zoomControles">
+        <button id="zoomMas" aria-label="Acercar">+</button>
+        <button id="zoomMenos" aria-label="Alejar">−</button>
+      </div>
+      <div class="detalle-flotante" id="detalleMarcador" hidden></div>
+    </div>
   </section>
 
   <section id="detalle" class="seccion">
@@ -218,7 +366,7 @@
   let obtenidos = JSON.parse(localStorage.getItem("obtenidosMongil") || "{}");
 
   // Estado de los filtros
-  const filtros = { texto: "", tier: "", elementos: new Set(), roles: new Set() };
+  const filtros = { texto: "", tiers: new Set(), elementos: new Set(), roles: new Set() };
 
   function esc(t) {
     return String(t).replace(/[&<>"']/g, c => ({
@@ -251,6 +399,7 @@
       b.classList.toggle("activo", b.dataset.sec === id));
     sessionStorage.setItem("vistaBelana", JSON.stringify({ sec: id, personaje: personajeId, origen: origen }));
     window.scrollTo(0, 0);
+    if (id === "monsters") igualarAlto(document.getElementById("m-lista"));
   }
 
   // Perfil: el avatar es el icono de un personaje (se guarda su id).
@@ -352,6 +501,7 @@
   function iniciarFiltros() {
     const elementos = [...new Set(PERSONAJES.map(p => p.element))].sort();
     const roles = [...new Set(PERSONAJES.map(p => p.role))].sort();
+    crearChips("chipsTier", ["4★", "5★"], filtros.tiers);
     crearChips("chipsElemento", elementos, filtros.elementos);
     crearChips("chipsRol", roles, filtros.roles);
 
@@ -359,17 +509,12 @@
       filtros.texto = e.target.value;
       pintarPersonajes();
     };
-    document.getElementById("filtroTier").onchange = e => {
-      filtros.tier = e.target.value;
-      pintarPersonajes();
-    };
     document.getElementById("limpiar").onclick = () => {
       filtros.texto = "";
-      filtros.tier = "";
+      filtros.tiers.clear();
       filtros.elementos.clear();
       filtros.roles.clear();
       document.getElementById("buscar").value = "";
-      document.getElementById("filtroTier").value = "";
       iniciarFiltros();
       pintarPersonajes();
     };
@@ -377,7 +522,7 @@
 
   function cumpleFiltros(p) {
     if (filtros.texto && !normalizar(p.name).includes(normalizar(filtros.texto))) return false;
-    if (filtros.tier && p.tier !== filtros.tier) return false;
+    if (filtros.tiers.size > 0 && !filtros.tiers.has(p.tier)) return false;
     if (filtros.elementos.size > 0 && !filtros.elementos.has(p.element)) return false;
     if (filtros.roles.size > 0 && !filtros.roles.has(p.role)) return false;
     return true;
@@ -395,32 +540,13 @@
       const d = document.createElement("div");
       d.className = "tarjeta";
       d.innerHTML = `
-        <div class="marcador"></div>
-        <img class="icono" src="${iconoDe(p)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none'">
+        <img class="icono tier-${p.tier.replace('★','')}" src="${iconoDe(p)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none'">
         <div class="tarjeta-info">
-          <strong>${esc(p.name)} - ${esc(p.tier)}</strong>
+          <strong>${esc(p.name)}</strong>
           <span>${esc(p.element)}</span>
           <span>${esc(p.role)}</span>
           <span>${esc(p.rango)}</span>
-        </div>
-        <div class="tarjeta-artefacto">
-          <img src="${artefactoIconoDe(p)}" alt="${esc(p.artefacto)}" loading="lazy" onerror="this.style.display='none'">
-          <span>${esc(p.artefacto)}</span>
         </div>`;
-
-      // Casilla "lo tengo" dentro de la tarjeta
-      const casilla = document.createElement("input");
-      casilla.type = "checkbox";
-      casilla.checked = !!obtenidos[p.id];
-      casilla.title = "Lo tengo";
-      // Evita que el clic en la casilla abra la ficha del personaje
-      casilla.onclick = e => e.stopPropagation();
-      casilla.onchange = e => {
-        obtenidos[p.id] = e.target.checked;
-        localStorage.setItem("obtenidosMongil", JSON.stringify(obtenidos));
-        actualizarContador();
-      };
-      d.querySelector(".marcador").appendChild(casilla);
 
       d.onclick = () => abrirFicha(p.id);
       cont.appendChild(d);
@@ -489,27 +615,77 @@
   // Pantalla desde la que se abrió la ficha actual (listado o equipos)
   let fichaOrigen = null;
 
+  // Artefactos del personaje en una sola tarjeta: el principal y sus variantes.
+  // Cada fila muestra icono, nombre y sub estadística; al tocarla se despliega su efecto.
+  function filaArtefacto(a) {
+    return `
+      <div class="art-item">
+        <button type="button" class="art-fila" aria-expanded="false" onclick="alternarArtefacto(this)">
+          <span class="item-icono${a.grado ? " tier-" + a.grado : ""}"><img src="${iconoArtefacto(a.nombre)}" alt="${esc(a.nombre)}" onerror="this.style.display='none'"></span>
+          <span class="art-textos">
+            <strong>${esc(a.nombre)}</strong>
+            ${a.sub ? `<span class="item-sub">${esc(a.sub)}</span>` : ""}
+          </span>
+          ${a.efecto ? '<span class="art-flecha">▾</span>' : ""}
+        </button>
+        ${a.efecto ? `<p class="art-efecto" hidden>${esc(a.efecto)}</p>` : ""}
+      </div>`;
+  }
+
+  function tarjetaArtefactos(p) {
+    const buscar = n => ARTEFACTOS.find(a => nombreArchivo(a.nombre) === nombreArchivo(n));
+    const principal = buscar(p.artefacto) || { nombre: p.artefacto, grado: "", sub: "", efecto: "" };
+    const variantes = (p.secundarios || []).map(buscar).filter(Boolean);
+    return `
+      <div class="caja art-card">
+        <p class="art-etiqueta">Artefacto principal</p>
+        ${filaArtefacto(principal)}
+        ${variantes.length ? `<p class="art-etiqueta variantes">Variantes</p>${variantes.map(filaArtefacto).join("")}` : ""}
+      </div>`;
+  }
+
+  function alternarArtefacto(boton) {
+    const efecto = boton.parentElement.querySelector(".art-efecto");
+    if (!efecto) return;
+    efecto.hidden = !efecto.hidden;
+    boton.setAttribute("aria-expanded", String(!efecto.hidden));
+  }
+
   function abrirFicha(id, desdeHistorial = false, origenForzado = null) {
     const p = PERSONAJES.find(x => x.id === id);
     if (!p) return;
     document.getElementById("ficha").innerHTML = `
       <div class="caja ficha-cabecera">
-        <img class="icono-grande" src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
+        <img class="icono-grande tier-${p.tier.replace('★','')}" src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
         <div class="ficha-datos">
-          <h2>${esc(p.name)} - ${esc(p.tier)}</h2>
+          <div class="ficha-nombre">
+            <h2>${esc(p.name)}</h2>
+            <button type="button" class="btn-tengo" id="tengo" aria-pressed="false">Lo tengo</button>
+          </div>
           <p>${esc(p.element)}</p>
-          <p>${esc(p.role)}${p.rol !== p.role ? " - " + esc(p.rol) : ""}</p>
+          <p>${esc(p.role)}</p>
           <p>${esc(p.rango)}</p>
         </div>
-        <div class="ficha-artefacto">
-          <img src="${artefactoIconoDe(p)}" alt="${esc(p.artefacto)}" onerror="this.style.display='none'">
-          <span>${esc(p.artefacto)}</span>
-        </div>
       </div>
+      ${tarjetaArtefactos(p)}
       ${tarjetaEquipo(1, p.equipos[0])}
       ${tarjetaEquipo(2, p.equipos[1])}
       ${tarjetaMonsterlings(p.monsters)}
     `;
+    const botonTengo = document.getElementById("tengo");
+    const pintarTengo = () => {
+      const si = !!obtenidos[p.id];
+      botonTengo.classList.toggle("activo", si);
+      botonTengo.setAttribute("aria-pressed", si);
+      botonTengo.textContent = si ? "✓ Lo tengo" : "Lo tengo";
+    };
+    pintarTengo();
+    botonTengo.onclick = () => {
+      obtenidos[p.id] = !obtenidos[p.id];
+      localStorage.setItem("obtenidosMongil", JSON.stringify(obtenidos));
+      pintarTengo();
+      actualizarContador();
+    };
     const origen = origenForzado || document.querySelector(".seccion.activa").id;
     fichaOrigen = origen;
     if (!desdeHistorial) history.pushState({ vista: "detalle", personaje: id, origen: origen }, "");
@@ -526,6 +702,11 @@
     document.getElementById("fondoMenu").classList.remove("abierto");
   }
   document.getElementById("abrirMenu").onclick = abrirMenu;
+  document.getElementById("tituloApp").onclick = abrirMenu;
+  window.addEventListener("resize", () => {
+    if (document.getElementById("monsters").classList.contains("activa")) igualarAlto(document.getElementById("m-lista"));
+  });
+  document.getElementById("tituloApp").onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrirMenu(); } };
   document.getElementById("fondoMenu").onclick = cerrarMenu;
 
   // Navegación
@@ -559,7 +740,487 @@
       </div>`;
   }
 
-  // Equipos recomendados por elemento (desplegables)
+  // ---------- LISTAS: MONSTERLINGS, ARTEFACTOS Y EQUIPAMIENTOS ----------
+  // Filtro inteligente de efectos: cada categoría busca palabras clave dentro del texto del efecto.
+  // Solo aparecen las categorías que existen en los datos, así que se actualiza solo al cargar efectos.
+  const CATEGORIAS_EFECTO = [
+    { nombre: "Daño a jefes", claves: ["jefe"] },
+    { nombre: "Apoyo", claves: ["\\bapoyo"] },
+    { nombre: "Neutralización", claves: ["neutraliz"] },
+    { nombre: "Contención", claves: ["contenc"] },
+    { nombre: "Refriega", claves: ["refriega"] },
+    { nombre: "Vida y curación", claves: ["\\bvida\\b", "\\bcur", "regener"] },
+    { nombre: "Recarga y energía", claves: ["recarga", "enfriamiento", "energia"] },
+    { nombre: "Velocidad", claves: ["velocidad"] },
+    { nombre: "Fuego", claves: ["fuego"] },
+    { nombre: "Hielo", claves: ["hielo", "escarcha"] },
+    { nombre: "Tierra", claves: ["tierra"] },
+    { nombre: "Rayo", claves: ["rayo"] },
+    { nombre: "Viento", claves: ["viento"] }
+  ];
+
+  function categoriasDe(texto) {
+    const t = normalizar(texto || "");
+    return CATEGORIAS_EFECTO.filter(c => c.claves.some(k => new RegExp(k).test(t))).map(c => c.nombre);
+  }
+
+  function categoriasPresentes(textos, siempre = []) {
+    return CATEGORIAS_EFECTO.map(c => c.nombre).filter(n => siempre.includes(n) || textos.some(t => categoriasDe(t).includes(n)));
+  }
+
+  // Misma regla que cumpleGrupo: basta con que el texto cumpla uno de los efectos marcados
+  function cumpleEfectos(seleccion, texto) {
+    if (seleccion.size === 0) return true;
+    const cats = categoriasDe(texto);
+    return [...seleccion].some(e => cats.includes(e));
+  }
+
+  function alternarDetalle(e) {
+    const tarjeta = e.target.closest(".con-detalle");
+    if (tarjeta) tarjeta.classList.toggle("abierta");
+  }
+
+  // Filtros por palabras clave del texto de efecto (Monsterlings y Artefactos)
+  const FILTRO_ELEMENTOS = [
+    { nombre: "Fuego", claves: ["fuego"] },
+    { nombre: "Hielo", claves: ["hielo", "escarcha"] },
+    { nombre: "Tierra", claves: ["tierra"] },
+    { nombre: "Rayo", claves: ["rayo"] },
+    { nombre: "Viento", claves: ["viento"] }
+  ];
+  const FILTRO_STATS = [
+    { nombre: "ATQ", claves: ["\\batq\\b"] },
+    { nombre: "Daño", claves: ["\\bdano"] },
+    { nombre: "DEF", claves: ["\\bdef\\b"] },
+    { nombre: "Índice de crítico", claves: ["indice de critico"] },
+    { nombre: "Recupera", claves: ["\\brecuper"] },
+    { nombre: "RES", claves: ["\\bres\\b"] },
+    { nombre: "Restablece", claves: ["\\brestablec"] }
+  ];
+  const ROL_APOYO = { nombre: "Apoyo", claves: ["\\bapoyo"] };
+  const ROL_NEUTRALIZACION = { nombre: "Neutralización", claves: ["neutraliz"] };
+  const ROL_CONTENCION = { nombre: "Contención", claves: ["contenc"] };
+  const ROL_REFRIEGA = { nombre: "Refriega", claves: ["refriega"] };
+  const FILTRO_ROL_MONSTER = [ROL_APOYO, ROL_NEUTRALIZACION, ROL_CONTENCION, ROL_REFRIEGA];
+  const FILTRO_ROL_ARTEFACTO = [ROL_APOYO, ROL_CONTENCION, ROL_NEUTRALIZACION, ROL_REFRIEGA];
+
+  // REGLA DE FILTROS: dentro de un mismo filtro se pueden marcar varios botones y se suman (basta con cumplir uno);
+  // entre filtros distintos se deben cumplir todos los que estén activos. Sin nada marcado, el filtro no limita.
+  function cumpleGrupo(grupo, seleccion, texto) {
+    if (seleccion.size === 0) return true;
+    const t = normalizar(texto || "");
+    const hay = grupo.filter(c => c.claves.some(k => new RegExp(k).test(t))).map(c => c.nombre);
+    return [...seleccion].some(e => hay.includes(e));
+  }
+
+  const mayus = t => t.charAt(0).toUpperCase() + t.slice(1);
+  const valoresUnicos = arr => [...new Set(arr.filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b), "es"));
+
+  // Regiones: primero las de la hoja "regiones" (en su orden) y después las que aparezcan en los datos
+  function regionesDisponibles() {
+    const lista = typeof REGIONES !== "undefined" ? REGIONES : [];
+    return [...new Set([...lista, ...valoresUnicos(MONSTERLINGS.map(m => m.region))])];
+  }
+
+  // Chips de filtro (se oculta el grupo entero si no hay valores)
+  function chipsGenericos(contId, valores, conjunto, alCambiar, etiqueta = v => v) {
+    const cont = document.getElementById(contId);
+    cont.innerHTML = "";
+    valores.forEach(v => {
+      const b = document.createElement("button");
+      b.className = "chip" + (conjunto.has(v) ? " activo" : "");
+      b.textContent = etiqueta(v);
+      b.onclick = () => {
+        if (conjunto.has(v)) conjunto.delete(v); else conjunto.add(v);
+        b.classList.toggle("activo");
+        alCambiar();
+      };
+      cont.appendChild(b);
+    });
+    cont.parentElement.style.display = valores.length ? "" : "none";
+  }
+
+  // ----- Monsterlings -----
+  const fm = { texto: "", tipos: new Set(), regiones: new Set(), links: new Set(), elementos: new Set(), efectos: new Set(), roles: new Set() };
+
+  function cumpleMonster(m) {
+    const t = normalizar(`${m.nombre} ${m.efecto}`);
+    if (fm.texto && !t.includes(normalizar(fm.texto))) return false;
+    if (fm.tipos.size && !fm.tipos.has(m.tipo)) return false;
+    if (fm.regiones.size && !fm.regiones.has(m.region)) return false;
+    if (fm.links.size && !((fm.links.has("Sí") && m.link === "Sí") || (fm.links.has("No") && m.link !== "Sí"))) return false;
+    return cumpleGrupo(FILTRO_ELEMENTOS, fm.elementos, m.efecto)
+      && cumpleGrupo(FILTRO_STATS, fm.efectos, m.efecto)
+      && cumpleGrupo(FILTRO_ROL_MONSTER, fm.roles, m.efecto);
+  }
+
+  // Deja todas las tarjetas de la lista con la misma altura: la de la tarjeta con más texto
+  function igualarAlto(lista) {
+    if (!lista) return;
+    const tarjetas = [...lista.querySelectorAll(".item-lista:not(.abierta)")];
+    if (!tarjetas.length) return;
+    lista.style.removeProperty("--alto");
+    lista.classList.add("midiendo");
+    const max = Math.max(...tarjetas.map(t => t.offsetHeight));
+    lista.classList.remove("midiendo");
+    if (max > 40) lista.style.setProperty("--alto", max + "px");
+  }
+
+  function pintarMonsters() {
+    const visibles = MONSTERLINGS.filter(cumpleMonster);
+    document.getElementById("m-contador").textContent = `Mostrando ${visibles.length} de ${MONSTERLINGS.length}`;
+    // Cada tarjeta, de arriba abajo: región, nombre y efecto de rango. Se despliega solo si tiene enlace.
+    document.getElementById("m-lista").innerHTML = visibles.length ? visibles.map(m => {
+      const hayDetalle = !!m.enlace;
+      return `
+        <div class="item-lista${hayDetalle ? " con-detalle" : ""}">
+          <div class="item-icono${m.tipo === "legendario" ? " dorado" : ""}"><img src="${iconoMonster(m.nombre)}" alt="${esc(m.nombre)}" loading="lazy" onerror="this.style.display='none'"><span class="item-numero">${m.numero}</span></div>
+          <div class="item-info">
+            <div class="etiquetas">
+              ${m.region ? `<span class="etq">${esc(m.region)}</span>` : ""}
+              ${m.link === "Sí" ? '<span class="etq etq-link">LINK</span>' : ""}
+              ${m.tipo === "legendario" ? '<span class="etq etq-dorada">Legendario</span>' : ""}
+            </div>
+            <strong class="item-nombre">${esc(m.nombre)}</strong>
+            ${m.efecto ? `<span class="item-efecto">${esc(m.efecto)}</span>` : ""}
+          </div>
+          ${hayDetalle ? `<div class="item-detalle"><p>${esc(m.enlace)}</p></div>` : ""}
+        </div>`;
+    }).join("") : "<p class='aviso'>Ningún monsterling coincide con los filtros.</p>";
+    igualarAlto(document.getElementById("m-lista"));
+  }
+
+  function iniciarMonsters() {
+    chipsGenericos("m-tipos", ["normal", "legendario"], fm.tipos, pintarMonsters, v => v === "legendario" ? "Legendarios" : "Normales");
+    chipsGenericos("m-regiones", regionesDisponibles(), fm.regiones, pintarMonsters);
+    chipsGenericos("m-links", ["Sí", "No"], fm.links, pintarMonsters, v => v === "Sí" ? "Con link" : "Sin link");
+    chipsGenericos("m-elementos", FILTRO_ELEMENTOS.map(c => c.nombre), fm.elementos, pintarMonsters);
+    chipsGenericos("m-efectos", FILTRO_STATS.map(c => c.nombre), fm.efectos, pintarMonsters);
+    chipsGenericos("m-roles", FILTRO_ROL_MONSTER.map(c => c.nombre), fm.roles, pintarMonsters);
+    document.getElementById("m-lista").onclick = alternarDetalle;
+    document.getElementById("m-buscar").oninput = e => { fm.texto = e.target.value; pintarMonsters(); };
+    document.getElementById("m-limpiar").onclick = () => {
+      fm.texto = ""; fm.links.clear(); fm.tipos.clear(); fm.regiones.clear(); fm.elementos.clear(); fm.efectos.clear(); fm.roles.clear();
+      document.getElementById("m-buscar").value = "";
+      iniciarMonsters();
+    };
+    pintarMonsters();
+  }
+
+  // ----- Artefactos -----
+  const fa = { texto: "", grados: new Set(), roles: new Set(), elementos: new Set(), efectos: new Set() };
+  const ROLES_ARTEFACTO = ["Apoyo", "Asesino", "Destructor", "Luchador"];
+
+  function cumpleArtefacto(a) {
+    const texto = `${a.sub} ${a.efecto}`;
+    if (fa.texto && !normalizar(`${a.nombre} ${texto}`).includes(normalizar(fa.texto))) return false;
+    if (fa.grados.size && !fa.grados.has(String(a.grado))) return false;
+    if (fa.roles.size && !fa.roles.has(a.rol)) return false;
+    return cumpleGrupo(FILTRO_ELEMENTOS, fa.elementos, texto)
+      && cumpleGrupo(FILTRO_ROL_ARTEFACTO, fa.efectos, texto);
+  }
+
+  function tarjetaArtefactoLista(a) {
+    const hayDetalle = !!a.efecto;
+    return `
+        <div class="item-lista${hayDetalle ? " con-detalle" : ""}">
+          <div class="item-icono tier-${a.grado}"><img src="${iconoArtefacto(a.nombre)}" alt="${esc(a.nombre)}" loading="lazy" onerror="this.style.display='none'"></div>
+          <div class="item-info">
+            <div class="etiquetas"><span class="etq">${esc(a.rol)}</span></div>
+            <strong class="item-nombre">${esc(a.nombre)}</strong>
+            ${a.sub ? `<span class="item-sub">${esc(a.sub)}</span>` : ""}
+          </div>
+          ${hayDetalle ? `<div class="item-detalle"><p>${esc(a.efecto)}</p></div>` : ""}
+        </div>`;
+  }
+
+  function pintarArtefactos() {
+    const orden = (a, b) => a.nombre.localeCompare(b.nombre, "es");
+    const visibles = ARTEFACTOS.filter(cumpleArtefacto);
+    const pase = visibles.filter(a => a.pase).sort(orden);
+    const resto = visibles.filter(a => !a.pase).sort(orden);
+    document.getElementById("a-contador").textContent = `Mostrando ${visibles.length} de ${ARTEFACTOS.length}`;
+    let html = "";
+    if (pase.length) html += `<h3 class="grupo-titulo">Artefactos del pase</h3>` + pase.map(tarjetaArtefactoLista).join("");
+    if (pase.length && resto.length) html += `<h3 class="grupo-titulo">Artefactos</h3>`;
+    html += resto.map(tarjetaArtefactoLista).join("");
+    document.getElementById("a-lista").innerHTML = html || "<p class='aviso'>Ningún artefacto coincide con los filtros.</p>";
+  }
+
+  function iniciarArtefactos() {
+    chipsGenericos("a-grados", ["5", "4"], fa.grados, pintarArtefactos, v => v + "★");
+    chipsGenericos("a-roles", ROLES_ARTEFACTO, fa.roles, pintarArtefactos);
+    chipsGenericos("a-elementos", FILTRO_ELEMENTOS.map(c => c.nombre), fa.elementos, pintarArtefactos);
+    chipsGenericos("a-efectos", FILTRO_ROL_ARTEFACTO.map(c => c.nombre), fa.efectos, pintarArtefactos);
+    document.getElementById("a-lista").onclick = alternarDetalle;
+    document.getElementById("a-buscar").oninput = e => { fa.texto = e.target.value; pintarArtefactos(); };
+    document.getElementById("a-limpiar").onclick = () => {
+      fa.texto = ""; fa.grados.clear(); fa.roles.clear(); fa.elementos.clear(); fa.efectos.clear();
+      document.getElementById("a-buscar").value = "";
+      iniciarArtefactos();
+    };
+    pintarArtefactos();
+  }
+
+  // ----- Equipamientos -----
+  const fe = { texto: "", tipos: new Set(), efectos: new Set() };
+  const piezasDe = k => PIEZAS_EQUIPO.filter(x => x.conjunto === k);
+
+  function efectosConjunto(k) {
+    const c = CONJUNTOS[k];
+    return [c.dos, c.cuatro, ...piezasDe(k).map(x => x.efecto)].filter(Boolean).join(" ");
+  }
+
+  function cumpleConjunto(k) {
+    const c = CONJUNTOS[k];
+    const extra = piezasDe(k).map(x => `${x.efecto} ${x.conseguir}`).join(" ");
+    const t = normalizar(`${c.nombre} ${c.dos || ""} ${c.cuatro || ""} ${extra}`);
+    if (fe.texto && !t.includes(normalizar(fe.texto))) return false;
+    if (fe.tipos.size && !((fe.tipos.has("si") && c.cuatro) || (fe.tipos.has("no") && !c.cuatro))) return false;
+    return cumpleEfectos(fe.efectos, efectosConjunto(k));
+  }
+
+  function pintarEquipamientos() {
+    const claves = Object.keys(CONJUNTOS).filter(cumpleConjunto);
+    document.getElementById("e-contador").textContent = `Mostrando ${claves.length} de ${Object.keys(CONJUNTOS).length}`;
+    document.getElementById("e-lista").innerHTML = claves.length ? claves.map(k => {
+      const c = CONJUNTOS[k];
+      const piezas = piezasDe(k);
+      const detalle = piezas.filter(x => x.efecto || x.conseguir).map(x =>
+        `<p class="aviso"><strong>${mayus(x.pieza)}:</strong> ${esc(x.efecto)}${x.efecto && x.conseguir ? " · " : ""}${x.conseguir ? "Dónde: " + esc(x.conseguir) : ""}</p>`).join("");
+      return `
+        <div class="item-lista">
+          <div class="item-info">
+            <strong>${esc(c.nombre)}</strong>
+            <div class="piezas-fila">
+              ${piezas.map(x => `
+                <div class="pieza-mini">
+                  <div class="item-icono"><img src="${iconoConjunto(k, PIEZA_NUM[x.pieza])}" alt="${esc(x.pieza)}" loading="lazy" onerror="this.style.display='none'"></div>
+                  ${mayus(x.pieza)}
+                </div>`).join("")}
+            </div>
+            ${c.dos ? `<p><strong>2 piezas:</strong> ${esc(c.dos)}</p>` : ""}
+            ${c.cuatro ? `<p><strong>4 piezas:</strong> ${esc(c.cuatro)}</p>` : ""}
+            ${detalle}
+          </div>
+        </div>`;
+    }).join("") : "<p class='aviso'>Ningún conjunto coincide con los filtros.</p>";
+  }
+
+  function iniciarEquipamientos() {
+    chipsGenericos("e-tipos", ["si", "no"], fe.tipos, pintarEquipamientos, v => v === "si" ? "Con efecto de 4 piezas" : "Solo efecto de 2 piezas");
+    chipsGenericos("e-efectos", categoriasPresentes(Object.keys(CONJUNTOS).map(efectosConjunto), ["Apoyo", "Neutralización", "Contención", "Refriega"]), fe.efectos, pintarEquipamientos);
+    document.getElementById("e-buscar").oninput = e => { fe.texto = e.target.value; pintarEquipamientos(); };
+    document.getElementById("e-limpiar").onclick = () => {
+      fe.texto = ""; fe.tipos.clear(); fe.efectos.clear();
+      document.getElementById("e-buscar").value = "";
+      iniciarEquipamientos();
+    };
+    pintarEquipamientos();
+  }
+
+  function iniciarListas() {
+    iniciarMonsters();
+    iniciarArtefactos();
+    iniciarEquipamientos();
+  }
+
+  // ---------- MAPAS ----------
+  const visor = document.getElementById("visor");
+  const lienzo = document.getElementById("lienzo");
+  const mapaCaja = document.getElementById("mapaCaja");
+  let mapaActual = 0;
+  let zoom = 1, panX = 0, panY = 0;
+  const tiposActivos = new Set(Object.keys(TIPOS_MARCADOR));
+  const punteros = new Map();
+  let distAnterior = 0;
+  // Marcadores completados (se guardan en el dispositivo)
+  let completados = JSON.parse(localStorage.getItem("mapaCompletados") || "{}");
+  let ocultarHechos = false;
+
+  function claveMarcador(mapa, i) {
+    return mapa.marcadores[i].id || `${mapa.id}-${i}`;
+  }
+
+  function estaHecho(mapa, i) {
+    return !!completados[claveMarcador(mapa, i)];
+  }
+
+  function toggleHecho(i) {
+    const k = claveMarcador(MAPAS[mapaActual], i);
+    if (completados[k]) delete completados[k]; else completados[k] = true;
+    localStorage.setItem("mapaCompletados", JSON.stringify(completados));
+    pintarMapa();
+    abrirMarcador(i);
+  }
+
+  function actualizarContadorHechos() {
+    const mapa = MAPAS[mapaActual];
+    const visibles = (mapa.marcadores || []).map((m, i) => ({ m, i }))
+      .filter(x => tiposActivos.has(x.m.tipo));
+    const hechos = visibles.filter(x => estaHecho(mapa, x.i)).length;
+    document.getElementById("contadorHechos").textContent = `Completados: ${hechos} de ${visibles.length}`;
+  }
+
+  function aplicarTransform() {
+    lienzo.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+    lienzo.style.setProperty("--zoom", zoom);
+  }
+
+  // Acerca o aleja manteniendo fijo el punto bajo el cursor (o el centro de la pantalla)
+  function zoomEn(factor, sx, sy) {
+    const r = visor.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const nuevo = Math.min(5, Math.max(1, zoom * factor));
+    const px = (sx - cx - panX) / zoom;
+    const py = (sy - cy - panY) / zoom;
+    zoom = nuevo;
+    panX = sx - cx - px * zoom;
+    panY = sy - cy - py * zoom;
+    if (zoom === 1) { panX = 0; panY = 0; }
+    aplicarTransform();
+  }
+
+  function zoomBoton(factor) {
+    const r = visor.getBoundingClientRect();
+    zoomEn(factor, r.left + r.width / 2, r.top + r.height / 2);
+  }
+
+  function resetZoom() {
+    zoom = 1; panX = 0; panY = 0;
+    aplicarTransform();
+  }
+
+  function distancia() {
+    const [a, b] = [...punteros.values()];
+    return Math.hypot(a.x - b.x, a.y - b.y) || 1;
+  }
+
+  function puntoMedio() {
+    const [a, b] = [...punteros.values()];
+    return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+  }
+
+  function cerrarDetalle() {
+    const det = document.getElementById("detalleMarcador");
+    det.hidden = true;
+    det.innerHTML = "";
+  }
+
+  function crearChipsTipos() {
+    const cont = document.getElementById("chipsTipos");
+    cont.innerHTML = "";
+    Object.keys(TIPOS_MARCADOR).forEach(tipo => {
+      const b = document.createElement("button");
+      b.className = "chip" + (tiposActivos.has(tipo) ? " activo" : "");
+      b.textContent = TIPOS_MARCADOR[tipo].nombre;
+      b.onclick = () => {
+        if (tiposActivos.has(tipo)) tiposActivos.delete(tipo); else tiposActivos.add(tipo);
+        b.classList.toggle("activo");
+        pintarMapa();
+      };
+      cont.appendChild(b);
+    });
+  }
+
+  function pintarMapa() {
+    const mapa = MAPAS[mapaActual];
+    if (!mapa) return;
+    const marcadores = (mapa.marcadores || []).map((m, i) => ({ ...m, i }))
+      .filter(m => tiposActivos.has(m.tipo))
+      .filter(m => !(ocultarHechos && estaHecho(mapa, m.i)));
+    mapaCaja.innerHTML = `
+      <img src="${mapa.imagen}" alt="${esc(mapa.nombre)}">
+      ${marcadores.map(m => {
+        const t = TIPOS_MARCADOR[m.tipo];
+        const icono = m.tipo === "monster" ? iconoMonster(m.nombre) : CARPETA_ICONOS_MAPA + t.icono;
+        return `
+          <button class="marcador-mapa${estaHecho(mapa, m.i) ? " hecho" : ""}" title="${esc(m.nombre)}"
+            style="left:${m.x}%; top:${m.y}%; border-color:${t.color}"
+            onclick="abrirMarcador(${m.i})">
+            <img src="${icono}" alt="" onerror="this.style.display='none'">
+          </button>`;
+      }).join("")}`;
+    actualizarContadorHechos();
+  }
+
+  function abrirMarcador(i) {
+    const m = MAPAS[mapaActual].marcadores[i];
+    const t = TIPOS_MARCADOR[m.tipo];
+    const det = document.getElementById("detalleMarcador");
+    const hecho = estaHecho(MAPAS[mapaActual], i);
+    det.innerHTML = `
+      <button class="cerrar-detalle" onclick="cerrarDetalle()" aria-label="Cerrar">×</button>
+      <h3>${esc(m.nombre)}</h3>
+      <p class="aviso">${esc(t.nombre)}</p>
+      ${m.descripcion ? `<p>${esc(m.descripcion)}</p>` : ""}
+      <button class="btn" onclick="toggleHecho(${i})">${hecho ? "✓ Completado (desmarcar)" : "Marcar como completado"}</button>`;
+    det.hidden = false;
+  }
+
+  function iniciarMapas() {
+    if (MAPAS.length === 0) {
+      mapaCaja.innerHTML = "<p class='aviso' style='padding:20px'>Aún no hay mapas cargados.</p>";
+      document.getElementById("botonFiltro").style.display = "none";
+      document.getElementById("zoomControles").style.display = "none";
+      return;
+    }
+    document.getElementById("selectMapa").innerHTML =
+      MAPAS.map((m, i) => `<option value="${i}">${esc(m.nombre)}</option>`).join("");
+    document.getElementById("selectMapa").onchange = e => {
+      mapaActual = Number(e.target.value);
+      cerrarDetalle();
+      resetZoom();
+      pintarMapa();
+    };
+    crearChipsTipos();
+    document.getElementById("ocultarHechos").onchange = e => {
+      ocultarHechos = e.target.checked;
+      pintarMapa();
+    };
+
+    document.getElementById("botonFiltro").onclick = () => {
+      const panel = document.getElementById("panelFiltros");
+      panel.hidden = !panel.hidden;
+    };
+    document.getElementById("zoomMas").onclick = () => zoomBoton(1.25);
+    document.getElementById("zoomMenos").onclick = () => zoomBoton(1 / 1.25);
+
+    // Rueda del ratón: acercar y alejar
+    visor.addEventListener("wheel", e => {
+      e.preventDefault();
+      zoomEn(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX, e.clientY);
+    }, { passive: false });
+
+    // Arrastrar para mover el mapa (con zoom) y pellizcar para acercar en el móvil
+    visor.addEventListener("pointerdown", e => {
+      if (e.target.closest(".marcador-mapa, .boton-filtro, .panel-filtros, .zoom-controles, .detalle-flotante")) return;
+      punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (punteros.size === 2) distAnterior = distancia();
+    });
+    visor.addEventListener("pointermove", e => {
+      if (!punteros.has(e.pointerId)) return;
+      const previo = punteros.get(e.pointerId);
+      punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (punteros.size === 1 && zoom > 1) {
+        panX += e.clientX - previo.x;
+        panY += e.clientY - previo.y;
+        aplicarTransform();
+      } else if (punteros.size === 2) {
+        const d = distancia();
+        const c = puntoMedio();
+        zoomEn(d / distAnterior, c.x, c.y);
+        distAnterior = d;
+      }
+    });
+    const soltar = e => punteros.delete(e.pointerId);
+    visor.addEventListener("pointerup", soltar);
+    visor.addEventListener("pointercancel", soltar);
+
+    pintarMapa();
+  }
+
+  // Cuadro de un monsterling dentro de los equipos
   function monstruoCaja(nombre, clase) {
     const etiqueta = clase === "mon-link" ? `<span class="mon-etq">LINK</span>` : "";
     return `
@@ -572,6 +1233,49 @@
       </div>`;
   }
 
+  const nombreCorto = p => p.name.replace(/ Verano$/, " V.");
+
+  // Los 3 monsterlings recomendados para ese puesto del equipo (el primero es el de LINK)
+  function monstersPuesto(m) {
+    if (!m) return "";
+    return `
+      <div class="monsters-medio">
+        ${monstruoCaja(m[0], "mon-link")}
+        ${monstruoCaja(m[1], "")}
+        ${monstruoCaja(m[2], "")}
+      </div>`;
+  }
+
+  // Puesto con un solo personaje: icono, nombre, sus monsterlings y sus rasgos
+  function puestoPersonaje(id, monsters) {
+    const p = PERSONAJES.find(x => x.id === id);
+    const m = monsters || [p.monsters.link, p.monsters.dos, p.monsters.tres];
+    return `
+      <div class="team-item" onclick="abrirFicha('${p.id}')">
+        <div class="team-cabeza">
+          <img src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
+          <span>${esc(nombreCorto(p))}</span>
+        </div>
+        ${monstersPuesto(m)}
+        <div class="team-rasgos">
+          ${(p.rasgos || []).map(r => `<span>${esc(r)}</span>`).join("")}
+        </div>
+      </div>`;
+  }
+
+  // Puesto con 2 o más personajes (opciones): solo texto con los nombres, uno debajo del otro, y los monsterlings del puesto
+  function puestoAlternativas(ids, monsters) {
+    return `
+      <div class="team-item team-item-alt">
+        <div class="team-alternativas">${ids.map(id => {
+          const p = PERSONAJES.find(x => x.id === id);
+          return `<button type="button" class="team-alt-nombre" onclick="abrirFicha('${p.id}')">${esc(nombreCorto(p))}</button>`;
+        }).join("")}</div>
+        ${monstersPuesto(monsters)}
+      </div>`;
+  }
+
+  // Equipos recomendados por elemento (desplegables)
   function pintarEquipos() {
     const cont = document.getElementById("listaEquipos");
     cont.innerHTML = cabeceraLegendarios() + EQUIPOS_RECOMENDADOS.map(grupo => `
@@ -579,25 +1283,9 @@
         <summary>${esc(grupo.elemento)}</summary>
         ${grupo.equipos.map(equipo => `
           <div class="team">
-            ${equipo.map(id => {
-              const p = PERSONAJES.find(x => x.id === id);
-              const m = p.monsters;
-              return `
-                <div class="team-item" onclick="abrirFicha('${p.id}')">
-                  <div class="team-cabeza">
-                    <img src="${iconoDe(p)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
-                    <span>${esc(p.name.replace(/ Verano$/, " V."))}</span>
-                  </div>
-                  <div class="monsters-medio">
-                    ${monstruoCaja(m.link, "mon-link")}
-                    ${monstruoCaja(m.dos, "")}
-                    ${monstruoCaja(m.tres, "")}
-                  </div>
-                  <div class="team-rasgos">
-                    ${(p.rasgos || []).map(r => `<span>${esc(r)}</span>`).join("")}
-                  </div>
-                  ${monstruoCaja(m.legendario, "mon-legendario")}
-                </div>`;
+            ${equipo.map(puesto => {
+              const ids = [].concat(puesto.p || puesto);
+              return ids.length > 1 ? puestoAlternativas(ids, puesto.m) : puestoPersonaje(ids[0], puesto.m);
             }).join("")}
           </div>`).join("")}
       </details>`).join("");
@@ -614,6 +1302,8 @@
   cargarPerfil();
   pintarRoles();
   pintarEquipos();
+  iniciarMapas();
+  iniciarListas();
   iniciarFiltros();
   pintarPersonajes();
 
@@ -621,7 +1311,7 @@
   const vista = JSON.parse(sessionStorage.getItem("vistaBelana") || "{}");
   if (vista.sec === "detalle" && PERSONAJES.some(p => p.id === vista.personaje)) {
     abrirFicha(vista.personaje, false, vista.origen);
-  } else if (["inicio", "personajes", "equipos"].includes(vista.sec)) {
+  } else if (["inicio", "personajes", "equipos", "monsters", "artefactos", "equipamientos", "mapas"].includes(vista.sec)) {
     mostrarSeccion(vista.sec);
   }
 

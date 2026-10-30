@@ -17,7 +17,10 @@ const ARCHIVOS = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
-  ...PERSONAJES.map(p => iconoDe(p))
+  ...PERSONAJES.map(p => iconoDe(p)),
+  ...MONSTERLINGS.map(m => iconoMonster(m.nombre)),
+  ...ARTEFACTOS.map(a => iconoArtefacto(a.nombre)),
+  ...PIEZAS_EQUIPO.map(x => iconoConjunto(x.conjunto, PIEZA_NUM[x.pieza]))
 ];
 
 // Instalación: guarda los archivos. Si alguno falta, los demás se guardan igualmente.
