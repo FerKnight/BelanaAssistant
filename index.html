@@ -15,8 +15,8 @@
   main { padding: 16px; max-width: 800px; margin: auto; }
   .seccion { display: none; }
   .seccion.activa { display: block; }
-  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-  .tarjeta { background: #1b2040; border-radius: 10px; padding: 5px; display: flex; align-items: center; gap: 5px; cursor: pointer; position: relative; max-width: 100%; box-sizing: border-box; height: 62px; overflow: hidden; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(156px, 1fr)); gap: 6px; }
+  .tarjeta { background: #1b2040; border-radius: 10px; padding: 5px; display: flex; align-items: center; gap: 5px; cursor: pointer; position: relative; max-width: 100%; box-sizing: border-box; height: var(--alto, 62px); overflow: hidden; }
   .tarjeta .icono { width: 44px; height: 44px; margin: 0; flex-shrink: 0; }
   .tarjeta-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
   .tarjeta-info strong { font-size: 12px; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -137,10 +137,9 @@
   .pieza-mini { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px; color: #aab; }
   .pieza-mini .item-icono { width: 44px; height: 44px; }
   .lista-uniforme { grid-template-columns: repeat(auto-fill, 236px); gap: 6px; justify-content: start; align-items: start; }
-  #m-lista.lista-uniforme, #a-lista.lista-uniforme { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #m-lista.lista-uniforme, #a-lista.lista-uniforme { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
   .lista-uniforme .item-lista { position: relative; box-sizing: border-box; height: auto; min-height: 56px; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 18px 6px 6px; }
-  #m-lista.lista-uniforme .item-lista, #a-lista.lista-uniforme .item-lista { height: 58px; overflow: hidden; }
-  #a-lista.lista-uniforme .item-lista { height: 88px; }
+  #m-lista.lista-uniforme .item-lista, #a-lista.lista-uniforme .item-lista { height: var(--alto, 110px); overflow: hidden; }
   #a-lista .etiquetas, #m-lista .etiquetas { margin: 0 0 2px; }
   .item-sub { display: block; font-size: 10.5px; line-height: 1.2; color: #b9c4ff; margin-top: 1px; }
   #a-lista .item-sub { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -159,21 +158,7 @@
   .con-detalle { cursor: pointer; }
   .con-detalle::after { content: "▾"; position: absolute; right: 6px; top: 4px; color: #aab; font-size: 12px; }
   .con-detalle.abierta::after { content: "▴"; }
-  @media (max-width: 560px) {
-    .tarjeta { flex-direction: column; justify-content: center; text-align: center; height: 128px; padding: 6px 4px; gap: 4px; }
-    .tarjeta-info { width: 100%; align-items: center; flex: 0 1 auto; }
-    .tarjeta-info strong { font-size: 11.5px; }
-    #m-lista.lista-uniforme .item-lista, #a-lista.lista-uniforme .item-lista { flex-direction: column; flex-wrap: nowrap; justify-content: center; text-align: center; height: 112px; padding: 6px; gap: 4px; }
-    #m-lista.lista-uniforme .item-lista.abierta, #a-lista.lista-uniforme .item-lista.abierta { height: auto; min-height: 112px; }
-    #m-lista .item-info, #a-lista .item-info { width: 100%; flex: 0 1 auto; }
-    #m-lista .etiquetas, #a-lista .etiquetas { justify-content: center; }
-    #m-lista .item-detalle, #a-lista .item-detalle { flex-basis: auto; width: 100%; text-align: left; }
-    #m-lista .item-efecto { text-align: left; }
-    #a-lista.lista-uniforme .item-lista { height: 148px; }
-    #a-lista.lista-uniforme .item-lista.abierta { min-height: 148px; }
-  }
-  #m-lista.lista-uniforme .item-lista { height: var(--alto, 130px); }
-  #m-lista.midiendo .item-lista { height: auto !important; overflow: visible !important; }
+  .midiendo .item-lista, .midiendo .tarjeta { height: auto !important; overflow: visible !important; }
   .item-efecto { display: block; margin-top: 3px; font-size: 11px; line-height: 1.3; color: #cfd6ff; white-space: pre-line; }
   .team-alternativas { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 2px 0; }
   .team-alt-nombre { background: none; border: 0; padding: 2px 0; color: #eee; font-size: 14px; line-height: 1.25; text-align: left; cursor: pointer; }
@@ -365,6 +350,12 @@
   let perfil = JSON.parse(localStorage.getItem("perfilMongil") || "{}");
   let obtenidos = JSON.parse(localStorage.getItem("obtenidosMongil") || "{}");
 
+  // ORDEN ALFABÉTICO: se ordena siempre al cargar, así los personajes nuevos quedan en su sitio sin importar el orden del Excel.
+  // La clave ignora tildes, mayúsculas y puntos (M.A.D. se ordena como "mad").
+  const claveAZ = t => normalizar(t).replace(/[^a-z0-9]/g, "");
+  const ordenAZ = (a, b) => claveAZ(a).localeCompare(claveAZ(b), "es");
+  PERSONAJES.sort((a, b) => ordenAZ(a.name, b.name));
+
   // Estado de los filtros
   const filtros = { texto: "", tiers: new Set(), elementos: new Set(), roles: new Set() };
 
@@ -399,7 +390,7 @@
       b.classList.toggle("activo", b.dataset.sec === id));
     sessionStorage.setItem("vistaBelana", JSON.stringify({ sec: id, personaje: personajeId, origen: origen }));
     window.scrollTo(0, 0);
-    if (id === "monsters") igualarAlto(document.getElementById("m-lista"));
+    igualarAltosVisibles();
   }
 
   // Perfil: el avatar es el icono de un personaje (se guarda su id).
@@ -521,7 +512,7 @@
   }
 
   function cumpleFiltros(p) {
-    if (filtros.texto && !normalizar(p.name).includes(normalizar(filtros.texto))) return false;
+    if (filtros.texto && !normalizar(p.name).replace(/\./g, "").includes(normalizar(filtros.texto).replace(/\./g, ""))) return false;
     if (filtros.tiers.size > 0 && !filtros.tiers.has(p.tier)) return false;
     if (filtros.elementos.size > 0 && !filtros.elementos.has(p.element)) return false;
     if (filtros.roles.size > 0 && !filtros.roles.has(p.role)) return false;
@@ -545,7 +536,7 @@
           <strong>${esc(p.name)}</strong>
           <span>${esc(p.element)}</span>
           <span>${esc(p.role)}</span>
-          <span>${esc(p.rango)}</span>
+          ${p.rango ? `<span>${esc(p.rango)}</span>` : ""}
         </div>`;
 
       d.onclick = () => abrirFicha(p.id);
@@ -556,6 +547,7 @@
       cont.innerHTML = "<p class='aviso'>Ningún personaje coincide con los filtros.</p>";
     }
     actualizarContador();
+    igualarAlto(cont);
   }
 
   // Tarjeta de equipo: nombre de los conjuntos, 4 huecos y los efectos activos
@@ -664,7 +656,7 @@
           </div>
           <p>${esc(p.element)}</p>
           <p>${esc(p.role)}</p>
-          <p>${esc(p.rango)}</p>
+          ${p.rango ? `<p>${esc(p.rango)}</p>` : ""}
         </div>
       </div>
       ${tarjetaArtefactos(p)}
@@ -704,7 +696,8 @@
   document.getElementById("abrirMenu").onclick = abrirMenu;
   document.getElementById("tituloApp").onclick = abrirMenu;
   window.addEventListener("resize", () => {
-    if (document.getElementById("monsters").classList.contains("activa")) igualarAlto(document.getElementById("m-lista"));
+    clearTimeout(temporizadorAlto);
+    temporizadorAlto = setTimeout(igualarAltosVisibles, 80);
   });
   document.getElementById("tituloApp").onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrirMenu(); } };
   document.getElementById("fondoMenu").onclick = cerrarMenu;
@@ -855,9 +848,17 @@
   }
 
   // Deja todas las tarjetas de la lista con la misma altura: la de la tarjeta con más texto
+  // Recalcula el alto de las tarjetas de la lista que se está viendo (al cambiar de sección o al cambiar el tamaño de la pantalla)
+  let temporizadorAlto;
+  function igualarAltosVisibles() {
+    [["personajes", "lista"], ["monsters", "m-lista"], ["artefactos", "a-lista"]].forEach(([seccion, lista]) => {
+      if (document.getElementById(seccion).classList.contains("activa")) igualarAlto(document.getElementById(lista));
+    });
+  }
+
   function igualarAlto(lista) {
     if (!lista) return;
-    const tarjetas = [...lista.querySelectorAll(".item-lista:not(.abierta)")];
+    const tarjetas = [...lista.querySelectorAll(".item-lista:not(.abierta), .tarjeta")];
     if (!tarjetas.length) return;
     lista.style.removeProperty("--alto");
     lista.classList.add("midiendo");
@@ -935,7 +936,7 @@
   }
 
   function pintarArtefactos() {
-    const orden = (a, b) => a.nombre.localeCompare(b.nombre, "es");
+    const orden = (a, b) => ordenAZ(a.nombre, b.nombre);
     const visibles = ARTEFACTOS.filter(cumpleArtefacto);
     const pase = visibles.filter(a => a.pase).sort(orden);
     const resto = visibles.filter(a => !a.pase).sort(orden);
@@ -945,6 +946,7 @@
     if (pase.length && resto.length) html += `<h3 class="grupo-titulo">Artefactos</h3>`;
     html += resto.map(tarjetaArtefactoLista).join("");
     document.getElementById("a-lista").innerHTML = html || "<p class='aviso'>Ningún artefacto coincide con los filtros.</p>";
+    igualarAlto(document.getElementById("a-lista"));
   }
 
   function iniciarArtefactos() {
@@ -981,7 +983,7 @@
   }
 
   function pintarEquipamientos() {
-    const claves = Object.keys(CONJUNTOS).filter(cumpleConjunto);
+    const claves = Object.keys(CONJUNTOS).filter(cumpleConjunto).sort((a, b) => ordenAZ(CONJUNTOS[a].nombre, CONJUNTOS[b].nombre));
     document.getElementById("e-contador").textContent = `Mostrando ${claves.length} de ${Object.keys(CONJUNTOS).length}`;
     document.getElementById("e-lista").innerHTML = claves.length ? claves.map(k => {
       const c = CONJUNTOS[k];
@@ -1249,7 +1251,7 @@
   // Puesto con un solo personaje: icono, nombre, sus monsterlings y sus rasgos
   function puestoPersonaje(id, monsters) {
     const p = PERSONAJES.find(x => x.id === id);
-    const m = monsters || [p.monsters.link, p.monsters.dos, p.monsters.tres];
+    const m = monsters || (p.monsters ? [p.monsters.link, p.monsters.dos, p.monsters.tres] : null);
     return `
       <div class="team-item" onclick="abrirFicha('${p.id}')">
         <div class="team-cabeza">
